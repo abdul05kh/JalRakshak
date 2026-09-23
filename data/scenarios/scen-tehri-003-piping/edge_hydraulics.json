@@ -1,0 +1,104 @@
+{
+  "R01": {
+    "arrival_s": 99999,
+    "max_depth_m": 0.0,
+    "max_vel_mps": 0.0,
+    "inundated": false
+  },
+  "R02": {
+    "arrival_s": 1140,
+    "max_depth_m": 4.5,
+    "max_vel_mps": 2.8,
+    "inundated": true
+  },
+  "R03": {
+    "arrival_s": 2820,
+    "max_depth_m": 5.2,
+    "max_vel_mps": 2.6,
+    "inundated": true
+  },
+  "R04": {
+    "arrival_s": 99999,
+    "max_depth_m": 0.0,
+    "max_vel_mps": 0.0,
+    "inundated": false
+  },
+  "R05": {
+    "arrival_s": 99999,
+    "max_depth_m": 0.0,
+    "max_vel_mps": 0.0,
+    "inundated": false
+  },
+  "R06": {
+    "arrival_s": 99999,
+    "max_depth_m": 0.0,
+    "max_vel_mps": 0.0,
+    "inundated": false
+  },
+  "R07": {
+    "arrival_s": 5800,
+    "max_depth_m": 3.8,
+    "max_vel_mps": 2.1,
+    "inundated": true
+  },
+  "R08": {
+    "arrival_s": 7900,
+    "max_depth_m": 3.1,
+    "max_vel_mps": 1.9,
+    "inundated": true
+  },
+  "R09": {
+    "arrival_s": 99999,
+    "max_depth_m": 0.0,
+    "max_vel_mps": 0.0,
+    "inundated": false
+  },
+  "R10": {
+    "arrival_s": 9800,
+    "max_depth_m": 2.4,
+    "max_vel_mps": 1.6,
+    "inundated": true
+  },
+  "R11": {
+    "arrival_s": 99999,
+    "max_depth_m": 0.0,
+    "max_vel_mps": 0.0,
+    "inundated": false
+  },
+  "R12": {
+    "arrival_s": 10500,
+    "max_depth_m": 1.8,
+    "max_vel_mps": 1.2,
+    "inundated": true
+  },
+  "R13": {
+    "arrival_s": 10800,
+    "max_depth_m": 1.2,
+    "max_vel_mps": 0.9,
+    "inundated": true
+  },
+  "R14": {
+    "arrival_s": 99999,
+    "max_depth_m": 0.0,
+    "max_vel_mps": 0.0,
+    "inundated": false
+  },
+  "R15": {
+    "arrival_s": 99999,
+    "max_depth_m": 0.0,
+    "max_vel_mps": 0.0,
+    "inundated": false
+  },
+  "R16": {
+    "arrival_s": 99999,
+    "max_depth_m": 0.0,
+    "max_vel_mps": 0.0,
+    "inundated": false
+  },
+  "R17": {
+    "arrival_s": 99999,
+    "max_depth_m": 0.0,
+    "max_vel_mps": 0.0,
+    "inundated": false
+  }
+}

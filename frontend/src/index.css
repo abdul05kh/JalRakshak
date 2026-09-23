@@ -1,0 +1,102 @@
+@import "leaflet/dist/leaflet.css";
+
+:root {
+  --bg-main: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-subtle: #f1f5f9;
+  --border-subtle: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --accent-blue: #2563eb;
+  --accent-blue-subtle: #eff6ff;
+  
+  --status-feasible-bg: #dcfce7;
+  --status-feasible-text: #166534;
+  --status-feasible-border: #86efac;
+
+  --status-lowmargin-bg: #fef3c7;
+  --status-lowmargin-text: #92400e;
+  --status-lowmargin-border: #fcd34d;
+
+  --status-infeasible-bg: #fee2e2;
+  --status-infeasible-text: #991b1b;
+  --status-infeasible-border: #fca5a5;
+
+  --status-datagap-bg: #f1f5f9;
+  --status-datagap-text: #475569;
+  --status-datagap-border: #cbd5e1;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+}
+
+#root {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Leaflet Overrides */
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  background: #e2e8f0;
+  font-family: inherit;
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 2px;
+}
+
+.leaflet-popup-content {
+  margin: 10px 14px;
+  line-height: 1.4;
+  color: var(--text-primary);
+  font-size: 13px;
+}
+
+/* Pulse animation for limiting segment */
+@keyframes pulse-red {
+  0% { opacity: 0.85; }
+  50% { opacity: 0.35; }
+  100% { opacity: 0.85; }
+}
+
+.pulsing-segment {
+  animation: pulse-red 1.6s infinite ease-in-out;
+}

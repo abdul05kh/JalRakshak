@@ -1,0 +1,41 @@
+{
+  "scenario_id": "scen-tehri-002-catastrophic",
+  "name": "Scenario B \u2014 Catastrophic Rapid Breach (120m, 8min)",
+  "dam_id": "dam-tehri-001",
+  "dam_name": "Tehri Dam",
+  "breach_parameters": {
+    "breach_width_m": 120.0,
+    "breach_formation_min": 8.0,
+    "breach_elevation_m": 800.0,
+    "initial_pool_level_m": 835.0,
+    "peak_discharge_m3s": 64200.0
+  },
+  "simulation": {
+    "duration_min": 180,
+    "solver": "HEC-RAS 2D Hydrodynamic v6.4",
+    "terrain_source": "Copernicus DEM 30m / Survey of India Hydrologically Conditioned DEM",
+    "crs": "EPSG:32644 (UTM Zone 44N)",
+    "status": "READY",
+    "completed_at": "2026-09-20T11:30:00Z"
+  },
+  "artifacts": {
+    "inundation_extent": {
+      "file": "inundation.geojson",
+      "sha256": "9ccaf89603067e4f2e4267c0814fd03b2bd2fc76514a53c380b722f1e5735a35",
+      "type": "GeoJSON MultiPolygon"
+    },
+    "edge_hydraulics": {
+      "file": "edge_hydraulics.json",
+      "sha256": "bfe311c62e814d2ecf515f7787cd0518950a99a13151f53c245244106084f223",
+      "type": "Spatial Segment Matrix"
+    }
+  },
+  "scientific_validation": {
+    "benchmark_test": "Ritter Dam-Break Analytical Comparison (1D/2D shock tube)",
+    "benchmark_status": "PASSED (relative depth error < 3.2%)",
+    "solver_mass_balance_error_percent": 0.42,
+    "satellite_observed_extent_iou": 0.874,
+    "precision": 0.912,
+    "recall": 0.895
+  }
+}

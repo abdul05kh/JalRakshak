@@ -1,0 +1,17 @@
+{
+  "id": "dam-tehri-001",
+  "name": "Tehri Dam",
+  "authority": "THDC India Limited / Central Water Commission",
+  "latitude": 30.378,
+  "longitude": 78.4803,
+  "river_name": "Bhagirathi River",
+  "reservoir_name": "Tehri Reservoir (Swami Ram Tirtha Sagar)",
+  "dam_type": "Earth and rock-fill",
+  "height_m": 260.5,
+  "crest_length_m": 575.0,
+  "full_reservoir_level_m": 830.0,
+  "max_water_level_m": 835.0,
+  "gross_storage_mcm": 3540.0,
+  "crs": "EPSG:4326 / Projected UTM Zone 44N (EPSG:32644)",
+  "created_at": "2026-09-20T00:00:00Z"
+}

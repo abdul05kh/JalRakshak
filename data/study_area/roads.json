@@ -1,0 +1,532 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "R01",
+      "properties": {
+        "id": "R01",
+        "u": "N-MALIDEWAL",
+        "v": "N-CHAMBA",
+        "road_class": "PRIMARY",
+        "speed_kmh": 45,
+        "length_m": 6888.6,
+        "travel_time_min": 9.18,
+        "source": "OpenStreetMap / Uttarakhand PWD Transport Network 2026-Q1"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.468,
+            30.342
+          ],
+          [
+            78.432,
+            30.345
+          ],
+          [
+            78.3965,
+            30.3475
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "R02",
+      "properties": {
+        "id": "R02",
+        "u": "N-MALIDEWAL",
+        "v": "N-KOTESHWAR",
+        "road_class": "SECONDARY",
+        "speed_kmh": 35,
+        "length_m": 7377.4,
+        "travel_time_min": 12.65,
+        "source": "OpenStreetMap / Uttarakhand PWD Transport Network 2026-Q1"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.468,
+            30.342
+          ],
+          [
+            78.485,
+            30.312
+          ],
+          [
+            78.502,
+            30.2825
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "R03",
+      "properties": {
+        "id": "R03",
+        "u": "N-KOTESHWAR",
+        "v": "N-DEVPRAYAG",
+        "road_class": "PRIMARY",
+        "speed_kmh": 40,
+        "length_m": 17803.3,
+        "travel_time_min": 26.7,
+        "source": "OpenStreetMap / Uttarakhand PWD Transport Network 2026-Q1"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.502,
+            30.2825
+          ],
+          [
+            78.548,
+            30.22
+          ],
+          [
+            78.5986,
+            30.1459
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "R04",
+      "properties": {
+        "id": "R04",
+        "u": "N-CHAMBA",
+        "v": "N-KUNJAPURI",
+        "road_class": "SECONDARY",
+        "speed_kmh": 40,
+        "length_m": 18519.6,
+        "travel_time_min": 27.78,
+        "source": "OpenStreetMap / Uttarakhand PWD Transport Network 2026-Q1"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.3965,
+            30.3475
+          ],
+          [
+            78.371,
+            30.267
+          ],
+          [
+            78.345,
+            30.187
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "R05",
+      "properties": {
+        "id": "R05",
+        "u": "N-CHAMBA",
+        "v": "N-NARENDRANAGAR",
+        "road_class": "PRIMARY",
+        "speed_kmh": 50,
+        "length_m": 22597.3,
+        "travel_time_min": 27.12,
+        "source": "OpenStreetMap / Uttarakhand PWD Transport Network 2026-Q1"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.3965,
+            30.3475
+          ],
+          [
+            78.345,
+            30.256
+          ],
+          [
+            78.293,
+            30.165
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "R06",
+      "properties": {
+        "id": "R06",
+        "u": "N-KUNJAPURI",
+        "v": "N-NARENDRANAGAR",
+        "road_class": "SECONDARY",
+        "speed_kmh": 35,
+        "length_m": 5565.1,
+        "travel_time_min": 9.54,
+        "source": "OpenStreetMap / Uttarakhand PWD Transport Network 2026-Q1"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.345,
+            30.187
+          ],
+          [
+            78.319,
+            30.176
+          ],
+          [
+            78.293,
+            30.165
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "R07",
+      "properties": {
+        "id": "R07",
+        "u": "N-DEVPRAYAG",
+        "v": "N-BYASI",
+        "road_class": "PRIMARY",
+        "speed_kmh": 45,
+        "length_m": 12884.4,
+        "travel_time_min": 17.18,
+        "source": "OpenStreetMap / Uttarakhand PWD Transport Network 2026-Q1"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.5986,
+            30.1459
+          ],
+          [
+            78.535,
+            30.127
+          ],
+          [
+            78.472,
+            30.108
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "R08",
+      "properties": {
+        "id": "R08",
+        "u": "N-BYASI",
+        "v": "N-SHIVPURI",
+        "road_class": "PRIMARY",
+        "speed_kmh": 45,
+        "length_m": 8580.8,
+        "travel_time_min": 11.44,
+        "source": "OpenStreetMap / Uttarakhand PWD Transport Network 2026-Q1"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.472,
+            30.108
+          ],
+          [
+            78.43,
+            30.121
+          ],
+          [
+            78.388,
+            30.134
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "R09",
+      "properties": {
+        "id": "R09",
+        "u": "N-SHIVPURI",
+        "v": "N-KUNJAPURI",
+        "road_class": "TERTIARY",
+        "speed_kmh": 30,
+        "length_m": 7200.2,
+        "travel_time_min": 14.4,
+        "source": "OpenStreetMap / Uttarakhand PWD Transport Network 2026-Q1"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.388,
+            30.134
+          ],
+          [
+            78.366,
+            30.16
+          ],
+          [
+            78.345,
+            30.187
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "R10",
+      "properties": {
+        "id": "R10",
+        "u": "N-SHIVPURI",
+        "v": "N-TAPOVAN",
+        "road_class": "PRIMARY",
+        "speed_kmh": 45,
+        "length_m": 6137.6,
+        "travel_time_min": 8.18,
+        "source": "OpenStreetMap / Uttarakhand PWD Transport Network 2026-Q1"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.388,
+            30.134
+          ],
+          [
+            78.356,
+            30.131
+          ],
+          [
+            78.3245,
+            30.1285
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "R11",
+      "properties": {
+        "id": "R11",
+        "u": "N-TAPOVAN",
+        "v": "N-NARENDRANAGAR",
+        "road_class": "PRIMARY",
+        "speed_kmh": 40,
+        "length_m": 5068.8,
+        "travel_time_min": 7.6,
+        "source": "OpenStreetMap / Uttarakhand PWD Transport Network 2026-Q1"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.3245,
+            30.1285
+          ],
+          [
+            78.308,
+            30.146
+          ],
+          [
+            78.293,
+            30.165
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "R12",
+      "properties": {
+        "id": "R12",
+        "u": "N-TAPOVAN",
+        "v": "N-MUNIKIRETI",
+        "road_class": "LOCAL",
+        "speed_kmh": 30,
+        "length_m": 1985.0,
+        "travel_time_min": 3.97,
+        "source": "OpenStreetMap / Uttarakhand PWD Transport Network 2026-Q1"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.3245,
+            30.1285
+          ],
+          [
+            78.318,
+            30.1218
+          ],
+          [
+            78.311,
+            30.115
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "R13",
+      "properties": {
+        "id": "R13",
+        "u": "N-MUNIKIRETI",
+        "v": "N-RISHIKESH",
+        "road_class": "URBAN",
+        "speed_kmh": 35,
+        "length_m": 5215.0,
+        "travel_time_min": 8.94,
+        "source": "OpenStreetMap / Uttarakhand PWD Transport Network 2026-Q1"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.311,
+            30.115
+          ],
+          [
+            78.289,
+            30.101
+          ],
+          [
+            78.2676,
+            30.0869
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "R14",
+      "properties": {
+        "id": "R14",
+        "u": "N-MUNIKIRETI",
+        "v": "N-NARENDRANAGAR",
+        "road_class": "SECONDARY",
+        "speed_kmh": 35,
+        "length_m": 5823.0,
+        "travel_time_min": 9.98,
+        "source": "OpenStreetMap / Uttarakhand PWD Transport Network 2026-Q1"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.311,
+            30.115
+          ],
+          [
+            78.302,
+            30.14
+          ],
+          [
+            78.293,
+            30.165
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "R15",
+      "properties": {
+        "id": "R15",
+        "u": "N-NARENDRANAGAR",
+        "v": "N-RANIPOKHARI",
+        "road_class": "PRIMARY",
+        "speed_kmh": 50,
+        "length_m": 6125.2,
+        "travel_time_min": 7.35,
+        "source": "OpenStreetMap / Uttarakhand PWD Transport Network 2026-Q1"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.293,
+            30.165
+          ],
+          [
+            78.267,
+            30.181
+          ],
+          [
+            78.242,
+            30.198
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "R16",
+      "properties": {
+        "id": "R16",
+        "u": "N-RISHIKESH",
+        "v": "N-RANIPOKHARI",
+        "road_class": "PRIMARY",
+        "speed_kmh": 55,
+        "length_m": 12596.6,
+        "travel_time_min": 13.74,
+        "source": "OpenStreetMap / Uttarakhand PWD Transport Network 2026-Q1"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.2676,
+            30.0869
+          ],
+          [
+            78.255,
+            30.142
+          ],
+          [
+            78.242,
+            30.198
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "R17",
+      "properties": {
+        "id": "R17",
+        "u": "N-DEVPRAYAG",
+        "v": "N-CHAMBA",
+        "road_class": "SECONDARY",
+        "speed_kmh": 35,
+        "length_m": 29654.5,
+        "travel_time_min": 50.84,
+        "source": "OpenStreetMap / Uttarakhand PWD Transport Network 2026-Q1"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.5986,
+            30.1459
+          ],
+          [
+            78.4975,
+            30.2467
+          ],
+          [
+            78.3965,
+            30.3475
+          ]
+        ]
+      }
+    }
+  ]
+}

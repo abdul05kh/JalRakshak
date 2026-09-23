@@ -1,0 +1,205 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "VILL-01",
+      "properties": {
+        "id": "VILL-01",
+        "name": "Koteshwar Settlement",
+        "type": "VILLAGE",
+        "population": 1850,
+        "elevation_m": 612.0,
+        "river_distance_km": 14.2,
+        "category": "ORIGIN"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.502,
+          30.2825
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "VILL-02",
+      "properties": {
+        "id": "VILL-02",
+        "name": "Malidewal Lowland Village",
+        "type": "VILLAGE",
+        "population": 940,
+        "elevation_m": 645.0,
+        "river_distance_km": 6.8,
+        "category": "ORIGIN"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.468,
+          30.342
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "VILL-03",
+      "properties": {
+        "id": "VILL-03",
+        "name": "Devprayag Confluence Settlement",
+        "type": "SETTLEMENT",
+        "population": 4200,
+        "elevation_m": 472.0,
+        "river_distance_km": 42.0,
+        "category": "ORIGIN"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.5986,
+          30.1459
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "VILL-04",
+      "properties": {
+        "id": "VILL-04",
+        "name": "Shivpuri Riverfront Hamlet",
+        "type": "VILLAGE",
+        "population": 1120,
+        "elevation_m": 395.0,
+        "river_distance_km": 68.5,
+        "category": "ORIGIN"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.388,
+          30.134
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "VILL-05",
+      "properties": {
+        "id": "VILL-05",
+        "name": "Tapovan Floodplain Quarter",
+        "type": "URBAN_LOCALITY",
+        "population": 6800,
+        "elevation_m": 356.0,
+        "river_distance_km": 81.0,
+        "category": "ORIGIN"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.3245,
+          30.1285
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "VILL-06",
+      "properties": {
+        "id": "VILL-06",
+        "name": "Muni Ki Reti Ghat Area",
+        "type": "URBAN_LOCALITY",
+        "population": 8900,
+        "elevation_m": 348.0,
+        "river_distance_km": 84.5,
+        "category": "ORIGIN"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.311,
+          30.115
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SHELTER-01",
+      "properties": {
+        "id": "SHELTER-01",
+        "name": "Chamba High-Ground Relief Shelter",
+        "type": "SHELTER",
+        "capacity": 3500,
+        "elevation_m": 1600.0,
+        "verified_at": "2026-09-18T10:00:00Z",
+        "category": "DESTINATION"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.3965,
+          30.3475
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SHELTER-02",
+      "properties": {
+        "id": "SHELTER-02",
+        "name": "Narendra Nagar District Emergency Center",
+        "type": "EMERGENCY_CENTER",
+        "capacity": 5000,
+        "elevation_m": 1120.0,
+        "verified_at": "2026-09-18T10:00:00Z",
+        "category": "DESTINATION"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.293,
+          30.165
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SHELTER-03",
+      "properties": {
+        "id": "SHELTER-03",
+        "name": "Kunjapuri Ridge Shelter Camp",
+        "type": "SHELTER",
+        "capacity": 2000,
+        "elevation_m": 1650.0,
+        "verified_at": "2026-09-18T10:00:00Z",
+        "category": "DESTINATION"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.345,
+          30.187
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SHELTER-04",
+      "properties": {
+        "id": "SHELTER-04",
+        "name": "Rani Pokhari Safe Evacuation Ground",
+        "type": "SHELTER",
+        "capacity": 6000,
+        "elevation_m": 480.0,
+        "verified_at": "2026-09-18T10:00:00Z",
+        "category": "DESTINATION"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          78.242,
+          30.198
+        ]
+      }
+    }
+  ]
+}
