@@ -1,16 +1,23 @@
 /**
  * GLO30ElevationLayer.ts
  * Authoritative Copernicus GLO-30 DSM Custom Elevation Layer for ArcGIS Maps SDK 5.1 SceneView
- * Streams the exact 1-arcsecond GLO-30 DSM elevation grid (EGM2008 MSL datum) to Map.ground.
+ * Streams the exact 1-arcsecond GLO-30 DSM elevation grid (EGM96 / EGM2008 MSL datum) to Map.ground.
+ * Strictly adheres to project bounds with zero fake fallbacks (outside points return noDataValue: -9999).
  */
 
 import BaseElevationLayer from "@arcgis/core/layers/BaseElevationLayer";
 import Extent from "@arcgis/core/geometry/Extent";
 import SpatialReference from "@arcgis/core/geometry/SpatialReference";
+import { updateDiagnostics } from "./Diagnostics";
 
 const C_WEB_MERCATOR = 20037508.3427892;
 
 interface TerrainMeta {
+  source: string;
+  crs: string;
+  projected_crs: string;
+  native_resolution_arcsec: number;
+  native_resolution_meters: number;
   bounds: {
     min_lon: number;
     max_lon: number;
@@ -28,6 +35,13 @@ interface TerrainMeta {
   };
 }
 
+function latLonToWebMercator(lat: number, lon: number): { x: number; y: number } {
+  const x = (lon / 180) * C_WEB_MERCATOR;
+  const rad = (lat * Math.PI) / 180;
+  const y = (Math.log(Math.tan(Math.PI / 4 + rad / 2)) / Math.PI) * C_WEB_MERCATOR;
+  return { x, y };
+}
+
 export const GLO30ElevationLayer = BaseElevationLayer.createSubclass({
   declaredClass: "esri.layers.GLO30ElevationLayer",
 
@@ -35,10 +49,10 @@ export const GLO30ElevationLayer = BaseElevationLayer.createSubclass({
     title: "Copernicus GLO-30 DSM (1-arcsec)",
     spatialReference: SpatialReference.WebMercator,
     fullExtent: new Extent({
-      xmin: -20037508.34,
-      ymin: -20037508.34,
-      xmax: 20037508.34,
-      ymax: 20037508.34,
+      xmin: 8705175.76,
+      ymin: 3510444.60,
+      xmax: 8766399.78,
+      ymax: 3574744.15,
       spatialReference: SpatialReference.WebMercator
     })
   },
@@ -47,6 +61,7 @@ export const GLO30ElevationLayer = BaseElevationLayer.createSubclass({
   meta: null as TerrainMeta | null,
   loadPromise: null as Promise<void> | null,
   layerTileSize: 256,
+  tileCache: new Map<string, any>(),
 
   async load(): Promise<any> {
     if (!this.loadPromise) {
@@ -57,18 +72,53 @@ export const GLO30ElevationLayer = BaseElevationLayer.createSubclass({
   },
 
   async initGrid(): Promise<void> {
+    updateDiagnostics((d) => {
+      d.terrain.metadataRequested = true;
+      d.terrain.binaryRequested = true;
+    });
+
     try {
       const [metaRes, binRes] = await Promise.all([
         fetch("/terrain/terrain_meta.json"),
         fetch("/terrain/tehri_valley_elevation.bin")
       ]);
 
+      if (!metaRes.ok) throw new Error(`HTTP ${metaRes.status} fetching terrain_meta.json`);
+      if (!binRes.ok) throw new Error(`HTTP ${binRes.status} fetching tehri_valley_elevation.bin`);
+
       this.meta = await metaRes.json();
       const buffer = await binRes.arrayBuffer();
       this.elevationGrid = new Float32Array(buffer);
-      console.log("[GLO30ElevationLayer] Authoritative Copernicus GLO-30 DSM Grid loaded into ArcGIS Ground.");
-    } catch (err) {
-      console.error("[GLO30ElevationLayer] Failed to load GLO-30 DSM grid:", err);
+
+      if (this.meta) {
+        const pMin = latLonToWebMercator(this.meta.bounds.min_lat, this.meta.bounds.min_lon);
+        const pMax = latLonToWebMercator(this.meta.bounds.max_lat, this.meta.bounds.max_lon);
+        this.fullExtent = new Extent({
+          xmin: pMin.x,
+          ymin: pMin.y,
+          xmax: pMax.x,
+          ymax: pMax.y,
+          spatialReference: SpatialReference.WebMercator
+        });
+      }
+
+      updateDiagnostics((d) => {
+        d.terrain.metadataLoaded = true;
+        d.terrain.binaryLoaded = true;
+        d.terrain.binaryBytes = buffer.byteLength;
+        d.ground.loaded = true;
+        d.ground.layerCount = 1;
+      });
+
+      console.log(`[GLO30ElevationLayer] Loaded authoritative GLO-30 DSM (${this.elevationGrid.length} points, ${buffer.byteLength} bytes).`);
+    } catch (err: any) {
+      const errMsg = err?.message || String(err);
+      console.error("[GLO30ElevationLayer] Fatal failure loading GLO-30 DSM terrain:", err);
+      updateDiagnostics((d) => {
+        d.ground.loadError = errMsg;
+        d.terrain.tileFailures += 1;
+      });
+      throw err;
     }
   },
 
@@ -104,9 +154,19 @@ export const GLO30ElevationLayer = BaseElevationLayer.createSubclass({
   },
 
   async fetchTile(level: number, row: number, col: number): Promise<any> {
+    const tileKey = `${level}/${row}/${col}`;
+    if (this.tileCache.has(tileKey)) {
+      return this.tileCache.get(tileKey);
+    }
+
     if (!this.elevationGrid) {
       await this.load();
     }
+
+    updateDiagnostics((d) => {
+      d.terrain.tileRequests += 1;
+      d.terrain.lastTile = tileKey;
+    });
 
     const tileSize = this.layerTileSize;
     const numTiles = Math.pow(2, level);
@@ -117,12 +177,38 @@ export const GLO30ElevationLayer = BaseElevationLayer.createSubclass({
     const ymax = C_WEB_MERCATOR - row * tileSpanM;
     const ymin = ymax - tileSpanM;
 
+    // Fast bounding box intersection test against terrain extent
+    if (this.meta) {
+      const pMin = latLonToWebMercator(this.meta.bounds.min_lat, this.meta.bounds.min_lon);
+      const pMax = latLonToWebMercator(this.meta.bounds.max_lat, this.meta.bounds.max_lon);
+
+      if (xmax < pMin.x || xmin > pMax.x || ymax < pMin.y || ymin > pMax.y) {
+        // Tile is completely outside terrain coverage -> Return noDataValue
+        const emptyResult = {
+          values: new Float32Array(tileSize * tileSize).fill(-9999),
+          width: tileSize,
+          height: tileSize,
+          maxZ: -9999,
+          minZ: -9999,
+          noDataValue: -9999
+        };
+        this.tileCache.set(tileKey, emptyResult);
+        updateDiagnostics((d) => {
+          d.terrain.noDataSamples += tileSize * tileSize;
+          d.terrain.tileSuccesses += 1;
+        });
+        return emptyResult;
+      }
+    }
+
     const dx = (xmax - xmin) / (tileSize - 1);
     const dy = (ymax - ymin) / (tileSize - 1);
 
     const values = new Float32Array(tileSize * tileSize);
     let minZ = 99999;
     let maxZ = -99999;
+    let validCount = 0;
+    let noDataCount = 0;
 
     for (let r = 0; r < tileSize; r++) {
       const y = ymax - r * dy;
@@ -135,22 +221,38 @@ export const GLO30ElevationLayer = BaseElevationLayer.createSubclass({
         const lon = (x / C_WEB_MERCATOR) * 180;
 
         const elev = this.getElevationAt(lon, lat);
-        const z = elev !== null ? elev : 600.0;
-
-        values[r * tileSize + c] = z;
-        if (z < minZ) minZ = z;
-        if (z > maxZ) maxZ = z;
+        if (elev !== null) {
+          values[r * tileSize + c] = elev;
+          if (elev < minZ) minZ = elev;
+          if (elev > maxZ) maxZ = elev;
+          validCount++;
+        } else {
+          values[r * tileSize + c] = -9999;
+          noDataCount++;
+        }
       }
     }
 
-    return {
+    const tileResult = {
       values,
       width: tileSize,
       height: tileSize,
-      maxZ: maxZ > -99999 ? maxZ : 800.0,
-      minZ: minZ < 99999 ? minZ : 600.0,
+      maxZ: maxZ > -99999 ? maxZ : -9999,
+      minZ: minZ < 99999 ? minZ : -9999,
       noDataValue: -9999
     };
+
+    if (this.tileCache.size < 500) {
+      this.tileCache.set(tileKey, tileResult);
+    }
+
+    updateDiagnostics((d) => {
+      d.terrain.tileSuccesses += 1;
+      d.terrain.validSamples += validCount;
+      d.terrain.noDataSamples += noDataCount;
+    });
+
+    return tileResult;
   }
 });
 

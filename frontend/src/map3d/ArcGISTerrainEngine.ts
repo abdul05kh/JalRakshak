@@ -2,6 +2,7 @@
  * ArcGISTerrainEngine.ts
  * Core 3D Geospatial Engine for JalRakshak using ArcGIS Maps SDK for JavaScript 5.1
  * Orchestrates Map, SceneView, Copernicus GLO-30 DSM BaseElevationLayer, camera, layers, and hit-testing.
+ * Strictly guarantees a single, cancel-safe, observable SceneView lifecycle.
  */
 
 import Map from "@arcgis/core/Map";
@@ -15,6 +16,7 @@ import { GLO30ElevationLayer } from "./GLO30ElevationLayer";
 import { ArcGISHydraulicLayer, type HydraulicThematicMode } from "./ArcGISHydraulicLayer";
 import { ArcGISRoadLayer } from "./ArcGISRoadLayer";
 import { ArcGISCameraController, type AUTHORITATIVE_CAMERA_PRESETS } from "./ArcGISCameraController";
+import { updateDiagnostics } from "./Diagnostics";
 import type { RoadFeature, EvacuationPointFeature } from "../types";
 
 export interface TerrainEngineCallbacks {
@@ -39,6 +41,8 @@ export class ArcGISTerrainEngine {
   private cameraController: ArcGISCameraController | null = null;
   private callbacks: TerrainEngineCallbacks;
   private isDestroyed = false;
+  private resizeObserver: ResizeObserver | null = null;
+  private initPromise: Promise<void> | null = null;
 
   constructor(container: HTMLDivElement, callbacks: TerrainEngineCallbacks = {}) {
     this.container = container;
@@ -46,91 +50,147 @@ export class ArcGISTerrainEngine {
   }
 
   public async initialize(): Promise<void> {
-    const w = this.container.clientWidth || this.container.offsetWidth;
-    const h = this.container.clientHeight || this.container.offsetHeight;
-    console.log(`[ArcGISTerrainEngine] Container dimensions: ${w}x${h}, DPR: ${window.devicePixelRatio}`);
+    if (this.initPromise) return this.initPromise;
 
-    if (w <= 0 || h <= 0) {
-      console.warn(`[ArcGISTerrainEngine] Warning: Container dimensions are 0 (${w}x${h}). Check DOM CSS mounting.`);
-    }
+    this.initPromise = (async () => {
+      if (this.isDestroyed) return;
 
-    try {
-      // 1. Authoritative Copernicus GLO-30 DSM Ground Elevation
-      this.elevationLayer = new GLO30ElevationLayer();
-      await this.elevationLayer.load();
-      this.callbacks.onDiagnosticState?.("ELEVATION_LAYER_ATTACHED");
-      console.log("[ArcGISTerrainEngine] DIAGNOSTIC: ELEVATION_LAYER_ATTACHED");
+      const w = this.container.clientWidth || this.container.offsetWidth;
+      const h = this.container.clientHeight || this.container.offsetHeight;
 
-      // 2. Initialize ArcGIS Map with dark-gray-vector basemap and custom Ground
-      this.map = new Map({
-        basemap: "dark-gray-vector",
-        ground: {
-          layers: [this.elevationLayer]
+      updateDiagnostics((d) => {
+        d.container.width = w;
+        d.container.height = h;
+        d.container.clientWidth = this.container.clientWidth;
+        d.container.clientHeight = this.container.clientHeight;
+        d.container.devicePixelRatio = typeof window !== "undefined" ? window.devicePixelRatio : 1;
+      });
+
+      console.log(`[ArcGISTerrainEngine] Initializing SceneView on container (${w}x${h}px, DPR: ${window.devicePixelRatio})`);
+
+      try {
+        // 1. Authoritative Copernicus GLO-30 DSM Ground Elevation
+        this.elevationLayer = new GLO30ElevationLayer();
+        await this.elevationLayer.load();
+
+        if (this.isDestroyed) {
+          this.destroy();
+          return;
         }
-      });
-      this.callbacks.onDiagnosticState?.("GROUND_CREATED");
-      this.callbacks.onDiagnosticState?.("BASEMAP_READY");
-      console.log("[ArcGISTerrainEngine] DIAGNOSTIC: GROUND_CREATED & BASEMAP_READY");
 
-      // 3. Initialize Feature & Hydraulic Layers
-      this.hydraulicLayer = new ArcGISHydraulicLayer();
-      this.roadLayer = new ArcGISRoadLayer();
-      this.infrastructureLayer = new GraphicsLayer({
-        title: "Critical Infrastructure (Dam, Breach, Shelters)",
-        elevationInfo: { mode: "relative-to-ground", offset: 10 }
-      });
+        this.callbacks.onDiagnosticState?.("ELEVATION_LAYER_ATTACHED");
 
-      this.map.add(this.hydraulicLayer.getLayer());
-      this.roadLayer.getLayers().forEach((l) => this.map!.add(l));
-      this.map.add(this.infrastructureLayer);
-
-      this.callbacks.onDiagnosticState?.("ROAD_LAYER_READY");
-      this.callbacks.onDiagnosticState?.("HYDRAULIC_LAYER_READY");
-      console.log("[ArcGISTerrainEngine] DIAGNOSTIC: ROAD_LAYER_READY & HYDRAULIC_LAYER_READY");
-
-      // 4. Initialize SceneView (Projected 3D Local / Global Viewport)
-      this.view = new SceneView({
-        container: this.container,
-        map: this.map,
-        qualityProfile: "high",
-        environment: {
-          lighting: {
-            directShadowsEnabled: true,
-            date: new Date("2026-06-21T12:00:00Z")
+        // 2. Initialize ArcGIS Map with dark-gray-vector basemap and custom Ground
+        this.map = new Map({
+          basemap: "dark-gray-vector",
+          ground: {
+            layers: [this.elevationLayer]
           }
-        },
-        ui: {
-          components: []
-        },
-        camera: {
-          position: {
-            longitude: 78.445,
-            latitude: 30.230,
-            z: 3200
-          },
-          heading: 32,
-          tilt: 58
+        });
+
+        updateDiagnostics((d) => {
+          d.map.created = true;
+          d.map.loaded = true;
+          d.map.basemapStatus = "INITIALIZED";
+          d.ground.created = true;
+          d.ground.visible = true;
+        });
+
+        // 3. Initialize Feature & Hydraulic Layers
+        this.hydraulicLayer = new ArcGISHydraulicLayer();
+        this.roadLayer = new ArcGISRoadLayer();
+        this.infrastructureLayer = new GraphicsLayer({
+          title: "Critical Infrastructure (Dam, Breach, Shelters)",
+          elevationInfo: { mode: "relative-to-ground", offset: 10 }
+        });
+
+        this.map.add(this.hydraulicLayer.getLayer());
+        this.roadLayer.getLayers().forEach((l) => this.map!.add(l));
+        this.map.add(this.infrastructureLayer);
+
+        if (this.isDestroyed) {
+          this.destroy();
+          return;
         }
-      });
 
-      this.callbacks.onDiagnosticState?.("SCENEVIEW_CREATED");
-      console.log("[ArcGISTerrainEngine] DIAGNOSTIC: SCENEVIEW_CREATED");
+        // 4. Initialize SceneView
+        this.view = new SceneView({
+          container: this.container,
+          map: this.map,
+          qualityProfile: "high",
+          environment: {
+            lighting: {
+              directShadowsEnabled: true,
+              date: new Date("2026-06-21T12:00:00Z")
+            }
+          },
+          ui: {
+            components: []
+          },
+          camera: {
+            position: {
+              longitude: 78.445,
+              latitude: 30.230,
+              z: 3200
+            },
+            heading: 32,
+            tilt: 58
+          }
+        });
 
-      this.cameraController = new ArcGISCameraController(this.view);
+        updateDiagnostics((d) => {
+          d.sceneView.created = true;
+          d.sceneView.width = this.view?.width || w;
+          d.sceneView.height = this.view?.height || h;
+        });
 
-      // 5. Setup Interactions (Hit-testing & Cursor Elevation Sampling)
-      this.setupInteractions();
+        this.cameraController = new ArcGISCameraController(this.view);
 
-      // Wait for Viewport readiness
-      await this.view.when();
-      this.callbacks.onDiagnosticState?.("SCENEVIEW_READY");
-      this.callbacks.onDiagnosticState?.("CAMERA_READY");
-      console.log("[ArcGISTerrainEngine] DIAGNOSTIC: SCENEVIEW_READY & CAMERA_READY. 3D SceneView fully initialized.");
-    } catch (err) {
-      console.error("[ArcGISTerrainEngine] Fatal Map Render Failure:", err);
-      this.callbacks.onDiagnosticState?.("RENDER_FAILURE", err);
-      throw err;
-    }
+        // 5. Setup Interactions
+        this.setupInteractions();
+
+        // 6. Setup ResizeObserver for responsive canvas updates
+        this.resizeObserver = new ResizeObserver((entries) => {
+          for (const entry of entries) {
+            const nw = entry.contentRect.width;
+            const nh = entry.contentRect.height;
+            updateDiagnostics((d) => {
+              d.container.width = nw;
+              d.container.height = nh;
+              d.container.clientWidth = this.container.clientWidth;
+              d.container.clientHeight = this.container.clientHeight;
+            });
+          }
+        });
+        this.resizeObserver.observe(this.container);
+
+        // Wait for SceneView readiness
+        await this.view.when();
+
+        if (this.isDestroyed) {
+          this.destroy();
+          return;
+        }
+
+        updateDiagnostics((d) => {
+          d.sceneView.ready = true;
+          d.sceneView.fatalError = null;
+        });
+
+        this.callbacks.onDiagnosticState?.("SCENEVIEW_READY");
+        console.log("[ArcGISTerrainEngine] 3D SceneView ready and rendering GLO-30 DSM terrain.");
+      } catch (err: any) {
+        const msg = err?.message || String(err);
+        console.error("[ArcGISTerrainEngine] Fatal Map Render Failure:", err);
+        updateDiagnostics((d) => {
+          d.sceneView.fatalError = msg;
+        });
+        this.callbacks.onDiagnosticState?.("RENDER_FAILURE", err);
+        throw err;
+      }
+    })();
+
+    return this.initPromise;
   }
 
   private setupInteractions(): void {
@@ -138,79 +198,86 @@ export class ArcGISTerrainEngine {
 
     // Pointer move -> Live cursor terrain elevation query
     this.view.on("pointer-move", (event) => {
-      if (!this.view || !this.callbacks.onCursorMove || !this.elevationLayer) return;
-
-      const mapPoint = this.view.toMap({ x: event.x, y: event.y });
-      if (mapPoint && mapPoint.longitude != null && mapPoint.latitude != null) {
-        const lon = Math.round(mapPoint.longitude * 10000) / 10000;
-        const lat = Math.round(mapPoint.latitude * 10000) / 10000;
-        const elev = this.elevationLayer.getElevationAt(lon, lat) ?? (mapPoint.z ? Math.round(mapPoint.z * 10) / 10 : 830.0);
-
+      if (this.isDestroyed || !this.view) return;
+      const pt = this.view.toMap({ x: event.x, y: event.y });
+      if (pt && pt.longitude != null && pt.latitude != null && this.callbacks.onCursorMove) {
+        const elev = this.elevationLayer?.getElevationAt?.(pt.longitude, pt.latitude) ?? pt.z ?? 0;
         this.callbacks.onCursorMove({
-          lon,
-          lat,
-          elevation_m: elev
+          lon: Math.round(pt.longitude * 100000) / 100000,
+          lat: Math.round(pt.latitude * 100000) / 100000,
+          elevation_m: Math.round(elev * 10) / 10
         });
       }
     });
 
-    // Click -> Hit-test for Road, Limiting Edge, Hydraulic Cell, Dam, Shelter
+    // Click -> Hit-test vector layers (Roads, Infrastructure, Hydraulic cells)
     this.view.on("click", async (event) => {
-      if (!this.view || !this.callbacks.onPickEntity) return;
+      if (this.isDestroyed || !this.view) return;
 
-      const response = await this.view.hitTest(event);
-      const mapPoint = this.view.toMap({ x: event.x, y: event.y });
-      const lon = mapPoint && mapPoint.longitude != null ? Math.round(mapPoint.longitude * 10000) / 10000 : 78.4803;
-      const lat = mapPoint && mapPoint.latitude != null ? Math.round(mapPoint.latitude * 10000) / 10000 : 30.3780;
-      const elev = this.elevationLayer ? (this.elevationLayer.getElevationAt(lon, lat) ?? 830.6) : 830.6;
+      try {
+        const response = await this.view.hitTest(event, {
+          include: [
+            ...(this.roadLayer?.getLayers() || []),
+            this.infrastructureLayer,
+            this.hydraulicLayer?.getLayer()
+          ].filter(Boolean) as any[]
+        });
 
-      if (response.results.length > 0) {
-        const topResult = response.results.find((r) => r.type === "graphic") as any;
-        if (topResult && topResult.graphic) {
-          const g = topResult.graphic as Graphic;
-          const attrs = g.attributes || {};
+        if (response.results.length > 0) {
+          const hit = response.results[0] as any;
+          const graphic: Graphic = hit.graphic;
+          const attrs = graphic.attributes || {};
 
-          let type: "ROAD" | "DAM" | "BREACH" | "SHELTER" | "HEC_RAS_CELL" | "TERRAIN" = "TERRAIN";
-          let title = "Selected Feature";
-
-          if (attrs.type === "ROAD") {
-            type = "ROAD";
-            title = attrs.name || `Road Segment ${attrs.edgeId || attrs.roadId}`;
-          } else if (attrs.type === "HEC_RAS_CELL") {
-            type = "HEC_RAS_CELL";
-            title = `HEC-RAS Inundation Cell (${attrs.depth_m}m depth)`;
-          } else if (attrs.type === "DAM") {
-            type = "DAM";
-            title = "Tehri Dam Structure (830m Crest)";
-          } else if (attrs.type === "BREACH") {
-            type = "BREACH";
-            title = "Breach Invert Location (635m Model Assumption)";
-          } else if (attrs.type === "SHELTER") {
-            type = "SHELTER";
-            title = attrs.name || "Designated Shelter";
+          if (attrs.edgeId && this.callbacks.onPickEntity) {
+            this.callbacks.onPickEntity({
+              type: "ROAD",
+              title: `Road Segment ${attrs.edgeId}`,
+              properties: attrs,
+              coordinate: {
+                lon: hit.mapPoint?.longitude ?? 78.48,
+                lat: hit.mapPoint?.latitude ?? 30.38,
+                elev_m: hit.mapPoint?.z ?? 600
+              }
+            });
+            return;
           }
 
-          this.callbacks.onPickEntity({
-            type,
-            title,
-            properties: attrs,
-            coordinate: { lon, lat, elev_m: elev }
-          });
-          return;
+          if (attrs.type && this.callbacks.onPickEntity) {
+            this.callbacks.onPickEntity({
+              type: attrs.type,
+              title: attrs.name || attrs.type,
+              properties: attrs,
+              coordinate: {
+                lon: hit.mapPoint?.longitude ?? 78.48,
+                lat: hit.mapPoint?.latitude ?? 30.38,
+                elev_m: hit.mapPoint?.z ?? 600
+              }
+            });
+            return;
+          }
         }
-      }
 
-      // Bare terrain clicked
-      this.callbacks.onPickEntity({
-        type: "TERRAIN",
-        title: `Copernicus GLO-30 DSM Surface (${lon.toFixed(4)}°E, ${lat.toFixed(4)}°N)`,
-        properties: {
-          source: "Copernicus GLO-30 DSM (1-arcsec)",
-          datum: "EGM2008 MSL",
-          elevation_m: elev
-        },
-        coordinate: { lon, lat, elev_m: elev }
-      });
+        // If no vector hit, query terrain point
+        const mapPt = this.view.toMap({ x: event.x, y: event.y });
+        if (mapPt && mapPt.longitude != null && mapPt.latitude != null && this.callbacks.onPickEntity) {
+          const elev = this.elevationLayer?.getElevationAt?.(mapPt.longitude, mapPt.latitude) ?? mapPt.z ?? 0;
+          this.callbacks.onPickEntity({
+            type: "TERRAIN",
+            title: "Himalayan Terrain Point",
+            properties: {
+              source: "Copernicus GLO-30 DSM",
+              datum: "EGM96 / EGM2008 MSL"
+            },
+            coordinate: {
+              lon: Math.round(mapPt.longitude * 100000) / 100000,
+              lat: Math.round(mapPt.latitude * 100000) / 100000,
+              elev_m: Math.round(elev * 10) / 10
+            }
+          });
+        }
+      } catch (err) {
+        console.warn("[ArcGISTerrainEngine] Hit test query error:", err);
+      }
     });
   }
 
@@ -218,120 +285,169 @@ export class ArcGISTerrainEngine {
     roads: RoadFeature[],
     evacPoints: EvacuationPointFeature[],
     inundationGeoJSON: any,
-    selectedEdgeId?: string | null,
+    selectedEdgeId?: string,
     thematicMode: HydraulicThematicMode = "EXTENT",
-    timestep: string = "T+60"
+    selectedTimelineStep: string = "T+60"
   ): void {
+    if (this.isDestroyed) return;
+
     if (this.roadLayer) {
       this.roadLayer.setRoads(roads, selectedEdgeId);
+      updateDiagnostics((d) => {
+        d.roads.sourceLoaded = true;
+        d.roads.featureCount = roads.length;
+        d.roads.renderedFeatureCount = roads.length;
+      });
     }
-    if (this.hydraulicLayer) {
-      this.hydraulicLayer.setInundationData(inundationGeoJSON, thematicMode, timestep);
+
+    if (this.hydraulicLayer && inundationGeoJSON) {
+      this.hydraulicLayer.setInundationData(inundationGeoJSON, thematicMode, selectedTimelineStep);
+      updateDiagnostics((d) => {
+        d.hydraulics.sourceLoaded = true;
+        d.hydraulics.featureCount = inundationGeoJSON.features?.length || 0;
+        d.hydraulics.visibleFeatureCount = inundationGeoJSON.features?.length || 0;
+      });
     }
-    this.updateInfrastructure(evacPoints);
+
+    this.renderInfrastructure(evacPoints);
   }
 
-  private updateInfrastructure(evacPoints: EvacuationPointFeature[]): void {
-    if (!this.infrastructureLayer) return;
+  public setTerrainVisibility(visible: boolean): void {
+    if (this.isDestroyed || !this.map) return;
+    this.map.ground.opacity = visible ? 1 : 0;
+    if (this.elevationLayer) {
+      this.elevationLayer.visible = visible;
+    }
+    updateDiagnostics((d) => {
+      d.ground.visible = visible;
+    });
+  }
+
+  public setRoadVisibility(visible: boolean): void {
+    if (this.isDestroyed || !this.roadLayer) return;
+    this.roadLayer.getLayers().forEach((l) => {
+      l.visible = visible;
+    });
+  }
+
+  private renderInfrastructure(evacPoints: EvacuationPointFeature[]): void {
+    if (!this.infrastructureLayer || this.isDestroyed) return;
     this.infrastructureLayer.removeAll();
 
-    const graphics: Graphic[] = [];
-
-    // Tehri Dam Crest Marker
-    graphics.push(new Graphic({
-      geometry: new Point({ longitude: 78.4803, latitude: 30.3780, z: 830.0 }),
+    const damGraphic = new Graphic({
+      geometry: new Point({
+        longitude: 78.4808,
+        latitude: 30.3789,
+        spatialReference: { wkid: 4326 }
+      }),
       symbol: new PointSymbol3D({
         symbolLayers: [
           new IconSymbol3DLayer({
             size: 16,
-            resource: { primitive: "square" },
-            material: { color: [56, 189, 248, 1.0] }
+            resource: { primitive: "cross" },
+            material: { color: "#38bdf8" }
           })
         ]
       }),
       attributes: {
         type: "DAM",
-        name: "Tehri Dam (260.5m Earth & Rockfill, 830m Crest MSL)",
-        crest_elevation_m: 830.0
+        name: "Tehri Dam Crest (840m MSL)",
+        crest_elev_m: 840.0,
+        height_m: 260.5
       }
-    }));
+    });
 
-    // Breach Location Marker
-    graphics.push(new Graphic({
-      geometry: new Point({ longitude: 78.4790, latitude: 30.3750, z: 635.0 }),
+    const breachGraphic = new Graphic({
+      geometry: new Point({
+        longitude: 78.4812,
+        latitude: 30.3780,
+        spatialReference: { wkid: 4326 }
+      }),
       symbol: new PointSymbol3D({
         symbolLayers: [
           new IconSymbol3DLayer({
-            size: 14,
-            resource: { primitive: "cross" },
-            material: { color: [239, 68, 68, 1.0] }
+            size: 18,
+            resource: { primitive: "x" },
+            material: { color: "#ef4444" }
           })
         ]
       }),
       attributes: {
         type: "BREACH",
-        name: "Modeled Breach Invert (635m Model Assumption)",
-        invert_elevation_m: 635.0
+        name: "Breach Invert (635m MSL)",
+        invert_elev_m: 635.0,
+        model: "Froehlich (2008) Piping"
       }
-    }));
+    });
 
-    // Shelters & Origins
-    evacPoints.forEach((pt) => {
-      const isShelter = pt.properties.type === "SHELTER" || pt.properties.category === "DESTINATION";
-      graphics.push(new Graphic({
+    this.infrastructureLayer.addMany([damGraphic, breachGraphic]);
+
+    evacPoints.forEach((ep) => {
+      const isShelter = ep.properties.type === "SHELTER";
+      const g = new Graphic({
         geometry: new Point({
-          longitude: pt.geometry.coordinates[0],
-          latitude: pt.geometry.coordinates[1],
-          z: pt.properties.elevation_m || 1000.0
+          longitude: ep.geometry.coordinates[0],
+          latitude: ep.geometry.coordinates[1],
+          spatialReference: { wkid: 4326 }
         }),
         symbol: new PointSymbol3D({
           symbolLayers: [
             new IconSymbol3DLayer({
-              size: 12,
-              resource: { primitive: "circle" },
-              material: { color: isShelter ? [56, 189, 248, 1.0] : [245, 158, 11, 1.0] }
+              size: isShelter ? 14 : 10,
+              resource: { primitive: isShelter ? "kite" : "circle" },
+              material: { color: isShelter ? "#4ade80" : "#fbbf24" }
             })
           ]
         }),
         attributes: {
-          type: "SHELTER",
-          name: pt.properties.name,
-          capacity: pt.properties.capacity,
-          elevation_m: pt.properties.elevation_m
+          type: isShelter ? "SHELTER" : "ORIGIN",
+          name: ep.properties.name,
+          capacity: ep.properties.capacity || 0,
+          id: ep.properties.id
         }
-      }));
+      });
+      this.infrastructureLayer!.add(g);
     });
 
-    this.infrastructureLayer.addMany(graphics);
+    updateDiagnostics((d) => {
+      d.infrastructure.renderedFeatureCount = this.infrastructureLayer?.graphics.length || 0;
+    });
   }
 
   public flyToPreset(presetKey: keyof typeof AUTHORITATIVE_CAMERA_PRESETS): void {
-    if (this.cameraController) {
+    if (this.cameraController && !this.isDestroyed) {
       this.cameraController.flyToPreset(presetKey);
     }
   }
 
-  public highlightEdge(edgeId: string | null): void {
-    if (this.roadLayer) {
-      this.roadLayer.highlightEdge(edgeId);
-    }
-  }
-
-  public getView(): SceneView | null {
-    return this.view;
-  }
-
   public destroy(): void {
-    if (this.isDestroyed) return;
     this.isDestroyed = true;
-
-    if (this.hydraulicLayer) this.hydraulicLayer.clear();
-    if (this.roadLayer) this.roadLayer.clear();
-    if (this.infrastructureLayer) this.infrastructureLayer.removeAll();
-
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+      this.resizeObserver = null;
+    }
     if (this.view) {
-      this.view.destroy();
+      try {
+        this.view.destroy();
+      } catch (e) {
+        console.warn("[ArcGISTerrainEngine] Error during view destroy:", e);
+      }
       this.view = null;
     }
+    if (this.map) {
+      try {
+        this.map.destroy();
+      } catch (e) {
+        console.warn("[ArcGISTerrainEngine] Error during map destroy:", e);
+      }
+      this.map = null;
+    }
+
+    updateDiagnostics((d) => {
+      d.sceneView.destroyed = true;
+      d.sceneView.ready = false;
+    });
+
+    console.log("[ArcGISTerrainEngine] Destroyed 3D Scene engine.");
   }
 }

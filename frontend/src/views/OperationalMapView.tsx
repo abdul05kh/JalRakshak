@@ -75,6 +75,8 @@ export const OperationalMapView: React.FC<OperationalMapViewProps> = ({
         selectedTimelineStep={`T+${activeTimestepMin}`}
         focusLimitingSignal={focusLimitingSignal}
         cameraPreset={cameraPreset}
+        showTerrain={showTerrain}
+        showRoads={showAllRoads}
         layerVisibility={{ inundation: true, roads: showAllRoads, origins: true, destinations: true }}
         onMapClick={() => {}}
         pointQueryData={null}

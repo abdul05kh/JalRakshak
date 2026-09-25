@@ -31,6 +31,8 @@ interface MapViewProps {
   cameraPreset?: string;
   selectedEdgeId?: string;
   onSelectEdgeId?: (edgeId: string) => void;
+  showTerrain?: boolean;
+  showRoads?: boolean;
   layerVisibility?: {
     inundation: boolean;
     roads: boolean;
@@ -51,7 +53,10 @@ export const MapView: React.FC<MapViewProps> = ({
   selectedTimelineStep = "T+60",
   cameraPreset = "VALLEY_OVERVIEW",
   selectedEdgeId,
-  onSelectEdgeId
+  onSelectEdgeId,
+  showTerrain = true,
+  showRoads = true,
+  layerVisibility
 }) => {
   // Translate camera preset key
   let mappedPreset = "VALLEY_OVERVIEW";
@@ -62,8 +67,10 @@ export const MapView: React.FC<MapViewProps> = ({
   else if (cameraPreset === "DOWNSTREAM") mappedPreset = "DOWNSTREAM_VALLEY";
   else if (cameraPreset === "ROUTE" || cameraPreset === "R02") mappedPreset = "R02_ROUTE";
 
+  const effectiveShowRoads = layerVisibility?.roads !== undefined ? layerVisibility.roads : showRoads;
+
   return (
-    <div className="w-full h-full relative">
+    <div style={{ width: "100%", height: "100%", position: "relative", overflow: "hidden" }}>
       <ArcGISSceneViewer
         inundationGeoJSON={inundationGeoJSON}
         roads={roads}
@@ -74,6 +81,8 @@ export const MapView: React.FC<MapViewProps> = ({
         cameraPreset={mappedPreset}
         selectedEdgeId={selectedEdgeId}
         onSelectEdgeId={onSelectEdgeId}
+        showTerrain={showTerrain}
+        showRoads={effectiveShowRoads}
       />
     </div>
   );
