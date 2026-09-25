@@ -1,0 +1,69 @@
+{
+  "gate": "GATE_4",
+  "test_suite_execution_date": "2026-09-24",
+  "end_to_end_acceptance_run": {
+    "scenario_id": "SCENARIO_CENTRAL",
+    "dam": "Tehri Dam",
+    "origin": {
+      "node": "N-MALIDEWAL",
+      "name": "Malidewal Lowland Village"
+    },
+    "destination": {
+      "node": "N-KOTESHWAR",
+      "name": "Koteshwar Settlement"
+    },
+    "decision_time_utc": "2026-09-24T00:00:00Z",
+    "safety_buffer_min": 3.0,
+    "depth_threshold_m": 0.30,
+    "closure_threshold_m": 0.30,
+    "result": {
+      "route_status": "FEASIBLE",
+      "latest_feasible_departure_utc": "2026-09-24T00:39:21Z",
+      "remaining_margin_min": 39.4,
+      "limiting_segment": {
+        "road_id": "R02",
+        "road_class": "SECONDARY",
+        "length_m": 7377.4,
+        "flood_arrival_s": 3300.0,
+        "flood_arrival_utc": "2026-09-24T00:55:00Z",
+        "max_depth_m": 37.37,
+        "limiting_deadline_utc": "2026-09-24T00:39:21Z",
+        "margin_min": 39.4
+      },
+      "travel_time_min": 12.65,
+      "deterministic_reason": "Route is FEASIBLE under this scenario and configured safety buffer (3.0 min). Model-derived departure deadline: 2026-09-24T00:39:21Z (Safety Margin: 39.4 min). First limiting segment: R02.",
+      "provenance": {
+        "scenario_id": "SCENARIO_CENTRAL",
+        "hdf5_artifact": "tehri_15km_scenario_central.p01.hdf",
+        "sha256": "c0b18e0416697757e4733bae120217e5222aed726841d4f8ab26bd093445fc78",
+        "solver": "USACE HEC-RAS 2D Hydrodynamic Engine (HEC-RAS 7.0.1)",
+        "terrain": "COPERNICUS GLO-30 DSM",
+        "physical_validation": "NOT_ESTABLISHED",
+        "vertical_datum": "NOT_ESTABLISHED"
+      }
+    }
+  },
+  "scenario_comparison_summary": {
+    "SCENARIO_MINIMUM": {
+      "q_peak_m3s": 28500.0,
+      "limiting_arrival_s": 5400.0,
+      "latest_departure_utc": "2026-09-24T01:14:21Z",
+      "margin_min": 74.3,
+      "status": "FEASIBLE"
+    },
+    "SCENARIO_CENTRAL": {
+      "q_peak_m3s": 65000.0,
+      "limiting_arrival_s": 3300.0,
+      "latest_departure_utc": "2026-09-24T00:39:21Z",
+      "margin_min": 39.4,
+      "status": "FEASIBLE"
+    },
+    "SCENARIO_MAXIMUM": {
+      "q_peak_m3s": 115000.0,
+      "limiting_arrival_s": 2400.0,
+      "latest_departure_utc": "2026-09-24T00:24:21Z",
+      "margin_min": 24.4,
+      "status": "FEASIBLE"
+    }
+  }
+}

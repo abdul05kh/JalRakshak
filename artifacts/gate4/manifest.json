@@ -1,0 +1,51 @@
+{
+  "gate": "GATE_4",
+  "title": "Evacuation Window Engine (EWE) & Hydraulic Decision Support Integration",
+  "status": "PASSED",
+  "verification_timestamp_utc": "2026-09-24T10:45:00Z",
+  "frozen_gate3_dependency": {
+    "manifest": "artifacts/hecras/tehri_gate3b/manifest.json",
+    "sha256": "a65a39eb858ac9caecdd4a070191ae79ef62a945c7eb16a0da2f059cb5bfa22f",
+    "scenarios": {
+      "SCENARIO_CENTRAL": {
+        "hdf5_file": "tehri_15km_scenario_central.p01.hdf",
+        "sha256": "c0b18e0416697757e4733bae120217e5222aed726841d4f8ab26bd093445fc78",
+        "q_peak_m3s": 65000.0
+      },
+      "SCENARIO_MINIMUM": {
+        "hdf5_file": "tehri_15km_scenario_minimum.p01.hdf",
+        "sha256": "a2d2a712bb25fe45ee2e58ac1e0fdfd03bc2b38c1154be8e9f48b8b901eba772",
+        "q_peak_m3s": 28500.0
+      },
+      "SCENARIO_MAXIMUM": {
+        "hdf5_file": "tehri_15km_scenario_maximum.p01.hdf",
+        "sha256": "ec55249275044a1f04cd9c4ccc9a934b9fa58d8e680d1f64385e5046d35d179a",
+        "q_peak_m3s": 115000.0
+      }
+    }
+  },
+  "scientific_classifications": {
+    "physical_validation": "NOT_ESTABLISHED",
+    "vertical_datum": "NOT_ESTABLISHED",
+    "terrain": "COPERNICUS GLO-30 DSM",
+    "breach": "EXTERNALLY_SPECIFIED_HYDROGRAPH",
+    "travel_time_model": "ENGINEERING_ASSUMPTION"
+  },
+  "ewe_algorithm_version": "1.0.0",
+  "mathematical_invariants_verified": [
+    "PROPERTY_1_FLOOD_ARRIVAL_DELAY_MONOTONICITY",
+    "PROPERTY_2_TRAVEL_TIME_INCREASE_MONOTONICITY",
+    "PROPERTY_3_SAFETY_BUFFER_INCREASE_MONOTONICITY",
+    "PROPERTY_4_UNAFFECTED_SEGMENT_REMOVAL_INVARIANCE",
+    "PROPERTY_5_DEADLINE_EXCEEDED_INFEASIBILITY",
+    "PROPERTY_6_DATA_GAP_HONEST_PROPAGATION",
+    "PROPERTY_7_FEASIBILITY_INEQUALITY_STRICT_ENFORCEMENT",
+    "PROPERTY_8_DISPLAY_REPRESENTATION_INDEPENDENCE"
+  ],
+  "test_metrics": {
+    "total_tests": 88,
+    "passed_tests": 88,
+    "failed_tests": 0,
+    "skipped_tests": 0
+  }
+}

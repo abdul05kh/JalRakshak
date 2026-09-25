@@ -96,4 +96,55 @@ def test_scenario_validation_endpoint():
     assert resp.status_code == 200
     data = resp.json()
     assert "analytical_benchmark" in data
-    assert data["analytical_benchmark"]["metrics"]["status"] == "PASSED"
+    assert data["analytical_benchmark"]["metrics"]["status"] == "SOFTWARE-VERIFIED"
+    assert data["satellite_extent_validation"]["status"] == "NOT RUN"
+
+def test_scenario_timeline_endpoint():
+    resp = client.get("/api/v1/scenarios/SCENARIO_CENTRAL/timeline")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["scenario_id"] == "SCENARIO_CENTRAL"
+    assert len(data["timesteps"]) == 9
+    # Verify T+60 reaches R02 in SCENARIO_CENTRAL
+    t60 = next(t for t in data["timesteps"] if t["timestep_min"] == 60)
+    assert "R02" in t60["affected_roads"]
+    assert t60["is_arrival_point_for_r02"] is True
+
+def test_scenario_explainers_endpoint():
+    resp = client.get("/api/v1/scenarios/scen-tehri-001-baseline/explainers")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert len(data["explainers"]) == 7
+    assert data["explainers"][0]["id"] == "EXP-01"
+    assert data["explainers"][2]["id"] == "EXP-03"
+
+def test_displayed_decision_matches_authoritative_backend():
+    """Guarantee zero discrepancy across scenario, route, arrival, travel, buffer, deadline, and limiting segment."""
+    authoritative_cases = [
+        ("SCENARIO_CENTRAL", 3600.0, 759.0, 180.0, 2661.0, "R02"),
+        ("SCENARIO_MINIMUM", 5700.0, 759.0, 180.0, 4761.0, "R02"),
+        ("SCENARIO_MAXIMUM", 2700.0, 759.0, 180.0, 1761.0, "R02"),
+    ]
+    for scen_id, expected_arrival_s, expected_travel_s, expected_buffer_s, expected_deadline_s, expected_limit in authoritative_cases:
+        resp = client.post("/api/v1/routes/analyze", json={
+            "scenario_id": scen_id,
+            "origin_id": "VILL-02",
+            "destination_id": "VILL-01", # Route involving R02
+            "departure_time_utc": "2026-09-24T00:00:00Z",
+            "constraints": {
+                "safety_buffer_min": 3.0,
+                "depth_limit_m": 0.30,
+                "velocity_limit_mps": 1.0
+            }
+        })
+        assert resp.status_code == 200
+        data = resp.json()
+        primary = data["primary_route"]
+        assert primary["limiting_segment"]["road_id"] == expected_limit
+        assert primary["limiting_segment"]["flood_arrival_s"] == expected_arrival_s
+        assert abs(primary["total_travel_time_min"] * 60 - expected_travel_s) < 1.0
+        # Assert deadline calculation: D = A - T - B
+        computed_deadline_s = primary["limiting_segment"]["flood_arrival_s"] - (primary["total_travel_time_min"] * 60) - 180.0
+        assert abs(computed_deadline_s - expected_deadline_s) < 1.0
+
+

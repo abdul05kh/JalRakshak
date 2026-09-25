@@ -1,0 +1,84 @@
+{
+  "total_sample_points": 1008,
+  "dataset": "Copernicus GLO-30 DSM (1-arcsec)",
+  "study_area_bounds": [
+    78.2,
+    30.05,
+    78.75,
+    30.55027777777778
+  ],
+  "metrics": {
+    "mean_absolute_error_m": 1.2240643771956602e-10,
+    "rmse_m": 1.5055069533810556e-10,
+    "p95_error_m": 2.7336000130162574e-10,
+    "p99_error_m": 3.574359652702695e-10,
+    "max_error_m": 5.679794412571937e-10,
+    "status": "PASS"
+  },
+  "landmarks_validation": [
+    {
+      "name": "Tehri Dam Crest",
+      "lon": 78.4803,
+      "lat": 30.378,
+      "source_elevation_m": 832.76,
+      "rendered_elevation_m": 832.76,
+      "error_m": 0.0
+    },
+    {
+      "name": "Breach Invert",
+      "lon": 78.479,
+      "lat": 30.375,
+      "source_elevation_m": 700.45,
+      "rendered_elevation_m": 700.45,
+      "error_m": 0.0
+    },
+    {
+      "name": "Malidewal Lowland",
+      "lon": 78.468,
+      "lat": 30.342,
+      "source_elevation_m": 1215.9,
+      "rendered_elevation_m": 1215.9,
+      "error_m": 0.0
+    },
+    {
+      "name": "Koteshwar Gorge (R02-E07)",
+      "lon": 78.502,
+      "lat": 30.2825,
+      "source_elevation_m": 1004.26,
+      "rendered_elevation_m": 1004.26,
+      "error_m": 0.0
+    },
+    {
+      "name": "Chamba High Ground",
+      "lon": 78.3965,
+      "lat": 30.3475,
+      "source_elevation_m": 1507.18,
+      "rendered_elevation_m": 1507.18,
+      "error_m": 0.0
+    },
+    {
+      "name": "Kunjapuri Ridge",
+      "lon": 78.362,
+      "lat": 30.268,
+      "source_elevation_m": 1044.14,
+      "rendered_elevation_m": 1044.14,
+      "error_m": 0.0
+    },
+    {
+      "name": "Devprayag Confluence",
+      "lon": 78.598,
+      "lat": 30.145,
+      "source_elevation_m": 445.0,
+      "rendered_elevation_m": 445.0,
+      "error_m": 0.0
+    },
+    {
+      "name": "Tehri Reservoir Water Edge",
+      "lon": 78.475,
+      "lat": 30.385,
+      "source_elevation_m": 814.0,
+      "rendered_elevation_m": 814.0,
+      "error_m": 0.0
+    }
+  ]
+}

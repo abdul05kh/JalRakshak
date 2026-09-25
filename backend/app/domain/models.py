@@ -38,6 +38,8 @@ class ScenarioSummary(BaseModel):
     dam_id: str
     dam_name: str
     name: str
+    source_type: Optional[str] = "SYNTHETIC_TEST_FIXTURE"
+    category: Optional[str] = "AUTHORITATIVE"
     status: str
     breach_width_m: float
     breach_formation_min: float
@@ -59,6 +61,7 @@ class PointQueryResponse(BaseModel):
     max_velocity_mps: float
     inundated: bool
     scenario_id: str
+    source_type: Optional[str] = "SYNTHETIC_TEST_FIXTURE"
     source_artifacts: List[str]
     confidence_label: str
 
@@ -124,18 +127,52 @@ class RouteAlternative(BaseModel):
     explanation: str
 
 class RouteAnalyzeResponse(BaseModel):
+    # Core Decision Identification
+    decision_id: Optional[str] = None
+    decision_timestamp: Optional[str] = None
     scenario_id: str
     scenario_name: str
+    source_type: str = "SYNTHETIC_TEST_FIXTURE"
+    hydraulic_artifact: Optional[str] = None
+    hydraulic_artifact_sha256: Optional[str] = None
+    hec_ras_version: Optional[str] = None
+
+    # Routing OD
+    origin: Optional[str] = None
     origin_name: str
+    destination: Optional[str] = None
     destination_name: str
     requested_departure_utc: str
+
+    # Decision Parameters & Outputs
+    route_id: Optional[str] = None
+    route_status: Optional[str] = None
+    latest_feasible_departure: Optional[str] = None
+    decision_margin: Optional[float] = None
+    safety_buffer: Optional[float] = None
     safety_buffer_min: float
     depth_limit_m: float
     velocity_limit_mps: float
+    limiting_segment: Optional[str] = None
+    limiting_segment_arrival: Optional[str] = None
+    limiting_segment_depth: Optional[float] = None
+    estimated_travel_time: Optional[float] = None
+    completion_time: Optional[str] = None
+
+    # Algorithm & Structure
     algorithm_version: str
     primary_status: str  # FEASIBLE, LOW MARGIN, INFEASIBLE, NO_FEASIBLE_ROUTE, DATA GAP
     primary_route: Optional[RouteAlternative]
     alternatives: List[RouteAlternative]
+    alternative_routes: Optional[List[Dict[str, Any]]] = None
+
+    # Assumptions, Limitations & Epistemic Status
+    travel_time_model: str = "STATIC_ENGINEERING_ASSUMPTION"
+    dynamic_traffic_model: str = "NOT_IMPLEMENTED"
+    road_network_scope: str = "DEMONSTRATION_DATASET"
+    assumptions: List[str] = Field(default_factory=list)
+    data_gaps: List[str] = Field(default_factory=list)
+    validation_status: str = "VALIDATION_NOT_ESTABLISHED"
     provenance: Dict[str, Any]
 
 class ScenarioComparisonResponse(BaseModel):

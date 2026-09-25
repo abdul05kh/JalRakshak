@@ -5,7 +5,7 @@
       "type": "Feature",
       "properties": {
         "scenario_id": "scen-tehri-001-baseline",
-        "zone": "Active Floodplain Extent",
+        "zone": "Active Floodplain Extent (Precomputed Demo)",
         "max_depth_range": "2.0m - 14.5m"
       },
       "geometry": {

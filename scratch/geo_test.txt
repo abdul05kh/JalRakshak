@@ -1,0 +1,1 @@
+rasterio: 1.5.1, geopandas: 1.1.4, h5py: 3.16.0, pyproj: 3.8.0

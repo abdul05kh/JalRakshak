@@ -5,7 +5,7 @@
       "type": "Feature",
       "properties": {
         "scenario_id": "scen-tehri-003-piping",
-        "zone": "Moderate Inundation Extent (Piping)",
+        "zone": "Moderate Inundation Extent (Precomputed Demo)",
         "max_depth_range": "0.8m - 8.5m"
       },
       "geometry": {

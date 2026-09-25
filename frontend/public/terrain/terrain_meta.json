@@ -1,0 +1,37 @@
+{
+  "source": "Copernicus GLO-30 DSM (COG_10_N30_00_E078_00_DEM)",
+  "crs": "EPSG:4326 / Vertical: EGM2008 MSL (meters)",
+  "projected_crs": "EPSG:32644 (UTM Zone 44N)",
+  "native_resolution_arcsec": 1.0,
+  "native_resolution_meters": 30.92,
+  "bounds": {
+    "min_lon": 78.2,
+    "min_lat": 30.05,
+    "max_lon": 78.75,
+    "max_lat": 30.55027777777778
+  },
+  "full_bounds": {
+    "min_lon": 78.0,
+    "min_lat": 30.0,
+    "max_lon": 79.0,
+    "max_lat": 31.0
+  },
+  "grid": {
+    "width": 1980,
+    "height": 1801,
+    "dx": 0.0002777777777777778,
+    "dy": 0.0002777777777777778,
+    "min_elev": 319.5,
+    "max_elev": 2765.367919921875,
+    "mean_elev": 1323.521484375
+  },
+  "full_grid": {
+    "width": 3600,
+    "height": 3600,
+    "dx": 0.0002777777777777778,
+    "dy": 0.0002777777777777778,
+    "min_elev": 301.43988037109375,
+    "max_elev": 6697.79248046875,
+    "mean_elev": 1946.8411865234375
+  }
+}

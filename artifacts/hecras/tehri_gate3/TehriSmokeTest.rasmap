@@ -1,0 +1,15 @@
+<RASMapper>
+  <Version>2.0.0</Version>
+  <RASProjectionFilename Filename="Terrain\TehriSmokeTerrain.prj" />
+  <Geometries Checked="True" Expanded="True">
+    <Layer Name="Tehri 1.5km Canyon Geometry" Type="RASGeometry" Filename="TehriSmokeTest.g01.hdf">
+      <Layer Type="RASD2FlowArea" Checked="True" />
+    </Layer>
+  </Geometries>
+  <Terrains Checked="True" Expanded="True">
+    <Layer Name="Terrain" Type="TerrainLayer" Checked="True" Filename="Terrain\TehriSmokeTerrain.hdf">
+      <ResampleMethod>near</ResampleMethod>
+      <Surface On="True" />
+    </Layer>
+  </Terrains>
+</RASMapper>

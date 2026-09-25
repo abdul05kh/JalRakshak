@@ -1,0 +1,133 @@
+{
+  "session_id": "sess_DRYRUN-TECH-002_1790255403",
+  "participant_id": "DRYRUN-TECH-002",
+  "participant_category": "TECHNICAL_DRY_RUN_PROFILE_B_ERRORS",
+  "counterbalance_group": "GROUP_2_B_THEN_A",
+  "software_version_backend": "1.0.0-gate5b",
+  "software_version_frontend": "1.0.0-gate5b",
+  "ground_truth_hash": "4bf8d9a2d6d04bff1cde373d74ec18602eadb00cabafe5c1d37767ea672a7637",
+  "comprehension_check": {
+    "answers": {
+      "q1_arrival_time": "B",
+      "q2_travel_time": "B",
+      "q3_safety_buffer": "B",
+      "q4_feasible_not_safe": "A"
+    },
+    "all_correct": false,
+    "misconceptions_flagged": [
+      "q4_feasible_not_safe"
+    ],
+    "recorded_at_iso": "2026-09-24T13:10:03.313048+00:00"
+  },
+  "trials": [
+    {
+      "trial_index": 1,
+      "condition": "CONDITION_B_JALRAKSHAK",
+      "task_id": "TASK_01",
+      "start_iso": "2026-09-24T13:26:43.313056+00:00",
+      "end_iso": "2026-09-24T13:26:55.313056+00:00",
+      "duration_seconds": 12.0,
+      "raw_response": {
+        "status_selected": "GUARANTEED SAFE"
+      },
+      "scores": {
+        "status_correct": 0,
+        "misinterpreted_as_safety": true
+      }
+    },
+    {
+      "trial_index": 2,
+      "condition": "CONDITION_B_JALRAKSHAK",
+      "task_id": "TASK_02",
+      "start_iso": "2026-09-24T13:26:56.313056+00:00",
+      "end_iso": "2026-09-24T13:27:09.313056+00:00",
+      "duration_seconds": 13.0,
+      "raw_response": {
+        "deadline_entered": "44.0 min"
+      },
+      "scores": {
+        "deadline_correct": 1,
+        "misinterpreted_as_safety": false
+      }
+    },
+    {
+      "trial_index": 3,
+      "condition": "CONDITION_B_JALRAKSHAK",
+      "task_id": "TASK_03",
+      "start_iso": "2026-09-24T13:27:10.313056+00:00",
+      "end_iso": "2026-09-24T13:27:22.313056+00:00",
+      "duration_seconds": 12.0,
+      "raw_response": {
+        "limiting_segment_entered": "R01"
+      },
+      "scores": {
+        "limiting_segment_correct": 0,
+        "misinterpreted_as_safety": false
+      }
+    },
+    {
+      "trial_index": 4,
+      "condition": "CONDITION_A_RAW_HYDRAULIC",
+      "task_id": "TASK_04",
+      "start_iso": "2026-09-24T13:32:33.313056+00:00",
+      "end_iso": "2026-09-24T13:33:33.313056+00:00",
+      "duration_seconds": 60.0,
+      "raw_response": {
+        "reason_text": "Water reaches road at 60 min."
+      },
+      "scores": {
+        "explanation_score": 1,
+        "misinterpreted_as_safety": false
+      }
+    },
+    {
+      "trial_index": 5,
+      "condition": "CONDITION_A_RAW_HYDRAULIC",
+      "task_id": "TASK_05",
+      "start_iso": "2026-09-24T13:33:34.313056+00:00",
+      "end_iso": "2026-09-24T13:34:08.313056+00:00",
+      "duration_seconds": 34.0,
+      "raw_response": {
+        "alternative_selected": "No, all routes flooded"
+      },
+      "scores": {
+        "alternative_correct": 0,
+        "misinterpreted_as_safety": false
+      }
+    },
+    {
+      "trial_index": 6,
+      "condition": "CONDITION_A_RAW_HYDRAULIC",
+      "task_id": "TASK_06",
+      "start_iso": "2026-09-24T13:34:09.313056+00:00",
+      "end_iso": "2026-09-24T13:34:53.313056+00:00",
+      "duration_seconds": 44.0,
+      "raw_response": {
+        "scenario_delta_selected": "Window expands"
+      },
+      "scores": {
+        "scenario_delta_correct": 0,
+        "misinterpreted_as_safety": false
+      }
+    },
+    {
+      "trial_index": 7,
+      "condition": "CONDITION_A_RAW_HYDRAULIC",
+      "task_id": "TASK_07",
+      "start_iso": "2026-09-24T13:34:54.313056+00:00",
+      "end_iso": "2026-09-24T13:35:18.313056+00:00",
+      "duration_seconds": 24.0,
+      "raw_response": {
+        "limitations_selected": [
+          "Static speed assumptions",
+          "Guarantees 100% risk-free evacuation"
+        ]
+      },
+      "scores": {
+        "limitation_awareness_score": 0,
+        "misinterpreted_as_safety": true
+      }
+    }
+  ],
+  "qualitative_feedback": {}
+}

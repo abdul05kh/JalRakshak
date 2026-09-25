@@ -1,0 +1,113 @@
+Message  | Plan: 'Tehri Smoke Test 2D Plan' (TehriSmokeTest.p01)
+Message  | Simulation started at: 24Sep2026 02:00:48 PM
+Message  | 
+Message  | PROCESS:RasProcess
+Message  | Writing Plan GIS Data...
+Progress | 100
+Message  | Completed Writing Plan GIS Data
+Message  | Writing Geometry...
+Message  |   Terrain: Terrain
+Message  |   TehriCanyon: Mesh property tables are current.
+Message  | Completed Writing Geometry
+Message  | Writing Event Conditions ...
+Message  | Completed Writing Event Condition Data
+Message  | 
+Message  | PROCESS:RASGeomPreprocess
+Message  | 	
+Message  | Geometric Preprocessor HEC-RAS 7.0.1 June 2026
+Progress | 0.2
+Progress | 0.3
+Message  |  
+Progress | 0.3333333
+Progress | 1
+Message  | 
+Message  | Finished Processing Geometry
+Message  | 
+Message  | PROCESS:RasUnsteady
+Message  | 
+Message  | Performing Unsteady Flow Simulation  HEC-RAS 7.0.1 June 2026
+Progress | 0.1
+Progress | 0.2
+Progress | 0.3
+Message  |  
+Message  | 	
+Message  | Unsteady Input Summary:
+Message  | 
+Message  | 2D Area	Cells	 Cores	Solvers	
+Message  | TehriCanyon     	     784	     8	    Diffusion Wave Equation Set (fastest)
+Progress | 0.4
+Progress | 0.5
+Progress | 0.6
+Progress | 0.7333333
+Progress | 2.777778E-04
+Progress | 2.027778E-02
+Progress | 5.055556E-02
+Progress | 7.111111E-02
+Progress | 9.166667E-02
+Progress | 0.1122222
+Progress | 0.1327778
+Progress | 0.1533333
+Progress | 0.1738889
+Progress | 0.1944444
+Progress | 0.215
+Progress | 0.2355556
+Progress | 0.2561111
+Progress | 0.2766667
+Progress | 0.2972222
+Progress | 0.3177778
+Progress | 0.3383333
+Progress | 0.3588889
+Progress | 0.3794445
+Progress | 0.4
+Progress | 0.4205556
+Progress | 0.4411111
+Progress | 0.4616667
+Progress | 0.4822222
+Progress | 0.5027778
+Progress | 0.5230556
+Progress | 0.5436111
+Progress | 0.5641667
+Progress | 0.5847222
+Progress | 0.6052778
+Progress | 0.6258333
+Progress | 0.6463889
+Progress | 0.6669444
+Progress | 0.6875
+Progress | 0.7077778
+Progress | 0.7283334
+Progress | 0.7488889
+Progress | 0.7694445
+Progress | 0.79
+Progress | 0.8105556
+Progress | 0.8311111
+Progress | 0.8516667
+Progress | 0.8722222
+Progress | 0.8927778
+Progress | 0.9133334
+Progress | 0.9338889
+Progress | 0.9544445
+Progress | 0.975
+Progress | 0.9955556
+Message  | 
+Message  | Overall Volume Accounting Error in 1000 m^3:           0.03282
+Message  | Overall Volume Accounting Error as percentage:          0.002196
+Message  | Please review "Computational Log File" output for volume accounting details
+Message  | 
+Message  | Writing Results to DSS
+Progress | 1
+Message  | 
+Message  | Finished Unsteady Flow Simulation
+Message  | 
+Message  | 1D Post Process Skipped (simulation is all 2D)
+Message  | 
+Message  | Computations Summary
+Message  | 
+Message  | Computation Task	Time(hh:mm:ss)
+Message  | Completing Geometry, Flow and Plan	       1
+Message  | Preprocessing Geometry	<1
+Message  | Unsteady Flow Computations	       2
+Message  | Complete Process	       3
+Message  | 
+Message  | Computation Speed	Simulation/Runtime
+Message  | Unsteady Flow Computations	1567x
+Message  | Complete Process	980x

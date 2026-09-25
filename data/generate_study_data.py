@@ -298,23 +298,11 @@ SCENARIOS_META = [
         "initial_pool_m": 830.0,
         "duration_min": 180,
         "peak_discharge_m3s": 28400.0,
-        "solver": "HEC-RAS 2D Hydrodynamic v6.4",
-        "terrain": "Copernicus DEM 30m / Survey of India Hydrologically Conditioned DEM",
+        "solver": "HEC-RAS-compatible scenario schema (precomputed demonstration fixture)",
+        "terrain": "Copernicus DEM 30m / Survey of India (source reference; raw DEM not bundled)",
         "crs": "EPSG:32644 (UTM Zone 44N)",
         "created_at": "2026-09-20T10:00:00Z",
-        "status": "READY",
-        # Edge hydraulic values: {edge_id: (arrival_s, max_depth_m, max_velocity_mps)}
-        # In this baseline:
-        # Malidewal canyon reaches: arrival 480s (8 min), depth 11.4m
-        # R01 (Malidewal to Chamba): High ground uphill, flood reaches only bottom node at 480s, upper road is safe (depth 0.0m)
-        # R02 (Malidewal to Koteshwar): Valley road flooded at 540s (9 min), depth 8.2m
-        # R03 (Koteshwar to Devprayag): Flooded at 1620s (27 min), depth 9.5m, vel 4.2m/s
-        # R07 (Devprayag to Byasi): Flooded at 3600s (60 min), depth 7.1m, vel 3.5m/s
-        # R08 (Byasi to Shivpuri): Flooded at 5100s (85 min), depth 6.3m, vel 3.2m/s
-        # R10 (Shivpuri to Tapovan): Flooded at 6900s (115 min), depth 5.2m, vel 2.8m/s
-        # R12 (Tapovan to Muni Ki Reti): Flooded at 7500s (125 min), depth 4.1m, vel 2.1m/s
-        # R13 (Muni Ki Reti to Rishikesh): Flooded at 7920s (132 min), depth 3.4m, vel 1.9m/s
-        # High altitude escape roads (R04, R05, R06, R09, R11, R14, R15, R16, R17): Safe from inundation (depth 0.0m, arrival null or >99999)
+        "status": "PRECOMPUTED DEMO FIXTURE",
         "edge_hydraulics": {
             "R01": {"arrival_s": 99999, "max_depth_m": 0.0, "max_vel_mps": 0.0, "inundated": False},
             "R02": {"arrival_s": 540, "max_depth_m": 8.2, "max_vel_mps": 4.5, "inundated": True},
@@ -334,13 +322,12 @@ SCENARIOS_META = [
             "R16": {"arrival_s": 99999, "max_depth_m": 0.0, "max_vel_mps": 0.0, "inundated": False},
             "R17": {"arrival_s": 99999, "max_depth_m": 0.0, "max_vel_mps": 0.0, "inundated": False}
         },
-        # Inundation Corridor Polygon
         "inundation_geojson": {
             "type": "FeatureCollection",
             "features": [
                 {
                     "type": "Feature",
-                    "properties": {"scenario_id": "scen-tehri-001-baseline", "zone": "Active Floodplain Extent", "max_depth_range": "2.0m - 14.5m"},
+                    "properties": {"scenario_id": "scen-tehri-001-baseline", "zone": "Active Floodplain Extent (Precomputed Demo)", "max_depth_range": "2.0m - 14.5m"},
                     "geometry": {
                         "type": "Polygon",
                         "coordinates": [[
@@ -364,12 +351,11 @@ SCENARIOS_META = [
         "initial_pool_m": 835.0,
         "duration_min": 180,
         "peak_discharge_m3s": 64200.0,
-        "solver": "HEC-RAS 2D Hydrodynamic v6.4",
-        "terrain": "Copernicus DEM 30m / Survey of India Hydrologically Conditioned DEM",
+        "solver": "HEC-RAS-compatible scenario schema (precomputed demonstration fixture)",
+        "terrain": "Copernicus DEM 30m / Survey of India (source reference; raw DEM not bundled)",
         "crs": "EPSG:32644 (UTM Zone 44N)",
         "created_at": "2026-09-20T11:30:00Z",
-        "status": "READY",
-        # Catastrophic: arrival is much faster, depths higher, expands to lower sections of R09 & R14
+        "status": "PRECOMPUTED DEMO FIXTURE",
         "edge_hydraulics": {
             "R01": {"arrival_s": 99999, "max_depth_m": 0.0, "max_vel_mps": 0.0, "inundated": False},
             "R02": {"arrival_s": 270, "max_depth_m": 14.8, "max_vel_mps": 6.8, "inundated": True},
@@ -379,12 +365,12 @@ SCENARIOS_META = [
             "R06": {"arrival_s": 99999, "max_depth_m": 0.0, "max_vel_mps": 0.0, "inundated": False},
             "R07": {"arrival_s": 1920, "max_depth_m": 13.2, "max_vel_mps": 5.4, "inundated": True},
             "R08": {"arrival_s": 2880, "max_depth_m": 11.5, "max_vel_mps": 4.9, "inundated": True},
-            "R09": {"arrival_s": 3100, "max_depth_m": 1.2, "max_vel_mps": 2.1, "inundated": True},  # Lower junction flooded!
+            "R09": {"arrival_s": 3100, "max_depth_m": 1.2, "max_vel_mps": 2.1, "inundated": True},
             "R10": {"arrival_s": 4200, "max_depth_m": 9.8, "max_vel_mps": 4.2, "inundated": True},
             "R11": {"arrival_s": 99999, "max_depth_m": 0.0, "max_vel_mps": 0.0, "inundated": False},
             "R12": {"arrival_s": 4680, "max_depth_m": 7.9, "max_vel_mps": 3.6, "inundated": True},
             "R13": {"arrival_s": 5040, "max_depth_m": 6.8, "max_vel_mps": 3.1, "inundated": True},
-            "R14": {"arrival_s": 4900, "max_depth_m": 0.8, "max_vel_mps": 1.4, "inundated": True},  # Junction partially flooded
+            "R14": {"arrival_s": 4900, "max_depth_m": 0.8, "max_vel_mps": 1.4, "inundated": True},
             "R15": {"arrival_s": 99999, "max_depth_m": 0.0, "max_vel_mps": 0.0, "inundated": False},
             "R16": {"arrival_s": 99999, "max_depth_m": 0.0, "max_vel_mps": 0.0, "inundated": False},
             "R17": {"arrival_s": 99999, "max_depth_m": 0.0, "max_vel_mps": 0.0, "inundated": False}
@@ -394,7 +380,7 @@ SCENARIOS_META = [
             "features": [
                 {
                     "type": "Feature",
-                    "properties": {"scenario_id": "scen-tehri-002-catastrophic", "zone": "Maximum Inundation Extent (Catastrophic)", "max_depth_range": "3.5m - 22.8m"},
+                    "properties": {"scenario_id": "scen-tehri-002-catastrophic", "zone": "Maximum Inundation Extent (Precomputed Demo)", "max_depth_range": "3.5m - 22.8m"},
                     "geometry": {
                         "type": "Polygon",
                         "coordinates": [[
@@ -418,11 +404,11 @@ SCENARIOS_META = [
         "initial_pool_m": 825.0,
         "duration_min": 180,
         "peak_discharge_m3s": 14100.0,
-        "solver": "HEC-RAS 2D Hydrodynamic v6.4",
-        "terrain": "Copernicus DEM 30m / Survey of India Hydrologically Conditioned DEM",
+        "solver": "HEC-RAS-compatible scenario schema (precomputed demonstration fixture)",
+        "terrain": "Copernicus DEM 30m / Survey of India (source reference; raw DEM not bundled)",
         "crs": "EPSG:32644 (UTM Zone 44N)",
         "created_at": "2026-09-20T14:00:00Z",
-        "status": "READY",
+        "status": "PRECOMPUTED DEMO FIXTURE",
         "edge_hydraulics": {
             "R01": {"arrival_s": 99999, "max_depth_m": 0.0, "max_vel_mps": 0.0, "inundated": False},
             "R02": {"arrival_s": 1140, "max_depth_m": 4.5, "max_vel_mps": 2.8, "inundated": True},
@@ -447,7 +433,7 @@ SCENARIOS_META = [
             "features": [
                 {
                     "type": "Feature",
-                    "properties": {"scenario_id": "scen-tehri-003-piping", "zone": "Moderate Inundation Extent (Piping)", "max_depth_range": "0.8m - 8.5m"},
+                    "properties": {"scenario_id": "scen-tehri-003-piping", "zone": "Moderate Inundation Extent (Precomputed Demo)", "max_depth_range": "0.8m - 8.5m"},
                     "geometry": {
                         "type": "Polygon",
                         "coordinates": [[
@@ -496,7 +482,8 @@ for sc in SCENARIOS_META:
             "breach_formation_min": sc["breach_formation_min"],
             "breach_elevation_m": sc["breach_elevation_m"],
             "initial_pool_level_m": sc["initial_pool_m"],
-            "peak_discharge_m3s": sc["peak_discharge_m3s"]
+            "peak_discharge_m3s": sc["peak_discharge_m3s"],
+            "source_reference": "Documented assumption derived from CWC/THDC literature guidelines"
         },
         "simulation": {
             "duration_min": sc["duration_min"],
@@ -519,16 +506,14 @@ for sc in SCENARIOS_META:
             }
         },
         "scientific_validation": {
-            "benchmark_test": "Ritter Dam-Break Analytical Comparison (1D/2D shock tube)",
-            "benchmark_status": "PASSED (relative depth error < 3.2%)",
-            "solver_mass_balance_error_percent": 0.42,
-            "satellite_observed_extent_iou": 0.874,
-            "precision": 0.912,
-            "recall": 0.895
+            "benchmark_test": "Ritter Dam-Break Analytical Comparison (Synthetic fixture comparison)",
+            "benchmark_status": "SOFTWARE-VERIFIED",
+            "satellite_validation": "NOT RUN (Raw Sentinel-1 product not bundled in prototype)",
+            "field_calibration": "NOT AVAILABLE (Demonstration Fixture)"
         }
     }
     
     with open(os.path.join(sc_dir, "manifest.json"), "w", encoding="utf-8") as f:
         json.dump(manifest, f, indent=2)
 
-print("Study area and 3 verified hydraulic scenarios generated successfully with complete checksums.")
+print("Study area and 3 precomputed demonstration scenarios generated with honest metadata and SHA-256 artifact integrity digests.")

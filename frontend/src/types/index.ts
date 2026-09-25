@@ -21,6 +21,8 @@ export interface ScenarioSummary {
   dam_id: string;
   dam_name: string;
   name: string;
+  source_type?: string;
+  category?: string;
   status: string;
   breach_width_m: number;
   breach_formation_min: number;
@@ -120,6 +122,7 @@ export interface RouteAlternative {
 export interface RouteAnalyzeResponse {
   scenario_id: string;
   scenario_name: string;
+  source_type?: string;
   origin_name: string;
   destination_name: string;
   requested_departure_utc: string;
@@ -130,6 +133,7 @@ export interface RouteAnalyzeResponse {
   primary_status: "FEASIBLE" | "LOW MARGIN" | "INFEASIBLE" | "DATA GAP" | "NO_FEASIBLE_ROUTE";
   primary_route: RouteAlternative | null;
   alternatives: RouteAlternative[];
+  validation_status?: string;
   provenance: Record<string, any>;
 }
 

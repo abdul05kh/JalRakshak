@@ -73,11 +73,13 @@ class EvacuationWindowEngine:
         departure_dt: datetime,
         safety_buffer_min: float = 3.0,
         depth_limit_m: float = 0.3,
-        velocity_limit_mps: float = 1.0
+        velocity_limit_mps: float = 1.0,
+        scenario_start_dt: Optional[datetime] = None
     ) -> Dict[str, Any]:
         """
         Evaluate a sequence of nodes under the Evacuation Window Engine contract.
         D_deadline = min_i (A_i - T_i - B)
+        Margin = D_deadline - D_departure
         """
         edges_detail = []
         cumulative_travel_s = 0.0
@@ -88,6 +90,13 @@ class EvacuationWindowEngine:
         has_data_gap = False
 
         buffer_s = safety_buffer_min * 60.0
+
+        # Establish scenario start datetime reference (defaults to departure_dt if not explicitly provided)
+        if scenario_start_dt is None:
+            scenario_start_dt = departure_dt
+        
+        # Departure time relative to scenario start in seconds
+        dep_rel_s = (departure_dt - scenario_start_dt).total_seconds()
 
         for i in range(len(path_nodes) - 1):
             u = path_nodes[i]
@@ -118,7 +127,7 @@ class EvacuationWindowEngine:
                 max_vel = hyd["max_vel_mps"]
                 inundated = hyd.get("inundated", False)
 
-            # Edge-level deadline calculation: D_i = A_i - T_i - B
+            # Edge-level deadline calculation in simulation seconds: D_i = A_i - T_i - B
             if arrival_s >= 99999:
                 edge_deadline_s = float("inf")
                 edge_deadline_utc = None
@@ -126,13 +135,13 @@ class EvacuationWindowEngine:
                 failure_reason = None
             else:
                 edge_deadline_s = arrival_s - cumulative_travel_s - buffer_s
-                edge_deadline_dt = departure_dt + timedelta(seconds=max(0, edge_deadline_s))
+                edge_deadline_dt = scenario_start_dt + timedelta(seconds=max(0, edge_deadline_s))
                 edge_deadline_utc = edge_deadline_dt.strftime("%Y-%m-%dT%H:%M:%SZ")
+                edge_margin_s = edge_deadline_s - dep_rel_s
 
                 # Feasibility check for this edge:
-                # Vehicle clears edge before water arrives with buffer?
-                # And depth/velocity limit exceeded?
-                if (max_depth >= depth_limit_m or max_vel >= velocity_limit_mps) and edge_deadline_s < 0:
+                # Does vehicle departure satisfy D_dep <= D_deadline_i?
+                if (max_depth >= depth_limit_m or max_vel >= velocity_limit_mps) and edge_margin_s < 0:
                     edge_feasible = False
                     is_route_feasible = False
                     failure_reason = (
@@ -151,15 +160,15 @@ class EvacuationWindowEngine:
                         "length_m": length_m,
                         "cumulative_travel_min": round(cumulative_travel_s / 60.0, 2),
                         "flood_arrival_s": arrival_s,
-                        "flood_arrival_utc": (departure_dt + timedelta(seconds=arrival_s)).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                        "flood_arrival_utc": (scenario_start_dt + timedelta(seconds=arrival_s)).strftime("%Y-%m-%dT%H:%M:%SZ"),
                         "max_depth_m": max_depth,
                         "max_velocity_mps": max_vel,
                         "limiting_deadline_utc": edge_deadline_utc,
-                        "margin_min": round(edge_deadline_s / 60.0, 1),
+                        "margin_min": round(edge_margin_s / 60.0, 1),
                         "failure_reason": failure_reason or "Earliest time-constrained road segment on route."
                     }
 
-            arrival_utc = (departure_dt + timedelta(seconds=arrival_s)).strftime("%Y-%m-%dT%H:%M:%SZ") if arrival_s < 99999 else None
+            arrival_utc = (scenario_start_dt + timedelta(seconds=arrival_s)).strftime("%Y-%m-%dT%H:%M:%SZ") if arrival_s < 99999 else None
 
             edges_detail.append({
                 "edge_id": edge_id,
@@ -199,11 +208,12 @@ class EvacuationWindowEngine:
                 f"Total route travel time: {total_travel_min} min."
             )
         else:
-            deadline_dt = departure_dt + timedelta(seconds=max(0, min_deadline_s))
+            deadline_dt = scenario_start_dt + timedelta(seconds=max(0, min_deadline_s))
             deadline_utc = deadline_dt.strftime("%Y-%m-%dT%H:%M:%SZ")
-            margin_min = round(min_deadline_s / 60.0, 1)
+            margin_s = min_deadline_s - dep_rel_s
+            margin_min = round(margin_s / 60.0, 1)
 
-            if min_deadline_s < 0 or not is_route_feasible:
+            if margin_s < 0 or not is_route_feasible:
                 status = "INFEASIBLE"
                 explanation = (
                     f"Route is INFEASIBLE under this scenario. Limiting segment {limiting_edge_info['road_id']} "
@@ -246,10 +256,15 @@ class EvacuationWindowEngine:
         safety_buffer_min: float = 3.0,
         depth_limit_m: float = 0.3,
         velocity_limit_mps: float = 1.0,
-        k_routes: int = 3
+        k_routes: int = 3,
+        scenario_start_dt: Optional[datetime] = None
     ) -> List[Dict[str, Any]]:
         """Compute k-shortest path alternatives and evaluate each with EWE."""
-        if not nx.has_path(self.graph, origin_node, dest_node):
+        if (
+            not self.graph.has_node(origin_node)
+            or not self.graph.has_node(dest_node)
+            or not nx.has_path(self.graph, origin_node, dest_node)
+        ):
             return []
 
         # Find simple paths sorted by travel time
@@ -263,12 +278,13 @@ class EvacuationWindowEngine:
 
         for idx, path in enumerate(candidate_paths):
             route_res = self.evaluate_route(
-                path,
-                edge_hydraulics,
-                departure_dt,
-                safety_buffer_min,
-                depth_limit_m,
-                velocity_limit_mps
+                path_nodes=path,
+                edge_hydraulics=edge_hydraulics,
+                departure_dt=departure_dt,
+                safety_buffer_min=safety_buffer_min,
+                depth_limit_m=depth_limit_m,
+                velocity_limit_mps=velocity_limit_mps,
+                scenario_start_dt=scenario_start_dt
             )
             route_res["route_index"] = idx + 1
             route_res["name"] = f"Route {'A' if idx==0 else 'B' if idx==1 else 'C'} ({' -> '.join(path)})"

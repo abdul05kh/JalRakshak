@@ -1,0 +1,13 @@
+Flow Title=Tehri Smoke Test Unsteady Flow
+Program Version=6.00
+Use Restart= 0 
+Boundary Location=                ,                ,        ,        ,                ,TehriCanyon     ,                ,DSNormalDepth                   
+Friction Slope=0.008000,0
+Boundary Location=                ,                ,        ,        ,                ,TehriCanyon     ,                ,UpstreamInflow                  
+Interval=1HOUR
+Flow Hydrograph= 2 
+     180     65000
+Flow Hydrograph Slope= 0.008000
+Initial Conditions Flow Information
+       1        Initial Profile
+ 3.1E+38      13

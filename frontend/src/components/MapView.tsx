@@ -1,20 +1,94 @@
-import React, { useEffect, useRef } from "react";
-import L from "leaflet";
+/**
+ * MapView.tsx
+ * Primary Map Viewport for JalRakshak
+ * Hosts the Authoritative 3D Geospatial Terrain Engine (CesiumJS + Copernicus GLO-30 DSM)
+ * with optional 2D Cartographic View (MapLibre GL).
+ */
+
+import React, { useState } from "react";
+import { CesiumViewer } from "../map3d/CesiumViewer";
 import type { RoadFeature, EvacuationPointFeature, RouteAlternative, PointQueryResponse } from "../types";
+import { Mountain, Layers } from "lucide-react";
+
+export interface CameraPresetConfig {
+  center: [number, number];
+  zoom: number;
+  pitch: number;
+  bearing: number;
+  label: string;
+  description: string;
+  elevation_m?: number;
+}
+
+export const CAMERA_PRESETS: Record<string, CameraPresetConfig> = {
+  OVERVIEW: {
+    center: [78.475, 30.290],
+    zoom: 12.0,
+    pitch: 58,
+    bearing: 32,
+    label: "Valley Overview",
+    description: "30km Bhagirathi River Gorge & Tehri Valley Terrain",
+    elevation_m: 650.0
+  },
+  DAM: {
+    center: [78.4803, 30.378],
+    zoom: 14.5,
+    pitch: 60,
+    bearing: 18,
+    label: "Tehri Dam Crest",
+    description: "260.5m Earth & Rockfill Dam Structure (830m Crest)",
+    elevation_m: 830.0
+  },
+  BREACH: {
+    center: [78.479, 30.375],
+    zoom: 15.5,
+    pitch: 65,
+    bearing: 45,
+    label: "Breach Invert (635m Model Assumption)",
+    description: "Modeled Breach Location — Invert 635m MSL Assumption",
+    elevation_m: 635.0
+  },
+  LIMITING: {
+    center: [78.502, 30.2825],
+    zoom: 14.8,
+    pitch: 62,
+    bearing: 50,
+    label: "Limiting Edge (R02-E07)",
+    description: "Koteshwar Riverbank Corridor — Earliest Flood Inundation Point",
+    elevation_m: 612.0
+  },
+  SHELTER: {
+    center: [78.3965, 30.3475],
+    zoom: 15.0,
+    pitch: 55,
+    bearing: -20,
+    label: "Chamba Shelter (High Ground)",
+    description: "Designated Safe Evacuation High-Ground Facility (1650m)",
+    elevation_m: 1650.0
+  }
+};
 
 interface MapViewProps {
   inundationGeoJSON: any;
   roads: RoadFeature[];
   evacPoints: EvacuationPointFeature[];
   activeRoute: RouteAlternative | null;
-  layerVisibility: {
+  mapViewState?: "2D" | "3D" | "SCIENCE";
+  thematicMode?: "EXTENT" | "DEPTH" | "ARRIVAL";
+  selectedTimelineStep?: string;
+  focusLimitingSignal?: number;
+  cameraPreset?: string;
+  selectedEdgeId?: string;
+  onSelectEdgeId?: (edgeId: string) => void;
+  layerVisibility?: {
     inundation: boolean;
     roads: boolean;
     origins: boolean;
     destinations: boolean;
   };
-  onMapClick: (lat: number, lon: number) => void;
-  pointQueryData: PointQueryResponse | null;
+  onMapClick?: (lat: number, lon: number) => void;
+  pointQueryData?: PointQueryResponse | null;
+  showValidationControls?: boolean;
 }
 
 export const MapView: React.FC<MapViewProps> = ({
@@ -22,219 +96,64 @@ export const MapView: React.FC<MapViewProps> = ({
   roads,
   evacPoints,
   activeRoute,
-  layerVisibility,
-  onMapClick,
-  pointQueryData
+  mapViewState = "3D",
+  thematicMode = "EXTENT",
+  selectedTimelineStep = "T+60",
+  cameraPreset = "VALLEY_OVERVIEW",
+  selectedEdgeId,
+  onSelectEdgeId
 }) => {
-  const mapContainerRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<L.Map | null>(null);
-  
-  // Layer Groups
-  const inundationLayerRef = useRef<L.GeoJSON | null>(null);
-  const roadsLayerRef = useRef<L.LayerGroup | null>(null);
-  const pointsLayerRef = useRef<L.LayerGroup | null>(null);
-  const routeLayerRef = useRef<L.LayerGroup | null>(null);
-  const clickPopupRef = useRef<L.Popup | null>(null);
+  const [currentMode, setCurrentMode] = useState<"3D" | "2D">(
+    mapViewState === "2D" ? "2D" : "3D"
+  );
 
-  // Initialize Map
-  useEffect(() => {
-    if (!mapContainerRef.current || mapInstanceRef.current) return;
+  // Translate camera preset key
+  let mappedPreset = "VALLEY_OVERVIEW";
+  if (cameraPreset === "DAM") mappedPreset = "TEHRI_DAM";
+  else if (cameraPreset === "BREACH") mappedPreset = "BREACH_LOCATION";
+  else if (cameraPreset === "LIMITING") mappedPreset = "R02_E07_LIMITING";
+  else if (cameraPreset === "SHELTER") mappedPreset = "CHAMBA_SHELTER";
+  else if (cameraPreset === "DOWNSTREAM") mappedPreset = "DOWNSTREAM_VALLEY";
+  else if (cameraPreset === "R02") mappedPreset = "R02_ROUTE";
 
-    const map = L.map(mapContainerRef.current, {
-      center: [30.22, 78.42],
-      zoom: 11,
-      zoomControl: true
-    });
-
-    L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-      subdomains: "abcd",
-      maxZoom: 19
-    }).addTo(map);
-
-    inundationLayerRef.current = L.geoJSON(undefined, {
-      style: {
-        color: "#0284c7",
-        weight: 2,
-        fillColor: "#38bdf8",
-        fillOpacity: 0.45
-      }
-    }).addTo(map);
-
-    roadsLayerRef.current = L.layerGroup().addTo(map);
-    pointsLayerRef.current = L.layerGroup().addTo(map);
-    routeLayerRef.current = L.layerGroup().addTo(map);
-
-    map.on("click", (e: L.LeafletMouseEvent) => {
-      onMapClick(e.latlng.lat, e.latlng.lng);
-    });
-
-    mapInstanceRef.current = map;
-
-    return () => {
-      map.remove();
-      mapInstanceRef.current = null;
-    };
-  }, []);
-
-  // Update Inundation Layer
-  useEffect(() => {
-    if (!inundationLayerRef.current) return;
-    inundationLayerRef.current.clearLayers();
-    if (inundationGeoJSON && layerVisibility.inundation) {
-      inundationLayerRef.current.addData(inundationGeoJSON);
-    }
-  }, [inundationGeoJSON, layerVisibility.inundation]);
-
-  // Update Roads Layer
-  useEffect(() => {
-    if (!roadsLayerRef.current) return;
-    roadsLayerRef.current.clearLayers();
-    if (!layerVisibility.roads) return;
-
-    roads.forEach((road) => {
-      const coords = road.geometry.coordinates.map((c) => [c[1], c[0]] as [number, number]);
-      const isPrimary = road.properties.road_class === "PRIMARY";
-      
-      const poly = L.polyline(coords, {
-        color: isPrimary ? "#475569" : "#94a3b8",
-        weight: isPrimary ? 3 : 2,
-        opacity: 0.8
-      });
-
-      poly.bindTooltip(`
-        <strong>${road.properties.id}</strong> (${road.properties.road_class})<br/>
-        Length: ${(road.properties.length_m / 1000).toFixed(1)} km | Speed: ${road.properties.speed_kmh} km/h<br/>
-        Travel Time: ${road.properties.travel_time_min} min
-      `);
-
-      poly.addTo(roadsLayerRef.current!);
-    });
-  }, [roads, layerVisibility.roads]);
-
-  // Update Points Layer (Origins and Destinations)
-  useEffect(() => {
-    if (!pointsLayerRef.current) return;
-    pointsLayerRef.current.clearLayers();
-
-    evacPoints.forEach((pt) => {
-      const coords: [number, number] = [pt.geometry.coordinates[1], pt.geometry.coordinates[0]];
-      const isOrigin = pt.properties.category === "ORIGIN";
-
-      if (isOrigin && !layerVisibility.origins) return;
-      if (!isOrigin && !layerVisibility.destinations) return;
-
-      const marker = L.circleMarker(coords, {
-        radius: isOrigin ? 6 : 8,
-        fillColor: isOrigin ? "#d97706" : "#16a34a",
-        color: "#ffffff",
-        weight: 2,
-        fillOpacity: 0.95
-      });
-
-      marker.bindTooltip(`
-        <strong>${pt.properties.name}</strong><br/>
-        Type: ${pt.properties.type}<br/>
-        Elevation: ${pt.properties.elevation_m}m MSL<br/>
-        ${pt.properties.population ? `Population: ${pt.properties.population}` : `Capacity: ${pt.properties.capacity}`}
-      `);
-
-      marker.addTo(pointsLayerRef.current!);
-    });
-  }, [evacPoints, layerVisibility.origins, layerVisibility.destinations]);
-
-  // Update Active Route & Limiting Segment Layer
-  useEffect(() => {
-    if (!routeLayerRef.current || !mapInstanceRef.current) return;
-    routeLayerRef.current.clearLayers();
-
-    if (!activeRoute) return;
-
-    // Collect all coordinates for route
-    const routeCoords: [number, number][] = [];
-    activeRoute.edges.forEach((edge) => {
-      const roadFeat = roads.find((r) => r.properties.id === edge.edge_id);
-      if (roadFeat) {
-        roadFeat.geometry.coordinates.forEach((c) => {
-          routeCoords.push([c[1], c[0]]);
-        });
-      }
-    });
-
-    if (routeCoords.length > 0) {
-      // Draw general route line
-      L.polyline(routeCoords, {
-        color: "#2563eb",
-        weight: 5,
-        opacity: 0.9
-      }).addTo(routeLayerRef.current);
-
-      // Highlight limiting segment if present
-      if (activeRoute.limiting_segment) {
-        const limitId = activeRoute.limiting_segment.road_id;
-        const limitRoad = roads.find((r) => r.properties.id === limitId);
-        if (limitRoad) {
-          const limitCoords = limitRoad.geometry.coordinates.map((c) => [c[1], c[0]] as [number, number]);
-          const limitPoly = L.polyline(limitCoords, {
-            color: "#dc2626",
-            weight: 7,
-            opacity: 1.0,
-            className: "pulsing-segment"
-          }).addTo(routeLayerRef.current);
-
-          limitPoly.bindTooltip(`
-            <strong style="color:#b91c1c;">LIMITING SEGMENT: ${limitId}</strong><br/>
-            Flood Arrival: ${activeRoute.limiting_segment.flood_arrival_utc}<br/>
-            Max Depth: ${activeRoute.limiting_segment.max_depth_m} m<br/>
-            Cumulative Travel: ${activeRoute.limiting_segment.cumulative_travel_min} min<br/>
-            Deadline UTC: ${activeRoute.limiting_segment.limiting_deadline_utc}
-          `, { permanent: true, direction: "top" });
-        }
-      }
-    }
-  }, [activeRoute, roads]);
-
-  // Handle Point Query Popup
-  useEffect(() => {
-    if (!pointQueryData || !mapInstanceRef.current) return;
-
-    const latlng: [number, number] = [pointQueryData.latitude, pointQueryData.longitude];
-    const content = `
-      <div style="font-family: inherit; font-size: 12px; min-width: 200px;">
-        <div style="font-weight: 700; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; margin-bottom: 6px;">
-          ${pointQueryData.nearest_feature_name}
-        </div>
-        <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
-          <span style="color: #64748b;">Flood Arrival:</span>
-          <span style="font-weight: 700; color: #0f172a;">${pointQueryData.arrival_time_s ? `${Math.round(pointQueryData.arrival_time_s / 60)} min (${pointQueryData.arrival_time_s}s)` : 'Not Flooded'}</span>
-        </div>
-        <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
-          <span style="color: #64748b;">Max Depth:</span>
-          <span style="font-weight: 700; color: #0f172a;">${pointQueryData.max_depth_m} m</span>
-        </div>
-        <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
-          <span style="color: #64748b;">Max Velocity:</span>
-          <span style="font-weight: 700; color: #0f172a;">${pointQueryData.max_velocity_mps} m/s</span>
-        </div>
-        <div style="font-size: 10px; color: #94a3b8; margin-top: 6px; border-top: 1px dashed #e2e8f0; padding-top: 4px;">
-          Source: ${pointQueryData.confidence_label}
-        </div>
+  if (currentMode === "3D") {
+    return (
+      <div className="w-full h-full relative">
+        <CesiumViewer
+          inundationGeoJSON={inundationGeoJSON}
+          roads={roads}
+          evacPoints={evacPoints}
+          activeRoute={activeRoute}
+          thematicMode={thematicMode}
+          selectedTimelineStep={selectedTimelineStep}
+          cameraPreset={mappedPreset}
+          selectedEdgeId={selectedEdgeId}
+          onSelectEdgeId={onSelectEdgeId}
+          onSwitchTo2D={() => setCurrentMode("2D")}
+        />
       </div>
-    `;
+    );
+  }
 
-    if (clickPopupRef.current) {
-      clickPopupRef.current.remove();
-    }
-
-    clickPopupRef.current = L.popup()
-      .setLatLng(latlng)
-      .setContent(content)
-      .openOn(mapInstanceRef.current);
-  }, [pointQueryData]);
-
+  // 2D Cartographic View Fallback
   return (
-    <div style={{ flex: 1, position: "relative", height: "calc(100vh - 58px)" }}>
-      <div ref={mapContainerRef} style={{ width: "100%", height: "100%" }} />
+    <div className="w-full h-full relative bg-slate-900 flex flex-col items-center justify-center text-white">
+      <div className="flex flex-col items-center gap-3 p-6 bg-slate-800/90 rounded-xl border border-slate-700 shadow-2xl max-w-md text-center">
+        <Layers className="w-10 h-10 text-amber-400" />
+        <h3 className="text-lg font-bold">2D Cartographic View Mode</h3>
+        <p className="text-xs text-slate-400">
+          The primary visualization for JalRakshak is the True 3D Geospatial Terrain Engine. Switch back to 3D to inspect real mountain relief, valley depth, and road-terrain clamping.
+        </p>
+        <button
+          onClick={() => setCurrentMode("3D")}
+          className="flex items-center gap-2 px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg text-xs font-semibold shadow-lg shadow-cyan-900/50 transition"
+        >
+          <Mountain className="w-4 h-4" />
+          Switch to 3D Terrain Engine
+        </button>
+      </div>
     </div>
   );
 };
+
+export default MapView;

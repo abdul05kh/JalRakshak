@@ -1,0 +1,295 @@
+{
+  "SCENARIO_CENTRAL": {
+    "scenario_name": "SCENARIO_CENTRAL",
+    "description": "Reference Froehlich 2008 Piping Scenario",
+    "q_peak_m3s": 65000.0,
+    "friction_slope": 0.004,
+    "manning_n": 0.045,
+    "flows_hydrograph_m3s": [
+      180,
+      65000
+    ],
+    "duration_seconds": 6.010828256607056,
+    "prj_metadata": {
+      "path": "C:\\HEC_Work\\TehriExecutionSmokeTest_Run1\\TehriSmokeTest.prj",
+      "filename": "TehriSmokeTest.prj",
+      "size_bytes": 143,
+      "sha256": "85f9b5b1cd245a8fa29b41aa5cf6181a0eb8c4c1af5b3c9e4befb2cdc01ab96c",
+      "modified_iso": "2026-09-24T08:28:35.352285+00:00"
+    },
+    "u01_metadata": {
+      "path": "C:\\HEC_Work\\TehriExecutionSmokeTest_Run1\\TehriSmokeTest.u01",
+      "filename": "TehriSmokeTest.u01",
+      "size_bytes": 597,
+      "sha256": "d6999d56e06959d39282a2e79c4fca8e6290065a57fd438c9df35ed16a9f97f7",
+      "modified_iso": "2026-09-24T08:30:29.756935+00:00"
+    },
+    "hdf_metadata": {
+      "path": "C:\\HEC_Work\\TehriExecutionSmokeTest_Run1\\TehriSmokeTest.p01.hdf",
+      "filename": "TehriSmokeTest.p01.hdf",
+      "size_bytes": 1732327,
+      "sha256": "7983aac37b7521a8d066c2468d43aeda98baeb6ed4de4aea76d10ce55f1831fa",
+      "modified_iso": "2026-09-24T08:30:34.409164+00:00"
+    },
+    "forensics": {
+      "file_type": "HEC-RAS Results",
+      "file_version": "HEC-RAS 7.0.1 June 2026",
+      "units_system": "SI Units",
+      "projection": "PROJCS[\"WGS_1984_UTM_Zone_44N\",GEOGCS[\"GCS_WGS_1984\",DATUM[\"D_WGS_1984\",SPHEROID[\"WGS_1984\",6378137.0,298.257223563]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"False_Easting\",500000.0],PARAMETER[\"False_Northing\",0.0],PARAMETER[\"Central_Meridian\",81.0],PARAMETER[\"Scale_Factor\",0.9996],PARAMETER[\"Latitude_Of_Origin\",0.0],UNIT[\"Meter\",1.0]]",
+      "cell_count": 896,
+      "terrain_min_m": NaN,
+      "terrain_max_m": NaN,
+      "terrain_mean_m": NaN,
+      "timesteps_count": 13,
+      "wse_min_m": 617.5,
+      "wse_max_m": 1123.751220703125,
+      "max_depth_m": 3.72686767578125,
+      "mean_peak_depth_m": 0.6003357172012329,
+      "max_face_velocity_ms": 0.993996798992157,
+      "vol_error_cumulative_1000m3": 0.0
+    },
+    "persisted_artifact": {
+      "path": "d:\\projects\\JalRakshak\\artifacts\\hecras\\tehri_gate3\\scenario_central.p01.hdf",
+      "filename": "scenario_central.p01.hdf",
+      "size_bytes": 1732327,
+      "sha256": "7983aac37b7521a8d066c2468d43aeda98baeb6ed4de4aea76d10ce55f1831fa",
+      "modified_iso": "2026-09-24T08:30:34.409164+00:00"
+    }
+  },
+  "SCENARIO_MINIMUM": {
+    "scenario_name": "SCENARIO_MINIMUM",
+    "description": "Minimum Partial Breach / Overtopping Scenario",
+    "q_peak_m3s": 28500.0,
+    "friction_slope": 0.004,
+    "manning_n": 0.045,
+    "flows_hydrograph_m3s": [
+      180,
+      28500
+    ],
+    "duration_seconds": 5.976694822311401,
+    "prj_metadata": {
+      "path": "C:\\HEC_Work\\TehriExecutionSmokeTest_Run1\\TehriSmokeTest.prj",
+      "filename": "TehriSmokeTest.prj",
+      "size_bytes": 143,
+      "sha256": "85f9b5b1cd245a8fa29b41aa5cf6181a0eb8c4c1af5b3c9e4befb2cdc01ab96c",
+      "modified_iso": "2026-09-24T08:28:35.352285+00:00"
+    },
+    "u01_metadata": {
+      "path": "C:\\HEC_Work\\TehriExecutionSmokeTest_Run1\\TehriSmokeTest.u01",
+      "filename": "TehriSmokeTest.u01",
+      "size_bytes": 597,
+      "sha256": "a8b408a8025ca359f5c1622e60a0e22af096150ce2b6a1d10d01582de17a3b05",
+      "modified_iso": "2026-09-24T08:30:35.785428+00:00"
+    },
+    "hdf_metadata": {
+      "path": "C:\\HEC_Work\\TehriExecutionSmokeTest_Run1\\TehriSmokeTest.p01.hdf",
+      "filename": "TehriSmokeTest.p01.hdf",
+      "size_bytes": 1729959,
+      "sha256": "d373d999bac4295ddb514dd68fcc070cad63a2c3350c5a917e334d8f9bef187e",
+      "modified_iso": "2026-09-24T08:30:40.273756+00:00"
+    },
+    "forensics": {
+      "file_type": "HEC-RAS Results",
+      "file_version": "HEC-RAS 7.0.1 June 2026",
+      "units_system": "SI Units",
+      "projection": "PROJCS[\"WGS_1984_UTM_Zone_44N\",GEOGCS[\"GCS_WGS_1984\",DATUM[\"D_WGS_1984\",SPHEROID[\"WGS_1984\",6378137.0,298.257223563]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"False_Easting\",500000.0],PARAMETER[\"False_Northing\",0.0],PARAMETER[\"Central_Meridian\",81.0],PARAMETER[\"Scale_Factor\",0.9996],PARAMETER[\"Latitude_Of_Origin\",0.0],UNIT[\"Meter\",1.0]]",
+      "cell_count": 896,
+      "terrain_min_m": NaN,
+      "terrain_max_m": NaN,
+      "terrain_mean_m": NaN,
+      "timesteps_count": 13,
+      "wse_min_m": 617.5,
+      "wse_max_m": 1123.751220703125,
+      "max_depth_m": 2.1334228515625,
+      "mean_peak_depth_m": 0.33402347564697266,
+      "max_face_velocity_ms": 0.716447114944458,
+      "vol_error_cumulative_1000m3": 0.0
+    },
+    "persisted_artifact": {
+      "path": "d:\\projects\\JalRakshak\\artifacts\\hecras\\tehri_gate3\\scenario_minimum.p01.hdf",
+      "filename": "scenario_minimum.p01.hdf",
+      "size_bytes": 1729959,
+      "sha256": "d373d999bac4295ddb514dd68fcc070cad63a2c3350c5a917e334d8f9bef187e",
+      "modified_iso": "2026-09-24T08:30:40.273756+00:00"
+    }
+  },
+  "SCENARIO_MAXIMUM": {
+    "scenario_name": "SCENARIO_MAXIMUM",
+    "description": "Maximum Worst-Case Rapid Breach Scenario",
+    "q_peak_m3s": 115000.0,
+    "friction_slope": 0.004,
+    "manning_n": 0.045,
+    "flows_hydrograph_m3s": [
+      180,
+      115000
+    ],
+    "duration_seconds": 5.975587368011475,
+    "prj_metadata": {
+      "path": "C:\\HEC_Work\\TehriExecutionSmokeTest_Run1\\TehriSmokeTest.prj",
+      "filename": "TehriSmokeTest.prj",
+      "size_bytes": 143,
+      "sha256": "85f9b5b1cd245a8fa29b41aa5cf6181a0eb8c4c1af5b3c9e4befb2cdc01ab96c",
+      "modified_iso": "2026-09-24T08:28:35.352285+00:00"
+    },
+    "u01_metadata": {
+      "path": "C:\\HEC_Work\\TehriExecutionSmokeTest_Run1\\TehriSmokeTest.u01",
+      "filename": "TehriSmokeTest.u01",
+      "size_bytes": 598,
+      "sha256": "61c3388933c10cdd821d593a8267a20a7aed5b46867c5f32fc1b26e8a8671d8e",
+      "modified_iso": "2026-09-24T08:30:41.776345+00:00"
+    },
+    "hdf_metadata": {
+      "path": "C:\\HEC_Work\\TehriExecutionSmokeTest_Run1\\TehriSmokeTest.p01.hdf",
+      "filename": "TehriSmokeTest.p01.hdf",
+      "size_bytes": 1729949,
+      "sha256": "2913594f2dc88508ef30ca3dd2f16341c831ab93fc40bab3ac8207b157144452",
+      "modified_iso": "2026-09-24T08:30:46.361782+00:00"
+    },
+    "forensics": {
+      "file_type": "HEC-RAS Results",
+      "file_version": "HEC-RAS 7.0.1 June 2026",
+      "units_system": "SI Units",
+      "projection": "PROJCS[\"WGS_1984_UTM_Zone_44N\",GEOGCS[\"GCS_WGS_1984\",DATUM[\"D_WGS_1984\",SPHEROID[\"WGS_1984\",6378137.0,298.257223563]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"False_Easting\",500000.0],PARAMETER[\"False_Northing\",0.0],PARAMETER[\"Central_Meridian\",81.0],PARAMETER[\"Scale_Factor\",0.9996],PARAMETER[\"Latitude_Of_Origin\",0.0],UNIT[\"Meter\",1.0]]",
+      "cell_count": 896,
+      "terrain_min_m": NaN,
+      "terrain_max_m": NaN,
+      "terrain_mean_m": NaN,
+      "timesteps_count": 13,
+      "wse_min_m": 617.5,
+      "wse_max_m": 1123.751220703125,
+      "max_depth_m": 1.37298583984375,
+      "mean_peak_depth_m": 0.2119576632976532,
+      "max_face_velocity_ms": 0.5888943672180176,
+      "vol_error_cumulative_1000m3": 0.0
+    },
+    "persisted_artifact": {
+      "path": "d:\\projects\\JalRakshak\\artifacts\\hecras\\tehri_gate3\\scenario_maximum.p01.hdf",
+      "filename": "scenario_maximum.p01.hdf",
+      "size_bytes": 1729949,
+      "sha256": "2913594f2dc88508ef30ca3dd2f16341c831ab93fc40bab3ac8207b157144452",
+      "modified_iso": "2026-09-24T08:30:46.361782+00:00"
+    }
+  },
+  "SCENARIO_BOUNDARY_SENSITIVITY": {
+    "scenario_name": "SCENARIO_BOUNDARY_SENSITIVITY",
+    "description": "Downstream Friction Slope Perturbation (S0=0.008 vs S0=0.004)",
+    "q_peak_m3s": 65000.0,
+    "friction_slope": 0.008,
+    "manning_n": 0.045,
+    "flows_hydrograph_m3s": [
+      180,
+      65000
+    ],
+    "duration_seconds": 5.999161958694458,
+    "prj_metadata": {
+      "path": "C:\\HEC_Work\\TehriExecutionSmokeTest_Run1\\TehriSmokeTest.prj",
+      "filename": "TehriSmokeTest.prj",
+      "size_bytes": 143,
+      "sha256": "85f9b5b1cd245a8fa29b41aa5cf6181a0eb8c4c1af5b3c9e4befb2cdc01ab96c",
+      "modified_iso": "2026-09-24T08:28:35.352285+00:00"
+    },
+    "u01_metadata": {
+      "path": "C:\\HEC_Work\\TehriExecutionSmokeTest_Run1\\TehriSmokeTest.u01",
+      "filename": "TehriSmokeTest.u01",
+      "size_bytes": 597,
+      "sha256": "824ac8465fe6e248b69a871d2db348c4f13bdbfc1b3186ff746e4aeeaadf6d31",
+      "modified_iso": "2026-09-24T08:30:47.764969+00:00"
+    },
+    "hdf_metadata": {
+      "path": "C:\\HEC_Work\\TehriExecutionSmokeTest_Run1\\TehriSmokeTest.p01.hdf",
+      "filename": "TehriSmokeTest.p01.hdf",
+      "size_bytes": 1732224,
+      "sha256": "9f8d287d75999a91f827659aa0de56c52672dec9017d29df22cf01d1106e0357",
+      "modified_iso": "2026-09-24T08:30:52.420453+00:00"
+    },
+    "forensics": {
+      "file_type": "HEC-RAS Results",
+      "file_version": "HEC-RAS 7.0.1 June 2026",
+      "units_system": "SI Units",
+      "projection": "PROJCS[\"WGS_1984_UTM_Zone_44N\",GEOGCS[\"GCS_WGS_1984\",DATUM[\"D_WGS_1984\",SPHEROID[\"WGS_1984\",6378137.0,298.257223563]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"False_Easting\",500000.0],PARAMETER[\"False_Northing\",0.0],PARAMETER[\"Central_Meridian\",81.0],PARAMETER[\"Scale_Factor\",0.9996],PARAMETER[\"Latitude_Of_Origin\",0.0],UNIT[\"Meter\",1.0]]",
+      "cell_count": 896,
+      "terrain_min_m": NaN,
+      "terrain_max_m": NaN,
+      "terrain_mean_m": NaN,
+      "timesteps_count": 13,
+      "wse_min_m": 617.5,
+      "wse_max_m": 1123.751220703125,
+      "max_depth_m": 3.72662353515625,
+      "mean_peak_depth_m": 0.6003355383872986,
+      "max_face_velocity_ms": 1.2248374223709106,
+      "vol_error_cumulative_1000m3": 0.0
+    },
+    "persisted_artifact": {
+      "path": "d:\\projects\\JalRakshak\\artifacts\\hecras\\tehri_gate3\\scenario_boundary_sensitivity.p01.hdf",
+      "filename": "scenario_boundary_sensitivity.p01.hdf",
+      "size_bytes": 1732224,
+      "sha256": "9f8d287d75999a91f827659aa0de56c52672dec9017d29df22cf01d1106e0357",
+      "modified_iso": "2026-09-24T08:30:52.420453+00:00"
+    }
+  },
+  "SCENARIO_REPEATABILITY_RUN2": {
+    "scenario_name": "SCENARIO_REPEATABILITY_RUN2",
+    "description": "Independent Reproducibility Execution on Run 2",
+    "q_peak_m3s": 65000.0,
+    "friction_slope": 0.004,
+    "manning_n": 0.045,
+    "flows_hydrograph_m3s": [
+      180,
+      65000
+    ],
+    "duration_seconds": 7.40416693687439,
+    "prj_metadata": {
+      "path": "C:\\HEC_Work\\TehriExecutionSmokeTest_Run2\\TehriSmokeTest.prj",
+      "filename": "TehriSmokeTest.prj",
+      "size_bytes": 143,
+      "sha256": "85f9b5b1cd245a8fa29b41aa5cf6181a0eb8c4c1af5b3c9e4befb2cdc01ab96c",
+      "modified_iso": "2026-09-24T08:28:36.238059+00:00"
+    },
+    "u01_metadata": {
+      "path": "C:\\HEC_Work\\TehriExecutionSmokeTest_Run2\\TehriSmokeTest.u01",
+      "filename": "TehriSmokeTest.u01",
+      "size_bytes": 597,
+      "sha256": "d6999d56e06959d39282a2e79c4fca8e6290065a57fd438c9df35ed16a9f97f7",
+      "modified_iso": "2026-09-24T08:30:53.776185+00:00"
+    },
+    "hdf_metadata": {
+      "path": "C:\\HEC_Work\\TehriExecutionSmokeTest_Run2\\TehriSmokeTest.p01.hdf",
+      "filename": "TehriSmokeTest.p01.hdf",
+      "size_bytes": 1733688,
+      "sha256": "3064acb12edb0332dbe29b0c0a8c1adbfcb730355fa41e74c79878404e73a93c",
+      "modified_iso": "2026-09-24T08:30:59.489862+00:00"
+    },
+    "forensics": {
+      "file_type": "HEC-RAS Results",
+      "file_version": "HEC-RAS 7.0.1 June 2026",
+      "units_system": "SI Units",
+      "projection": "PROJCS[\"WGS_1984_UTM_Zone_44N\",GEOGCS[\"GCS_WGS_1984\",DATUM[\"D_WGS_1984\",SPHEROID[\"WGS_1984\",6378137.0,298.257223563]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"False_Easting\",500000.0],PARAMETER[\"False_Northing\",0.0],PARAMETER[\"Central_Meridian\",81.0],PARAMETER[\"Scale_Factor\",0.9996],PARAMETER[\"Latitude_Of_Origin\",0.0],UNIT[\"Meter\",1.0]]",
+      "cell_count": 896,
+      "terrain_min_m": NaN,
+      "terrain_max_m": NaN,
+      "terrain_mean_m": NaN,
+      "timesteps_count": 13,
+      "wse_min_m": 617.5,
+      "wse_max_m": 1123.751220703125,
+      "max_depth_m": 3.72686767578125,
+      "mean_peak_depth_m": 0.6003357172012329,
+      "max_face_velocity_ms": 0.993996798992157,
+      "vol_error_cumulative_1000m3": 0.0
+    },
+    "persisted_artifact": {
+      "path": "d:\\projects\\JalRakshak\\artifacts\\hecras\\tehri_gate3\\scenario_repeatability_run2.p01.hdf",
+      "filename": "scenario_repeatability_run2.p01.hdf",
+      "size_bytes": 1733688,
+      "sha256": "3064acb12edb0332dbe29b0c0a8c1adbfcb730355fa41e74c79878404e73a93c",
+      "modified_iso": "2026-09-24T08:30:59.489862+00:00"
+    }
+  },
+  "repeatability_assessment": {
+    "artifact_hash_match": false,
+    "run1_sha256": "7983aac37b7521a8d066c2468d43aeda98baeb6ed4de4aea76d10ce55f1831fa",
+    "run2_sha256": "3064acb12edb0332dbe29b0c0a8c1adbfcb730355fa41e74c79878404e73a93c",
+    "numerical_repeatability_wse_diff_m": 0.0,
+    "numerical_repeatability_depth_diff_m": 0.0,
+    "status": "PASS"
+  }
+}

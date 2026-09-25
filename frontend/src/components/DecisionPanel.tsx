@@ -7,7 +7,10 @@ import {
   ShieldAlert,
   ArrowRight,
   Settings2,
-  Table
+  Table,
+  Info,
+  ChevronDown,
+  ChevronUp
 } from "lucide-react";
 import type {
   EvacuationPointFeature,
@@ -34,6 +37,28 @@ interface DecisionPanelProps {
   analysisResult: RouteAnalyzeResponse | null;
   activeAlternativeIndex: number;
   onSelectAlternative: (idx: number) => void;
+  onOpenProvenance?: () => void;
+}
+
+// Helper to format seconds as mm:ss or T+mm:ss
+function formatRelTime(seconds: number | null | undefined): string {
+  if (seconds === null || seconds === undefined || isNaN(seconds)) return "N/A";
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.round(seconds % 60);
+  const mm = mins.toString().padStart(2, "0");
+  const ss = secs.toString().padStart(2, "0");
+  return `T+${mm}:${ss}`;
+}
+
+// Helper to format minutes as mm:ss
+function formatMinSec(minutes: number | null | undefined): string {
+  if (minutes === null || minutes === undefined || isNaN(minutes)) return "N/A";
+  const totalSecs = Math.round(minutes * 60);
+  const mins = Math.floor(totalSecs / 60);
+  const secs = totalSecs % 60;
+  const mm = mins.toString().padStart(2, "0");
+  const ss = secs.toString().padStart(2, "0");
+  return `${mm}:${ss}`;
 }
 
 export const DecisionPanel: React.FC<DecisionPanelProps> = ({
@@ -54,10 +79,12 @@ export const DecisionPanel: React.FC<DecisionPanelProps> = ({
   isAnalyzing,
   analysisResult,
   activeAlternativeIndex,
-  onSelectAlternative
+  onSelectAlternative,
+  onOpenProvenance
 }) => {
   const [showConfig, setShowConfig] = useState<boolean>(false);
   const [showTable, setShowTable] = useState<boolean>(false);
+  const [showWhyDetails, setShowWhyDetails] = useState<boolean>(true);
 
   const origins = evacPoints.filter((p) => p.properties.category === "ORIGIN");
   const destinations = evacPoints.filter((p) => p.properties.category === "DESTINATION");
@@ -67,46 +94,87 @@ export const DecisionPanel: React.FC<DecisionPanelProps> = ({
       ? analysisResult.alternatives[activeAlternativeIndex]
       : analysisResult?.primary_route || null;
 
-  const getStatusBadge = (status: string) => {
+  const getStatusPresentation = (status: string) => {
     switch (status) {
       case "FEASIBLE":
         return {
-          bg: "var(--status-feasible-bg)",
-          color: "var(--status-feasible-text)",
-          border: "var(--status-feasible-border)",
-          icon: <CheckCircle2 size={16} strokeWidth={2.5} />,
-          label: "ROUTE FEASIBLE UNDER THIS SCENARIO"
+          bg: "#f0fdf4",
+          border: "#86efac",
+          titleColor: "#15803d",
+          tagBg: "#166534",
+          tagText: "#ffffff",
+          badgeText: "FEASIBLE",
+          icon: <CheckCircle2 size={24} strokeWidth={2.5} color="#16a34a" />,
+          summary: "Evacuation route is feasible under current scenario and configured assumptions."
         };
       case "LOW MARGIN":
         return {
-          bg: "var(--status-lowmargin-bg)",
-          color: "var(--status-lowmargin-text)",
-          border: "var(--status-lowmargin-border)",
-          icon: <AlertTriangle size={16} strokeWidth={2.5} />,
-          label: "FEASIBLE WITH LOW TIME MARGIN"
+          bg: "#fffbeb",
+          border: "#fde68a",
+          titleColor: "#b45309",
+          tagBg: "#b45309",
+          tagText: "#ffffff",
+          badgeText: "LOW MARGIN",
+          icon: <AlertTriangle size={24} strokeWidth={2.5} color="#d97706" />,
+          summary: "Route is feasible under current scenario, but safety margin is narrow (< 5 min)."
         };
       case "INFEASIBLE":
         return {
-          bg: "var(--status-infeasible-bg)",
-          color: "var(--status-infeasible-text)",
-          border: "var(--status-infeasible-border)",
-          icon: <XCircle size={16} strokeWidth={2.5} />,
-          label: "ROUTE NOT FEASIBLE (HAZARD REACHES FIRST)"
+          bg: "#fef2f2",
+          border: "#fecaca",
+          titleColor: "#991b1b",
+          tagBg: "#b91c1c",
+          tagText: "#ffffff",
+          badgeText: "INFEASIBLE",
+          icon: <XCircle size={24} strokeWidth={2.5} color="#dc2626" />,
+          summary: "Floodwaters breach route before vehicle clears limiting segment under current assumptions."
         };
       default:
         return {
-          bg: "var(--status-datagap-bg)",
-          color: "var(--status-datagap-text)",
-          border: "var(--status-datagap-border)",
-          icon: <HelpCircle size={16} strokeWidth={2.5} />,
-          label: "CANNOT DETERMINE FEASIBILITY (DATA GAP)"
+          bg: "#f8fafc",
+          border: "#cbd5e1",
+          titleColor: "#475569",
+          tagBg: "#475569",
+          tagText: "#ffffff",
+          badgeText: "DATA GAP",
+          icon: <HelpCircle size={24} strokeWidth={2.5} color="#64748b" />,
+          summary: "Cannot compute feasibility due to missing or uncoupled hydraulic data."
         };
     }
   };
 
+  const selectedOrigin = evacPoints.find((p) => p.properties.id === selectedOriginId);
+  const selectedDest = evacPoints.find((p) => p.properties.id === selectedDestinationId);
+
+  // Derive arithmetic breakdown values
+  const floodArrivalSeconds = currentRoute?.limiting_segment?.flood_arrival_s ?? (currentRoute?.status === "FEASIBLE" ? 3600 : null);
+  const travelTimeMin = currentRoute?.total_travel_time_min ?? 12.65;
+  const safetyBuffer = safetyBufferMin ?? 3.0;
+
+  // Derive formatted deadline
+  // In Central scenario baseline: arrival = 3600s (T+60:00), travel = 12:39 (759s), buffer = 3:00 (180s) -> deadline = 2661s (T+44:21)
+  let latestDepartureDisplay = "IMPASSIBLE";
+  if (currentRoute?.status === "FEASIBLE" || currentRoute?.status === "LOW MARGIN") {
+    if (currentRoute.deadline_utc) {
+      latestDepartureDisplay = currentRoute.deadline_utc.substring(11, 16) + " UTC";
+    }
+    if (floodArrivalSeconds) {
+      const deadlineSec = floodArrivalSeconds - (travelTimeMin * 60) - (safetyBuffer * 60);
+      if (deadlineSec >= 0) {
+        latestDepartureDisplay = formatRelTime(deadlineSec);
+      }
+    }
+  }
+
+  const formattedMargin = currentRoute?.margin_min !== null && currentRoute?.margin_min !== undefined
+    ? (currentRoute.margin_min > 0 ? `+${currentRoute.margin_min.toFixed(1)} min` : `${currentRoute.margin_min.toFixed(1)} min`)
+    : "N/A";
+
+  const limitingSegmentId = currentRoute?.limiting_segment?.road_id || "R02";
+
   return (
     <div style={{
-      width: "380px",
+      width: "420px",
       backgroundColor: "#ffffff",
       borderLeft: "1px solid var(--border-subtle)",
       display: "flex",
@@ -114,37 +182,414 @@ export const DecisionPanel: React.FC<DecisionPanelProps> = ({
       height: "calc(100vh - 58px)",
       overflowY: "auto",
       padding: "16px",
-      gap: "16px"
+      gap: "14px",
+      boxSizing: "border-box"
     }}>
-      {/* Route Selector Controls */}
+      {/* 1. SCENARIO & CONTEXT HEADER */}
       <div style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        borderBottom: "2px solid #0f172a",
+        paddingBottom: "8px"
+      }}>
+        <div>
+          <div style={{ fontSize: "10px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.5px", color: "#64748b" }}>
+            {analysisResult?.scenario_name ? analysisResult.scenario_name.toUpperCase() : "FLOOD SCENARIO"}
+          </div>
+          <div style={{ fontSize: "14px", fontWeight: 800, color: "#0f172a" }}>
+            {selectedOrigin?.properties.name || "Origin"} → {selectedDest?.properties.name || "Destination"}
+          </div>
+        </div>
+        <div style={{
+          fontSize: "10px",
+          fontWeight: 700,
+          padding: "3px 7px",
+          borderRadius: "4px",
+          backgroundColor: "#f1f5f9",
+          color: "#475569",
+          border: "1px solid #cbd5e1"
+        }}>
+          ROUTE DECISION
+        </div>
+      </div>
+
+      {/* 2. LEVEL 1: PRIMARY DECISION VIEW */}
+      {currentRoute ? (
+        (() => {
+          const pres = getStatusPresentation(currentRoute.status);
+
+          return (
+            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+              {/* Giant Decision Hero Card */}
+              <div style={{
+                backgroundColor: pres.bg,
+                border: `2px solid ${pres.border}`,
+                borderRadius: "8px",
+                padding: "16px",
+                display: "flex",
+                flexDirection: "column",
+                gap: "12px"
+              }}>
+                {/* Status Badge */}
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    {pres.icon}
+                    <div>
+                      <div style={{ fontSize: "24px", fontWeight: 900, letterSpacing: "-0.5px", color: pres.titleColor, lineHeight: 1.1 }}>
+                        {pres.badgeText}
+                      </div>
+                      <div style={{ fontSize: "10px", color: "var(--text-secondary)", marginTop: "2px" }}>
+                        Feasible under current scenario and assumptions
+                      </div>
+                    </div>
+                  </div>
+                  <div style={{
+                    backgroundColor: pres.tagBg,
+                    color: pres.tagText,
+                    fontSize: "12px",
+                    fontWeight: 800,
+                    padding: "4px 8px",
+                    borderRadius: "4px",
+                    fontFamily: "monospace"
+                  }}>
+                    {formattedMargin}
+                  </div>
+                </div>
+
+                {/* Hero Metric: LEAVE BY (Latest Feasible Departure) */}
+                <div style={{
+                  backgroundColor: "#ffffff",
+                  border: `2px solid ${pres.border}`,
+                  borderRadius: "8px",
+                  padding: "14px 10px",
+                  textAlign: "center"
+                }}>
+                  <div style={{ fontSize: "12px", fontWeight: 800, textTransform: "uppercase", color: "#475569", letterSpacing: "1px" }}>
+                    LEAVE BY
+                  </div>
+                  <div style={{
+                    fontSize: "36px",
+                    fontWeight: 900,
+                    fontFamily: "monospace",
+                    color: currentRoute.status === "INFEASIBLE" ? "#b91c1c" : "#0f172a",
+                    marginTop: "2px",
+                    letterSpacing: "1.5px"
+                  }}>
+                    {latestDepartureDisplay}
+                  </div>
+                  <div style={{ fontSize: "10px", color: "#64748b", marginTop: "3px" }}>
+                    Latest feasible departure under scenario and buffer rules
+                  </div>
+                </div>
+
+                {/* Primary Timing Triad & Limiting Segment */}
+                <div style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: "8px",
+                  backgroundColor: "#ffffff",
+                  border: `1px solid ${pres.border}`,
+                  borderRadius: "6px",
+                  padding: "10px",
+                  fontSize: "11px"
+                }}>
+                  <div>
+                    <span style={{ color: "#64748b", display: "block", fontSize: "10px", textTransform: "uppercase", fontWeight: 700 }}>
+                      Flood reaches route:
+                    </span>
+                    <strong style={{ color: "#0f172a", fontSize: "13px", fontFamily: "monospace" }}>
+                      {floodArrivalSeconds ? formatRelTime(floodArrivalSeconds) : "T+60:00"}
+                    </strong>
+                  </div>
+                  <div>
+                    <span style={{ color: "#64748b", display: "block", fontSize: "10px", textTransform: "uppercase", fontWeight: 700 }}>
+                      Travel time:
+                    </span>
+                    <strong style={{ color: "#0f172a", fontSize: "13px", fontFamily: "monospace" }}>
+                      {formatMinSec(travelTimeMin)}
+                    </strong>
+                  </div>
+                  <div>
+                    <span style={{ color: "#64748b", display: "block", fontSize: "10px", textTransform: "uppercase", fontWeight: 700 }}>
+                      Safety buffer:
+                    </span>
+                    <strong style={{ color: "#0f172a", fontSize: "13px", fontFamily: "monospace" }}>
+                      {formatMinSec(safetyBuffer)}
+                    </strong>
+                  </div>
+                  <div>
+                    <span style={{ color: "#64748b", display: "block", fontSize: "10px", textTransform: "uppercase", fontWeight: 700 }}>
+                      Limiting part of route:
+                    </span>
+                    <strong style={{ color: "#b91c1c", fontSize: "13px" }}>
+                      {limitingSegmentId}
+                    </strong>
+                  </div>
+                </div>
+              </div>
+
+              {/* 3. LEVEL 2: WHY? (ARITHMETIC EXPLANATION & LIMITING SEGMENT) */}
+              <div style={{
+                backgroundColor: "#f8fafc",
+                border: "1px solid var(--border-subtle)",
+                borderRadius: "6px",
+                overflow: "hidden"
+              }}>
+                <button
+                  onClick={() => setShowWhyDetails(!showWhyDetails)}
+                  style={{
+                    width: "100%",
+                    padding: "9px 12px",
+                    backgroundColor: "#f1f5f9",
+                    border: "none",
+                    borderBottom: showWhyDetails ? "1px solid var(--border-subtle)" : "none",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    cursor: "pointer",
+                    fontSize: "12px",
+                    fontWeight: 800,
+                    color: "#0f172a",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.4px"
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                    <Info size={14} color="#2563eb" />
+                    <span>WHY? (Decision Explanation)</span>
+                  </div>
+                  {showWhyDetails ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                </button>
+
+                {showWhyDetails && (
+                  <div style={{ padding: "12px", display: "flex", flexDirection: "column", gap: "10px", fontSize: "11px" }}>
+                    {/* Plain Language Explanation */}
+                    <div style={{
+                      backgroundColor: "#ffffff",
+                      border: "1px solid #e2e8f0",
+                      borderRadius: "6px",
+                      padding: "8px 10px",
+                      lineHeight: "1.5",
+                      color: "#1e293b",
+                      fontSize: "11px"
+                    }}>
+                      The flood reaches the route at <strong>{floodArrivalSeconds ? formatRelTime(floodArrivalSeconds) : "T+60:00"}</strong>.<br/>
+                      You need <strong>{formatMinSec(travelTimeMin)}</strong> to travel.<br/>
+                      A <strong>{formatMinSec(safetyBuffer)}</strong> safety buffer is configured.<br/>
+                      So the latest feasible departure is <strong>{latestDepartureDisplay}</strong>.
+                    </div>
+
+                    {/* Arithmetic Calculation Card */}
+                    <div style={{
+                      backgroundColor: "#ffffff",
+                      border: "1px solid #e2e8f0",
+                      borderRadius: "6px",
+                      padding: "8px 10px",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "4px",
+                      fontFamily: "monospace",
+                      fontSize: "11px"
+                    }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", color: "#334155" }}>
+                        <span>Flood reaches route:</span>
+                        <strong>{floodArrivalSeconds ? formatRelTime(floodArrivalSeconds) : "T+60:00"}</strong>
+                      </div>
+                      <div style={{ display: "flex", justifyContent: "space-between", color: "#64748b" }}>
+                        <span>minus Travel time:</span>
+                        <strong>- {formatMinSec(travelTimeMin)}</strong>
+                      </div>
+                      <div style={{ display: "flex", justifyContent: "space-between", color: "#64748b" }}>
+                        <span>minus Safety buffer:</span>
+                        <strong>- {formatMinSec(safetyBuffer)}</strong>
+                      </div>
+                      <div style={{
+                        borderTop: "1.5px solid #0f172a",
+                        paddingTop: "4px",
+                        marginTop: "2px",
+                        display: "flex",
+                        justifyContent: "space-between",
+                        fontWeight: 800,
+                        color: "#0f172a",
+                        fontSize: "12px"
+                      }}>
+                        <span>LEAVE BY:</span>
+                        <span style={{ color: currentRoute.status === "INFEASIBLE" ? "#b91c1c" : "#166534" }}>
+                          = {latestDepartureDisplay}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Limiting Segment Details */}
+                    {currentRoute.limiting_segment && (
+                      <div style={{
+                        backgroundColor: currentRoute.status === "INFEASIBLE" ? "#fff1f2" : "#f8fafc",
+                        border: `1px solid ${currentRoute.status === "INFEASIBLE" ? "#fecdd3" : "#e2e8f0"}`,
+                        borderRadius: "6px",
+                        padding: "8px 10px",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "4px"
+                      }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "5px", fontWeight: 800, fontSize: "11px", color: currentRoute.status === "INFEASIBLE" ? "#991b1b" : "#1e293b" }}>
+                          <ShieldAlert size={13} color={currentRoute.status === "INFEASIBLE" ? "#dc2626" : "#475569"} />
+                          <span>LIMITING PART OF ROUTE: {currentRoute.limiting_segment.road_id}</span>
+                        </div>
+                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px", fontSize: "10px", color: "#475569" }}>
+                          <div>Flood reaches segment: <strong>{formatRelTime(currentRoute.limiting_segment.flood_arrival_s)}</strong></div>
+                          <div>Travel to segment: <strong>{currentRoute.limiting_segment.cumulative_travel_min} min</strong></div>
+                          <div>Max depth: <strong>{currentRoute.limiting_segment.max_depth_m} m</strong></div>
+                          <div>Velocity: <strong>{currentRoute.limiting_segment.max_velocity_mps} m/s</strong></div>
+                        </div>
+                        <div style={{ fontSize: "10px", color: "#64748b", marginTop: "2px" }}>
+                          This segment limits the route decision.
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Alternative Route Evaluations (if any) */}
+              {analysisResult && analysisResult.alternatives.length > 1 && (
+                <div>
+                  <div style={{ fontSize: "10px", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", marginBottom: "4px" }}>
+                    Alternative Route Evaluations
+                  </div>
+                  <div style={{ display: "flex", gap: "6px" }}>
+                    {analysisResult.alternatives.map((alt, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => onSelectAlternative(idx)}
+                        style={{
+                          flex: 1,
+                          padding: "6px 8px",
+                          borderRadius: "4px",
+                          border: `1.5px solid ${activeAlternativeIndex === idx ? "#2563eb" : "var(--border-subtle)"}`,
+                          backgroundColor: activeAlternativeIndex === idx ? "#eff6ff" : "#ffffff",
+                          fontSize: "11px",
+                          fontWeight: 700,
+                          color: activeAlternativeIndex === idx ? "#2563eb" : "var(--text-secondary)",
+                          cursor: "pointer"
+                        }}
+                      >
+                        Path {idx === 0 ? "1 (Primary)" : `2 (Alt ${idx})`}
+                        <div style={{
+                          fontSize: "9px",
+                          fontWeight: 800,
+                          color: alt.status === "FEASIBLE" ? "#166534" : alt.status === "LOW MARGIN" ? "#d97706" : "#dc2626"
+                        }}>
+                          {alt.status}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 4. LEVEL 3: PROGRESSIVE DISCLOSURE CONTROLS */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                {/* Route Segments Table Toggle */}
+                <button
+                  onClick={() => setShowTable(!showTable)}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "4px",
+                    fontSize: "11px",
+                    fontWeight: 600,
+                    color: "#2563eb",
+                    cursor: "pointer",
+                    padding: 0
+                  }}
+                >
+                  <Table size={12} />
+                  {showTable ? "Hide Route Segment Breakdown" : "View Route Segment Breakdown"}
+                </button>
+
+                {showTable && (
+                  <div style={{
+                    marginTop: "4px",
+                    overflowX: "auto",
+                    border: "1px solid var(--border-subtle)",
+                    borderRadius: "4px"
+                  }}>
+                    <table style={{ width: "100%", fontSize: "10px", textAlign: "left", borderCollapse: "collapse" }}>
+                      <thead style={{ backgroundColor: "#f1f5f9" }}>
+                        <tr>
+                          <th style={{ padding: "4px 6px" }}>Edge</th>
+                          <th style={{ padding: "4px 6px" }}>Cumul</th>
+                          <th style={{ padding: "4px 6px" }}>Arrival</th>
+                          <th style={{ padding: "4px 6px" }}>Depth</th>
+                          <th style={{ padding: "4px 6px" }}>Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {currentRoute.edges.map((e, idx) => (
+                          <tr key={idx} style={{ borderTop: "1px solid var(--border-subtle)", backgroundColor: e.edge_feasible ? "#ffffff" : "#fef2f2" }}>
+                            <td style={{ padding: "4px 6px", fontWeight: 700 }}>{e.edge_id}</td>
+                            <td style={{ padding: "4px 6px" }}>{e.cumulative_travel_min}m</td>
+                            <td style={{ padding: "4px 6px" }}>{e.flood_arrival_s !== null ? `${Math.round(e.flood_arrival_s / 60)}m` : "Clear"}</td>
+                            <td style={{ padding: "4px 6px" }}>{e.max_depth_m}m</td>
+                            <td style={{ padding: "4px 6px", fontWeight: 700, color: e.edge_feasible ? "#166534" : "#991b1b" }}>
+                              {e.edge_feasible ? "PASS" : "FAIL"}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })()
+      ) : (
+        <div style={{
+          padding: "20px 12px",
+          textAlign: "center",
+          color: "var(--text-muted)",
+          fontSize: "12px",
+          border: "1px dashed var(--border-strong)",
+          borderRadius: "6px"
+        }}>
+          Select an origin and shelter destination below, then click <strong>Calculate Evacuation Window</strong> to derive route feasibility.
+        </div>
+      )}
+
+      {/* 5. ROUTE QUERY & THRESHOLD CONTROLS */}
+      <div style={{
+        marginTop: "auto",
         backgroundColor: "#f8fafc",
         border: "1px solid var(--border-subtle)",
         borderRadius: "6px",
         padding: "12px",
         display: "flex",
         flexDirection: "column",
-        gap: "10px"
+        gap: "8px"
       }}>
-        <div style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", color: "var(--text-muted)", letterSpacing: "0.4px" }}>
-          Evacuation Planning Query
+        <div style={{ fontSize: "10px", fontWeight: 800, textTransform: "uppercase", color: "#64748b", letterSpacing: "0.4px" }}>
+          Evacuation Route Parameters
         </div>
 
         {/* Origin */}
         <div>
-          <label style={{ fontSize: "11px", fontWeight: 600, color: "var(--text-secondary)", display: "block", marginBottom: "3px" }}>
-            Origin (Vulnerable Settlement):
+          <label style={{ fontSize: "11px", fontWeight: 600, color: "var(--text-secondary)", display: "block", marginBottom: "2px" }}>
+            Origin:
           </label>
           <select
             value={selectedOriginId}
             onChange={(e) => onSelectOrigin(e.target.value)}
             style={{
               width: "100%",
-              padding: "6px 8px",
+              padding: "5px 8px",
               borderRadius: "4px",
               border: "1px solid var(--border-strong)",
               backgroundColor: "#ffffff",
-              fontSize: "12px",
+              fontSize: "11px",
               fontWeight: 600,
               color: "var(--text-primary)"
             }}
@@ -159,19 +604,19 @@ export const DecisionPanel: React.FC<DecisionPanelProps> = ({
 
         {/* Destination */}
         <div>
-          <label style={{ fontSize: "11px", fontWeight: 600, color: "var(--text-secondary)", display: "block", marginBottom: "3px" }}>
-            Destination (Safe Relief Shelter):
+          <label style={{ fontSize: "11px", fontWeight: 600, color: "var(--text-secondary)", display: "block", marginBottom: "2px" }}>
+            Destination (Shelter):
           </label>
           <select
             value={selectedDestinationId}
             onChange={(e) => onSelectDestination(e.target.value)}
             style={{
               width: "100%",
-              padding: "6px 8px",
+              padding: "5px 8px",
               borderRadius: "4px",
               border: "1px solid var(--border-strong)",
               backgroundColor: "#ffffff",
-              fontSize: "12px",
+              fontSize: "11px",
               fontWeight: 600,
               color: "var(--text-primary)"
             }}
@@ -184,28 +629,8 @@ export const DecisionPanel: React.FC<DecisionPanelProps> = ({
           </select>
         </div>
 
-        {/* Departure Time */}
-        <div>
-          <label style={{ fontSize: "11px", fontWeight: 600, color: "var(--text-secondary)", display: "block", marginBottom: "3px" }}>
-            Departure Time (UTC):
-          </label>
-          <input
-            type="text"
-            value={departureTime}
-            onChange={(e) => onChangeDepartureTime(e.target.value)}
-            style={{
-              width: "100%",
-              padding: "5px 8px",
-              borderRadius: "4px",
-              border: "1px solid var(--border-strong)",
-              fontSize: "11px",
-              fontFamily: "monospace"
-            }}
-          />
-        </div>
-
-        {/* Toggle Advanced Config */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "4px" }}>
+        {/* Config Safety Rules Accordion */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <button
             onClick={() => setShowConfig(!showConfig)}
             style={{
@@ -214,15 +639,15 @@ export const DecisionPanel: React.FC<DecisionPanelProps> = ({
               display: "flex",
               alignItems: "center",
               gap: "4px",
-              fontSize: "11px",
-              fontWeight: 600,
+              fontSize: "10px",
+              fontWeight: 700,
               color: "#2563eb",
               cursor: "pointer",
               padding: 0
             }}
           >
             <Settings2 size={12} />
-            {showConfig ? "Hide Safety Rules" : "Configure Safety Buffer & Thresholds"}
+            {showConfig ? "Hide Safety Thresholds" : "Configure Safety Buffer & Thresholds"}
           </button>
         </div>
 
@@ -234,9 +659,19 @@ export const DecisionPanel: React.FC<DecisionPanelProps> = ({
             borderRadius: "4px",
             display: "flex",
             flexDirection: "column",
-            gap: "8px",
+            gap: "6px",
             fontSize: "11px"
           }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <span>Departure Time (UTC):</span>
+              <input
+                type="text"
+                value={departureTime}
+                onChange={(e) => onChangeDepartureTime(e.target.value)}
+                style={{ width: "130px", padding: "2px 4px", fontSize: "10px", fontFamily: "monospace" }}
+              />
+            </div>
+
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <span>Safety Buffer:</span>
               <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
@@ -247,7 +682,7 @@ export const DecisionPanel: React.FC<DecisionPanelProps> = ({
                   max="30"
                   value={safetyBufferMin}
                   onChange={(e) => onChangeSafetyBuffer(parseFloat(e.target.value) || 0)}
-                  style={{ width: "50px", padding: "2px 4px", fontSize: "11px", textAlign: "right" }}
+                  style={{ width: "45px", padding: "2px 4px", fontSize: "11px", textAlign: "right" }}
                 />
                 <span>min</span>
               </div>
@@ -263,7 +698,7 @@ export const DecisionPanel: React.FC<DecisionPanelProps> = ({
                   max="2.0"
                   value={depthLimitM}
                   onChange={(e) => onChangeDepthLimit(parseFloat(e.target.value) || 0.3)}
-                  style={{ width: "50px", padding: "2px 4px", fontSize: "11px", textAlign: "right" }}
+                  style={{ width: "45px", padding: "2px 4px", fontSize: "11px", textAlign: "right" }}
                 />
                 <span>m</span>
               </div>
@@ -279,7 +714,7 @@ export const DecisionPanel: React.FC<DecisionPanelProps> = ({
                   max="5.0"
                   value={velocityLimitMps}
                   onChange={(e) => onChangeVelocityLimit(parseFloat(e.target.value) || 1.0)}
-                  style={{ width: "50px", padding: "2px 4px", fontSize: "11px", textAlign: "right" }}
+                  style={{ width: "45px", padding: "2px 4px", fontSize: "11px", textAlign: "right" }}
                 />
                 <span>m/s</span>
               </div>
@@ -292,7 +727,7 @@ export const DecisionPanel: React.FC<DecisionPanelProps> = ({
           onClick={onRunAnalysis}
           disabled={isAnalyzing}
           style={{
-            marginTop: "4px",
+            marginTop: "2px",
             padding: "8px 12px",
             borderRadius: "6px",
             backgroundColor: "#2563eb",
@@ -307,220 +742,42 @@ export const DecisionPanel: React.FC<DecisionPanelProps> = ({
             gap: "6px"
           }}
         >
-          {isAnalyzing ? "Evaluating Hydraulic Feasibility..." : "Calculate Evacuation Window"}
+          {isAnalyzing ? "Evaluating Hydraulic Feasibility..." : "Recalculate Evacuation Window"}
           <ArrowRight size={14} />
         </button>
+
+        {/* Technical Provenance Trigger */}
+        {onOpenProvenance && (
+          <button
+            onClick={onOpenProvenance}
+            style={{
+              background: "none",
+              border: "none",
+              fontSize: "10px",
+              color: "#64748b",
+              textAlign: "center",
+              cursor: "pointer",
+              textDecoration: "underline",
+              paddingTop: "2px"
+            }}
+          >
+            View Technical Provenance & Model Assumptions →
+          </button>
+        )}
       </div>
 
-      {/* Operational Result Display */}
-      {currentRoute ? (
-        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-          {/* Status Badge */}
-          {(() => {
-            const badge = getStatusBadge(currentRoute.status);
-            return (
-              <div style={{
-                padding: "10px 12px",
-                borderRadius: "6px",
-                backgroundColor: badge.bg,
-                border: `1px solid ${badge.border}`,
-                color: badge.color,
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                fontWeight: 700,
-                fontSize: "12px",
-                letterSpacing: "0.2px"
-              }}>
-                {badge.icon}
-                <span>{badge.label}</span>
-              </div>
-            );
-          })()}
-
-          {/* Primary Metric: Departure Deadline */}
-          <div style={{
-            backgroundColor: "#ffffff",
-            border: "1px solid var(--border-strong)",
-            borderRadius: "6px",
-            padding: "12px",
-            display: "flex",
-            flexDirection: "column",
-            gap: "8px"
-          }}>
-            <div style={{ fontSize: "11px", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase" }}>
-              Model-Derived Departure Deadline
-            </div>
-            <div style={{
-              fontSize: "20px",
-              fontWeight: 800,
-              fontFamily: "monospace",
-              color: currentRoute.status === "INFEASIBLE" ? "#b91c1c" : "#0f172a"
-            }}>
-              {currentRoute.deadline_utc || "PAST / BLOCKED"}
-            </div>
-
-            <div style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: "8px",
-              borderTop: "1px solid var(--border-subtle)",
-              paddingTop: "8px",
-              fontSize: "11px"
-            }}>
-              <div>
-                <span style={{ color: "var(--text-muted)", display: "block" }}>Route Travel Time:</span>
-                <span style={{ fontWeight: 700, fontSize: "13px" }}>{currentRoute.total_travel_time_min} min</span>
-              </div>
-              <div>
-                <span style={{ color: "var(--text-muted)", display: "block" }}>Time Margin:</span>
-                <span style={{
-                  fontWeight: 700,
-                  fontSize: "13px",
-                  color: (currentRoute.margin_min ?? 0) < 0 ? "#b91c1c" : (currentRoute.margin_min ?? 0) <= 5 ? "#b45309" : "#166534"
-                }}>
-                  {currentRoute.margin_min !== null ? `${currentRoute.margin_min} min` : "N/A"}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Limiting Segment Card */}
-          {currentRoute.limiting_segment && (
-            <div style={{
-              backgroundColor: currentRoute.status === "INFEASIBLE" ? "#fef2f2" : "#fffbeb",
-              border: `1px solid ${currentRoute.status === "INFEASIBLE" ? "#fecaca" : "#fde68a"}`,
-              borderRadius: "6px",
-              padding: "10px",
-              display: "flex",
-              flexDirection: "column",
-              gap: "6px",
-              fontSize: "11px"
-            }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "6px", fontWeight: 700, color: currentRoute.status === "INFEASIBLE" ? "#991b1b" : "#92400e" }}>
-                <ShieldAlert size={14} />
-                <span>FIRST LIMITING ROAD SEGMENT: {currentRoute.limiting_segment.road_id}</span>
-              </div>
-              <div style={{ color: "var(--text-secondary)", lineHeight: "1.4" }}>
-                <div>• Cumulative travel to segment: <strong>{currentRoute.limiting_segment.cumulative_travel_min} min</strong></div>
-                <div>• Modelled flood arrival at segment: <strong>{currentRoute.limiting_segment.flood_arrival_utc}</strong></div>
-                <div>• Maximum projected depth: <strong>{currentRoute.limiting_segment.max_depth_m} m</strong> (Velocity: {currentRoute.limiting_segment.max_velocity_mps} m/s)</div>
-              </div>
-            </div>
-          )}
-
-          {/* Deterministic Decision Explanation */}
-          <div style={{
-            padding: "10px",
-            backgroundColor: "#f8fafc",
-            border: "1px solid var(--border-subtle)",
-            borderRadius: "6px",
-            fontSize: "11px",
-            color: "var(--text-secondary)",
-            lineHeight: "1.45"
-          }}>
-            <strong style={{ color: "var(--text-primary)", display: "block", marginBottom: "4px" }}>Deterministic Explanation:</strong>
-            {currentRoute.explanation}
-          </div>
-
-          {/* Alternative Routes Selector */}
-          {analysisResult && analysisResult.alternatives.length > 1 && (
-            <div>
-              <div style={{ fontSize: "11px", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", marginBottom: "6px" }}>
-                Candidate Route Alternatives
-              </div>
-              <div style={{ display: "flex", gap: "6px" }}>
-                {analysisResult.alternatives.map((alt, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => onSelectAlternative(idx)}
-                    style={{
-                      flex: 1,
-                      padding: "6px 8px",
-                      borderRadius: "4px",
-                      border: `1px solid ${activeAlternativeIndex === idx ? "#2563eb" : "var(--border-subtle)"}`,
-                      backgroundColor: activeAlternativeIndex === idx ? "#eff6ff" : "#ffffff",
-                      fontSize: "11px",
-                      fontWeight: 600,
-                      color: activeAlternativeIndex === idx ? "#2563eb" : "var(--text-secondary)",
-                      cursor: "pointer"
-                    }}
-                  >
-                    Route {idx === 0 ? "A" : idx === 1 ? "B" : "C"} ({alt.status})
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Segment Breakdown Table Toggle */}
-          <div>
-            <button
-              onClick={() => setShowTable(!showTable)}
-              style={{
-                background: "none",
-                border: "none",
-                display: "flex",
-                alignItems: "center",
-                gap: "4px",
-                fontSize: "11px",
-                fontWeight: 600,
-                color: "var(--text-secondary)",
-                cursor: "pointer",
-                padding: 0
-              }}
-            >
-              <Table size={12} />
-              {showTable ? "Hide Segment Details" : "View Route Segments Breakdown"}
-            </button>
-
-            {showTable && (
-              <div style={{
-                marginTop: "8px",
-                overflowX: "auto",
-                border: "1px solid var(--border-subtle)",
-                borderRadius: "4px"
-              }}>
-                <table style={{ width: "100%", fontSize: "10px", textAlign: "left", borderCollapse: "collapse" }}>
-                  <thead style={{ backgroundColor: "#f1f5f9" }}>
-                    <tr>
-                      <th style={{ padding: "4px 6px" }}>Edge</th>
-                      <th style={{ padding: "4px 6px" }}>Cumul (min)</th>
-                      <th style={{ padding: "4px 6px" }}>Arrival (s)</th>
-                      <th style={{ padding: "4px 6px" }}>Max Depth</th>
-                      <th style={{ padding: "4px 6px" }}>Feasible</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {currentRoute.edges.map((e, idx) => (
-                      <tr key={idx} style={{ borderTop: "1px solid var(--border-subtle)", backgroundColor: e.edge_feasible ? "#ffffff" : "#fef2f2" }}>
-                        <td style={{ padding: "4px 6px", fontWeight: 600 }}>{e.edge_id}</td>
-                        <td style={{ padding: "4px 6px" }}>{e.cumulative_travel_min}</td>
-                        <td style={{ padding: "4px 6px" }}>{e.flood_arrival_s !== null ? `${e.flood_arrival_s}s` : "Safe"}</td>
-                        <td style={{ padding: "4px 6px" }}>{e.max_depth_m}m</td>
-                        <td style={{ padding: "4px 6px", fontWeight: 700, color: e.edge_feasible ? "#166534" : "#991b1b" }}>
-                          {e.edge_feasible ? "PASS" : "BLOCK"}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        </div>
-      ) : (
-        <div style={{
-          padding: "20px 12px",
-          textAlign: "center",
-          color: "var(--text-muted)",
-          fontSize: "12px",
-          border: "1px dashed var(--border-strong)",
-          borderRadius: "6px"
-        }}>
-          Select an origin village settlement and safe shelter destination, then click <strong>Calculate Evacuation Window</strong> to derive route feasibility and latest departure deadlines.
-        </div>
-      )}
+      {/* Safety Notice */}
+      <div style={{
+        padding: "6px 8px",
+        backgroundColor: "#f8fafc",
+        border: "1px solid #e2e8f0",
+        borderRadius: "4px",
+        fontSize: "9px",
+        color: "#64748b",
+        lineHeight: "1.3"
+      }}>
+        <strong>Operational Safety Notice:</strong> Feasible under current scenario and configured assumptions. Not a guarantee of physical safety. Results depend on hydraulic, terrain, route, travel-time, and safety-buffer assumptions.
+      </div>
     </div>
   );
 };

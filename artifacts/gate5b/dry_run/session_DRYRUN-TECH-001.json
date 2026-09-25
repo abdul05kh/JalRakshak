@@ -1,0 +1,136 @@
+{
+  "session_id": "sess_DRYRUN-TECH-001_1790255403",
+  "participant_id": "DRYRUN-TECH-001",
+  "participant_category": "TECHNICAL_DRY_RUN_PROFILE_A",
+  "counterbalance_group": "GROUP_1_A_THEN_B",
+  "software_version_backend": "1.0.0-gate5b",
+  "software_version_frontend": "1.0.0-gate5b",
+  "ground_truth_hash": "4bf8d9a2d6d04bff1cde373d74ec18602eadb00cabafe5c1d37767ea672a7637",
+  "comprehension_check": {
+    "answers": {
+      "q1_arrival_time": "B",
+      "q2_travel_time": "B",
+      "q3_safety_buffer": "B",
+      "q4_feasible_not_safe": "B"
+    },
+    "all_correct": true,
+    "misconceptions_flagged": [],
+    "recorded_at_iso": "2026-09-24T13:10:03.312349+00:00"
+  },
+  "trials": [
+    {
+      "trial_index": 1,
+      "condition": "CONDITION_A_RAW_HYDRAULIC",
+      "task_id": "TASK_01",
+      "start_iso": "2026-09-24T13:10:03.312362+00:00",
+      "end_iso": "2026-09-24T13:10:45.812362+00:00",
+      "duration_seconds": 42.5,
+      "raw_response": {
+        "status_selected": "FEASIBLE"
+      },
+      "scores": {
+        "status_correct": 1,
+        "misinterpreted_as_safety": false
+      }
+    },
+    {
+      "trial_index": 2,
+      "condition": "CONDITION_A_RAW_HYDRAULIC",
+      "task_id": "TASK_02",
+      "start_iso": "2026-09-24T13:10:46.312362+00:00",
+      "end_iso": "2026-09-24T13:11:41.512362+00:00",
+      "duration_seconds": 55.2,
+      "raw_response": {
+        "deadline_entered": "T+44 min 21 sec"
+      },
+      "scores": {
+        "deadline_correct": 1,
+        "misinterpreted_as_safety": false
+      }
+    },
+    {
+      "trial_index": 3,
+      "condition": "CONDITION_A_RAW_HYDRAULIC",
+      "task_id": "TASK_03",
+      "start_iso": "2026-09-24T13:11:42.312362+00:00",
+      "end_iso": "2026-09-24T13:12:18.312362+00:00",
+      "duration_seconds": 36.0,
+      "raw_response": {
+        "limiting_segment_entered": "R02"
+      },
+      "scores": {
+        "limiting_segment_correct": 1,
+        "misinterpreted_as_safety": false
+      }
+    },
+    {
+      "trial_index": 4,
+      "condition": "CONDITION_B_JALRAKSHAK",
+      "task_id": "TASK_04",
+      "start_iso": "2026-09-24T13:17:18.312362+00:00",
+      "end_iso": "2026-09-24T13:17:43.312362+00:00",
+      "duration_seconds": 25.0,
+      "raw_response": {
+        "reason_text": "Flood arrival at segment R02 is 60 min, traversal time is 12.65 min, and safety buffer is 3 min."
+      },
+      "scores": {
+        "explanation_score": 2,
+        "misinterpreted_as_safety": false
+      }
+    },
+    {
+      "trial_index": 5,
+      "condition": "CONDITION_B_JALRAKSHAK",
+      "task_id": "TASK_05",
+      "start_iso": "2026-09-24T13:17:44.312362+00:00",
+      "end_iso": "2026-09-24T13:17:59.312362+00:00",
+      "duration_seconds": 15.0,
+      "raw_response": {
+        "alternative_selected": "Yes, High Ridge Bypass via R01"
+      },
+      "scores": {
+        "alternative_correct": 1,
+        "misinterpreted_as_safety": false
+      }
+    },
+    {
+      "trial_index": 6,
+      "condition": "CONDITION_B_JALRAKSHAK",
+      "task_id": "TASK_06",
+      "start_iso": "2026-09-24T13:18:00.312362+00:00",
+      "end_iso": "2026-09-24T13:18:16.312362+00:00",
+      "duration_seconds": 16.0,
+      "raw_response": {
+        "scenario_delta_selected": "Departure window contracts significantly (earlier arrival)"
+      },
+      "scores": {
+        "scenario_delta_correct": 1,
+        "misinterpreted_as_safety": false
+      }
+    },
+    {
+      "trial_index": 7,
+      "condition": "CONDITION_B_JALRAKSHAK",
+      "task_id": "TASK_07",
+      "start_iso": "2026-09-24T13:18:17.312362+00:00",
+      "end_iso": "2026-09-24T13:18:33.312362+00:00",
+      "duration_seconds": 16.0,
+      "raw_response": {
+        "limitations_selected": [
+          "Static speed assumptions",
+          "Demonstration road dataset",
+          "No historical calibration"
+        ]
+      },
+      "scores": {
+        "limitation_awareness_score": 1,
+        "misinterpreted_as_safety": false
+      }
+    }
+  ],
+  "qualitative_feedback": {
+    "condition_a_usability": "Raw rasters require manual arithmetic for travel time and buffer subtraction, but mathematically solvable.",
+    "condition_b_clarity": "Decision panel directly surfaces arrival, traversal, and minimum deadline clearly.",
+    "time_format_feedback": "T+MM:SS notation is unambiguous compared to clock UTC."
+  }
+}

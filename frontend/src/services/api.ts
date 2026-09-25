@@ -75,3 +75,16 @@ export async function fetchProvenanceData(scenarioId: string): Promise<any> {
   if (!res.ok) throw new Error("Failed to fetch provenance data");
   return res.json();
 }
+
+export async function fetchTimelineData(scenarioId: string): Promise<any> {
+  const res = await fetch(`${API_BASE}/scenarios/${scenarioId}/timeline`);
+  if (!res.ok) throw new Error("Failed to fetch timeline data");
+  return res.json();
+}
+
+export async function fetchExplainersData(scenarioId: string): Promise<any> {
+  const res = await fetch(`${API_BASE}/scenarios/${scenarioId}/explainers`);
+  if (!res.ok) throw new Error("Failed to fetch explainers data");
+  return res.json();
+}
+

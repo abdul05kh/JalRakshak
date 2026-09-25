@@ -1,0 +1,70 @@
+ 
+                                              HEC-RAS - River Analysis System
+ 
+ 
+Project File:  C:\HEC_Work\TehriExecutionSmokeTest_Run1\TehriSmokeTest.prj
+ 
+Project Name:  Tehri Dam Break Smoke Test
+ 
+ 
+Plan Name:     Tehri Smoke Test 2D Plan
+ 
+Short ID:      TehriSmoke2D
+ 
+
+Starting Time:   23Sep2026 2400
+
+Ending Time:     24Sep2026 0100
+
+
+                ################################################
+                #                                              #
+                #                                              #
+                #       1D and 2D Unsteady Flow Module         #
+                #                                              #
+                #                                              #
+                #          HEC-RAS 7.0.1 June 2026             #
+                #                                              #
+                #             24SEP26 at 14:00:50              #
+                #                                              #
+                ################################################
+                
+ 
+ 
+ 
+
+         US Inflow      DS Outflow       Lat Hydro        SA Hydro     Groundwater      Diversions   Precip Excess
+         *********      **********       *********        ********     ***********      **********   *************
+                                                                                                                                  
+
+    Start 1D Reach  Final 1D Reach   Starting SA's      Final SA's
+    **************  **************   *************      **********
+                                                                  
+
+
+
+                 ***   Volume Accounting for 2D Flow Area in 1000 m^3   ***
+
+           2D Area    Starting Vol      Ending Vol      Cum Inflow     Cum Outflow           Error   Percent Error
+           *******    ************      **********      **********     ***********           *****   *************
+ 
+ 
+       TehriCanyon                           1494.           1494.                         0.03282        0.002196
+
+
+
+                 ***  Total Volume Accounting (for the entire model) in 1000 m^3   ***
+
+Total Boundary Flux of Water In            1494.
+Total Boundary Flux of Water Out    0.0000000000
+
+Starting Volume                     0.0000000000
+Ending Volume                              1494.
+
+
+                             Error   Percent Error
+                             *****   *************
+                           0.03282        0.002196
+
+
+

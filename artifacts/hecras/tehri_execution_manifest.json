@@ -1,0 +1,120 @@
+{
+  "hecras_version": "HEC-RAS 7.0.1 June 2026",
+  "ras_unsteady_executable": "C:\\Program Files (x86)\\HEC\\HEC-RAS\\7.0.1\\x64\\RasUnsteady.exe",
+  "ras_geom_preprocess_executable": "C:\\Program Files (x86)\\HEC\\HEC-RAS\\7.0.1\\x64\\RasGeomPreprocess.exe",
+  "ras_controller_progid": "RAS701.HECRASController",
+  "execution_start": "2026-09-24T03:25:20",
+  "execution_end": "2026-09-24T03:25:24",
+  "exit_code": 0,
+  "final_status": "CONSTRUCTION_SMOKE_TEST_PASSED",
+  "project": {
+    "title": "Tehri Dam Break Smoke Test",
+    "path": "C:\\HEC_Work\\TehriExecutionSmokeTest_Run1\\TehriSmokeTest.prj",
+    "sha256": "85f9b5b1cd245a8fa29b41aa5cf6181a0eb8c4c1af5b3c9e4befb2cdc01ab96c",
+    "size_bytes": 143
+  },
+  "geometry": {
+    "title": "Tehri 1.5km Canyon Geometry",
+    "file": "TehriSmokeTest.g01",
+    "sha256": "e370dbad1ee8b9703883361478c5d30d6861736b11d31e6ea30f2b4c70339bee",
+    "size_bytes": 27445,
+    "compiled_hdf": "TehriSmokeTest.g01.hdf",
+    "compiled_hdf_sha256": "de59215ed272326258ad251008a556fb0a7efe2453d7e56ad419dbc80e2ac7db",
+    "compiled_hdf_size_bytes": 1316099,
+    "flow_area_name": "TehriCanyon",
+    "cell_count": 896,
+    "face_count": 1624,
+    "mesh_spacing_m": 50.0,
+    "bounds_utm44n": {
+      "min_x": 257000.0,
+      "max_x": 258500.0,
+      "min_y": 3362500.0,
+      "max_y": 3364000.0
+    }
+  },
+  "terrain": {
+    "source_provenance": "Copernicus GLO-30 DSM (Resampled to 25m, UTM 44N EPSG:32644)",
+    "tif_file": "C:\\HEC_Work\\TehriExecutionSmokeTest_Run1\\Terrain\\TehriSmokeTerrain.tif",
+    "tif_sha256": "8be1eea4de465415a75221314b25efdcfb1f38d33222d0a3e8f72bfe0e19f0b5",
+    "tif_size_bytes": 40408,
+    "hdf_file": "C:\\HEC_Work\\TehriExecutionSmokeTest_Run1\\Terrain\\TehriSmokeTerrain.hdf",
+    "hdf_sha256": "f83178095b4c87b850131f55da4c8e14dac367d3c968ac85af5ca41769e5afad",
+    "crs": "EPSG:32644 (UTM Zone 44N)",
+    "vertical_datum_status": "NOT_ESTABLISHED"
+  },
+  "plan": {
+    "title": "Tehri Smoke Test 2D Plan",
+    "file": "TehriSmokeTest.p01",
+    "sha256": "d9ad07690080810b0257eac80c2e3c1e66e99a8e75c623e7f3971b7e1c86a2bb",
+    "size_bytes": 939,
+    "simulation_start": "24SEP2026,0000",
+    "simulation_end": "24SEP2026,0100",
+    "computation_timestep": "1SEC",
+    "output_interval": "5MIN",
+    "equation_set": "SWE-ELM (Diffusion Wave Equation Set)",
+    "matrix_solver": "PARDISO"
+  },
+  "unsteady_flow": {
+    "title": "Tehri Smoke Test Unsteady Flow",
+    "file": "TehriSmokeTest.u01",
+    "sha256": "3e4e7e612ee16f11ff35ab0793616790ba1f0438464e7fc21a76660d46f9940d",
+    "size_bytes": 589,
+    "boundary_conditions": [
+      {
+        "name": "DSNormalDepth",
+        "type": "Normal Depth Friction Slope",
+        "value": 0.004
+      },
+      {
+        "name": "UpstreamInflow",
+        "type": "Flow Hydrograph",
+        "value_m3s": 100.0
+      }
+    ]
+  },
+  "result_hdf5": {
+    "file_path": "C:\\HEC_Work\\TehriExecutionSmokeTest_Run1\\TehriSmokeTest.p01.hdf",
+    "sha256": "ab3db449d852b82ea7c8130997dc032e3c28d3b79463002d6f9f89d62462b0b0",
+    "size_bytes": 1729315,
+    "root_attributes": {
+      "File Type": "HEC-RAS Results",
+      "File Version": "HEC-RAS 7.0.1 June 2026",
+      "Projection": "PROJCS[\"WGS_1984_UTM_Zone_44N\",GEOGCS[\"GCS_WGS_1984\",DATUM[\"D_WGS_1984\",SPHEROID[\"WGS_1984\",6378137.0,298.257223563]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"False_Easting\",500000.0],PARAMETER[\"False_Northing\",0.0],PARAMETER[\"Central_Meridian\",81.0],PARAMETER[\"Scale_Factor\",0.9996],PARAMETER[\"Latitude_Of_Origin\",0.0],UNIT[\"Meter\",1.0]]",
+      "Units System": "SI Units"
+    },
+    "timesteps_count": 13,
+    "cells_count": 896,
+    "water_surface_max_m": 1123.751220703125,
+    "water_surface_min_m": 617.5,
+    "face_velocity_max_ms": 0.3216192424297333,
+    "face_velocity_min_ms": -0.47205251455307007
+  },
+  "mass_balance": {
+    "volume_accounting_error_1000m3": 0.00745,
+    "volume_accounting_error_percent": 0.002069,
+    "status": "CONSERVATION_CHECK_PASSED",
+    "physical_validation_status": "UNVALIDATED_PRELIMINARY_DEMONSTRATION"
+  },
+  "repeatability": {
+    "run1_p01_hdf_sha256": "ab3db449d852b82ea7c8130997dc032e3c28d3b79463002d6f9f89d62462b0b0",
+    "run2_p01_hdf_sha256": "e2789c2e4f028b552e189f253882db87dfb81f02f2a642b241049f35826a6fc9",
+    "sha256_identical": false,
+    "sha256_difference_reason": "HEC-RAS embeds execution timestamps and file write time strings into HDF5 metadata header",
+    "numerical_arrays_identical": true,
+    "max_numerical_difference": 0.0
+  },
+  "derived_fields": {
+    "depth": {
+      "formula": "Depth = max(0, WSE - Cell Minimum Elevation)",
+      "classification": "DERIVED FROM NATIVE HEC-RAS OUTPUT",
+      "units": "meters",
+      "max_depth_m": 0.94525146484375
+    },
+    "arrival_time": {
+      "formula": "First timestep where Derived Depth >= Configured Threshold",
+      "configured_threshold_m": 0.3,
+      "units": "seconds",
+      "temporal_resolution": "300 seconds (5 minute output interval)"
+    }
+  }
+}

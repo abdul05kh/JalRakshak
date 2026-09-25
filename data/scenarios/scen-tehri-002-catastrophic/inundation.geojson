@@ -5,7 +5,7 @@
       "type": "Feature",
       "properties": {
         "scenario_id": "scen-tehri-002-catastrophic",
-        "zone": "Maximum Inundation Extent (Catastrophic)",
+        "zone": "Maximum Inundation Extent (Precomputed Demo)",
         "max_depth_range": "3.5m - 22.8m"
       },
       "geometry": {

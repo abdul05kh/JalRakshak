@@ -1,15 +1,35 @@
 import React from "react";
-import { ShieldCheck, GitCompare, Award, FileText, Activity } from "lucide-react";
+import { 
+  ShieldCheck, 
+  Map, 
+  Waves, 
+  Clock, 
+  Network, 
+  Award, 
+  FileCheck 
+} from "lucide-react";
 import type { ScenarioSummary, Dam } from "../types";
+
+export type ViewType = 
+  | "OPERATIONAL_MAP" 
+  | "FLOOD_SIMULATION" 
+  | "EVACUATION_DECISION" 
+  | "ROAD_IMPACT" 
+  | "ARCHITECTURE"
+  | "FEASIBILITY"
+  | "SCIENCE_VALIDATION" 
+  | "PROVENANCE";
 
 interface HeaderProps {
   scenarios: ScenarioSummary[];
   activeScenarioId: string;
   onSelectScenario: (id: string) => void;
   dam: Dam | null;
-  onOpenCompare: () => void;
-  onOpenValidation: () => void;
-  onOpenProvenance: () => void;
+  selectedRouteId: string;
+  onSelectRouteId: (id: string) => void;
+  activeTimestepMin?: number;
+  activeView: ViewType;
+  onNavigateToView: (view: ViewType) => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -17,175 +37,192 @@ export const Header: React.FC<HeaderProps> = ({
   activeScenarioId,
   onSelectScenario,
   dam,
-  onOpenCompare,
-  onOpenValidation,
-  onOpenProvenance
+  selectedRouteId,
+  onSelectRouteId,
+  activeTimestepMin = 60,
+  activeView,
+  onNavigateToView
 }) => {
+  const authoritativeScenarios = scenarios.filter((s) => s.category === "AUTHORITATIVE" || s.id.startsWith("SCENARIO_"));
+  const otherScenarios = scenarios.filter((s) => !authoritativeScenarios.some((a) => a.id === s.id));
+
+  const navItems: { id: ViewType; label: string; icon: React.ReactNode }[] = [
+    { id: "OPERATIONAL_MAP", label: "3D MAP", icon: <Map size={13} /> },
+    { id: "FLOOD_SIMULATION", label: "SIMULATION", icon: <Waves size={13} /> },
+    { id: "EVACUATION_DECISION", label: "DECISION", icon: <Clock size={13} /> },
+    { id: "ROAD_IMPACT", label: "ROAD IMPACT", icon: <Network size={13} /> },
+    { id: "SCIENCE_VALIDATION", label: "SCIENCE", icon: <Award size={13} /> },
+    { id: "PROVENANCE", label: "PROVENANCE", icon: <FileCheck size={13} /> }
+  ];
+
   return (
     <header style={{
-      height: "58px",
-      backgroundColor: "#ffffff",
-      borderBottom: "1px solid var(--border-subtle)",
+      height: "50px",
+      backgroundColor: "#0f172a",
+      borderBottom: "1px solid rgba(255, 255, 255, 0.12)",
       display: "flex",
       alignItems: "center",
       justifyContent: "space-between",
-      padding: "0 20px",
-      zIndex: 1000
+      padding: "0 16px",
+      zIndex: 1000,
+      userSelect: "none",
+      color: "#ffffff"
     }}>
-      {/* Brand & Study Area Context */}
-      <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+      {/* Left: Brand & Context */}
+      <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+        <div 
+          onClick={() => onNavigateToView("OPERATIONAL_MAP")}
+          style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}
+        >
           <div style={{
-            width: "30px",
-            height: "30px",
+            width: "26px",
+            height: "26px",
             borderRadius: "6px",
             backgroundColor: "#2563eb",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            color: "#ffffff"
+            color: "#ffffff",
+            boxShadow: "0 2px 8px rgba(37, 99, 235, 0.4)"
           }}>
-            <ShieldCheck size={18} strokeWidth={2.5} />
+            <ShieldCheck size={16} strokeWidth={2.5} />
           </div>
-          <div>
-            <div style={{ fontWeight: 700, fontSize: "15px", letterSpacing: "-0.3px", color: "var(--text-primary)" }}>
-              JalRakshak
-            </div>
-            <div style={{ fontSize: "10px", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: 600, letterSpacing: "0.4px" }}>
-              Dam-Break Flood Decision Support
-            </div>
-          </div>
+          <span style={{ fontWeight: 900, fontSize: "14px", letterSpacing: "-0.3px", color: "#ffffff" }}>
+            JALRAKSHAK
+          </span>
         </div>
 
-        <div style={{ height: "24px", width: "1px", backgroundColor: "var(--border-subtle)" }} />
-
         {dam && (
-          <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "12px", color: "var(--text-secondary)" }}>
-            <span style={{ fontWeight: 600, color: "var(--text-primary)" }}>{dam.name}</span>
-            <span style={{ color: "var(--text-muted)" }}>({dam.river_name})</span>
-            <span style={{
-              fontSize: "10px",
-              padding: "2px 6px",
-              borderRadius: "4px",
-              backgroundColor: "#f1f5f9",
-              border: "1px solid var(--border-subtle)",
-              fontWeight: 600
-            }}>
-              FRL: {dam.full_reservoir_level_m}m MSL
-            </span>
-          </div>
+          <span style={{
+            fontSize: "10.5px",
+            color: "#94a3b8",
+            fontWeight: 600,
+            paddingLeft: "8px",
+            borderLeft: "1px solid rgba(255, 255, 255, 0.15)"
+          }}>
+            {dam.name} ({dam.river_name})
+          </span>
         )}
       </div>
 
-      {/* Scenario Selector & Status */}
-      <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-          <label style={{ fontSize: "11px", fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase" }}>
-            Breach Scenario:
+      {/* Middle: Scenario & Route Selectors */}
+      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+        {/* Scenario Selector */}
+        <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+          <label style={{ fontSize: "10px", fontWeight: 800, color: "#94a3b8", textTransform: "uppercase" }}>
+            SCENARIO:
           </label>
           <select
             value={activeScenarioId}
             onChange={(e) => onSelectScenario(e.target.value)}
             style={{
-              padding: "6px 10px",
-              borderRadius: "6px",
-              border: "1px solid var(--border-strong)",
-              backgroundColor: "#f8fafc",
-              fontSize: "12px",
-              fontWeight: 600,
-              color: "var(--text-primary)",
+              padding: "4px 8px",
+              borderRadius: "5px",
+              border: "1px solid rgba(255, 255, 255, 0.18)",
+              backgroundColor: "#1e293b",
+              fontSize: "11px",
+              fontWeight: 700,
+              color: "#38bdf8",
               cursor: "pointer",
               outline: "none"
             }}
           >
-            {scenarios.map((sc) => (
-              <option key={sc.id} value={sc.id}>
-                {sc.name}
-              </option>
-            ))}
+            <optgroup label="AUTHORITATIVE HEC-RAS 2D SCENARIOS">
+              {authoritativeScenarios.map((sc) => (
+                <option key={sc.id} value={sc.id}>
+                  {sc.id.replace("SCENARIO_", "")} (Qp: {sc.peak_discharge_m3s.toLocaleString()} m³/s)
+                </option>
+              ))}
+            </optgroup>
+            {otherScenarios.length > 0 && (
+              <optgroup label="DEMONSTRATION & RESEARCH FIXTURES">
+                {otherScenarios.map((sc) => (
+                  <option key={sc.id} value={sc.id}>
+                    {sc.name.substring(0, 26)}...
+                  </option>
+                ))}
+              </optgroup>
+            )}
           </select>
         </div>
 
-        <div style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "5px",
-          padding: "4px 8px",
-          borderRadius: "4px",
-          backgroundColor: "#dcfce7",
-          border: "1px solid #86efac",
-          color: "#166534",
-          fontSize: "11px",
-          fontWeight: 700,
-          letterSpacing: "0.2px"
-        }}>
-          <Activity size={12} />
-          HYDRAULIC RUN READY
+        {/* Route Selector */}
+        <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+          <label style={{ fontSize: "10px", fontWeight: 800, color: "#94a3b8", textTransform: "uppercase" }}>
+            ROUTE:
+          </label>
+          <select
+            value={selectedRouteId}
+            onChange={(e) => onSelectRouteId(e.target.value)}
+            style={{
+              padding: "4px 8px",
+              borderRadius: "5px",
+              border: "1px solid rgba(255, 255, 255, 0.18)",
+              backgroundColor: "#1e293b",
+              fontSize: "11px",
+              fontWeight: 700,
+              color: "#4ade80",
+              cursor: "pointer",
+              outline: "none"
+            }}
+          >
+            <option value="R02">R02 — Chamba via Koteshwar (Primary)</option>
+            <option value="R01">R01 — Chamba High Ridge</option>
+            <option value="R03">R03 — Devprayag Valley</option>
+            <option value="R04">R04 — Tehri North Access</option>
+            <option value="R05">R05 — Koteshwar Dam Crossing</option>
+          </select>
         </div>
 
-        <div style={{ height: "20px", width: "1px", backgroundColor: "var(--border-subtle)" }} />
-
-        {/* Action Buttons: Compare, Validation, Provenance */}
-        <button
-          onClick={onOpenCompare}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "5px",
-            padding: "6px 10px",
-            borderRadius: "6px",
-            border: "1px solid var(--border-strong)",
-            backgroundColor: "#ffffff",
-            fontSize: "11px",
-            fontWeight: 600,
-            color: "var(--text-secondary)",
-            cursor: "pointer"
-          }}
-        >
-          <GitCompare size={13} />
-          Compare Scenarios
-        </button>
-
-        <button
-          onClick={onOpenValidation}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "5px",
-            padding: "6px 10px",
-            borderRadius: "6px",
-            border: "1px solid var(--border-strong)",
-            backgroundColor: "#ffffff",
-            fontSize: "11px",
-            fontWeight: 600,
-            color: "var(--text-secondary)",
-            cursor: "pointer"
-          }}
-        >
-          <Award size={13} />
-          Scientific QA
-        </button>
-
-        <button
-          onClick={onOpenProvenance}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "5px",
-            padding: "6px 10px",
-            borderRadius: "6px",
-            border: "1px solid #2563eb",
-            backgroundColor: "#eff6ff",
-            fontSize: "11px",
-            fontWeight: 600,
-            color: "#2563eb",
-            cursor: "pointer"
-          }}
-        >
-          <FileText size={13} />
-          Provenance & Audit
-        </button>
+        {/* Timestep Badge */}
+        <div style={{
+          padding: "4px 9px",
+          borderRadius: "5px",
+          backgroundColor: "rgba(30, 41, 59, 0.9)",
+          border: "1px solid rgba(56, 189, 248, 0.4)",
+          color: "#38bdf8",
+          fontSize: "11px",
+          fontWeight: 800,
+          fontFamily: "monospace",
+          letterSpacing: "0.5px",
+          display: "flex",
+          alignItems: "center",
+          gap: "5px"
+        }}>
+          <Clock size={12} color="#38bdf8" />
+          <span>T+{activeTimestepMin.toString().padStart(2, "0")}:00</span>
+        </div>
       </div>
+
+      {/* Right: Full-Screen Navigation Tabs */}
+      <nav style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+        {navItems.map((item) => {
+          const isActive = activeView === item.id;
+          return (
+            <button
+              key={item.id}
+              onClick={() => onNavigateToView(item.id)}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "4px",
+                padding: "5px 9px",
+                borderRadius: "6px",
+                border: isActive ? "1px solid #3b82f6" : "1px solid transparent",
+                backgroundColor: isActive ? "rgba(59, 130, 246, 0.25)" : "transparent",
+                color: isActive ? "#93c5fd" : "#cbd5e1",
+                fontSize: "11px",
+                fontWeight: isActive ? 800 : 500,
+                cursor: "pointer",
+                transition: "all 0.15s ease"
+              }}
+            >
+              {item.icon}
+              <span>{item.label}</span>
+            </button>
+          );
+        })}
+      </nav>
     </header>
   );
 };
