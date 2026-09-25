@@ -71,10 +71,11 @@ The Gate 5B experiment compares emergency evacuation decision performance under 
 
 ---
 
-## 6. Scientific Limitations & Non-Generalization Statement
+## 6. Scientific Limitations & Zero-Fabrication Disclosure
 
 > [!NOTE]
-> **Exploratory Scope:** This pilot represents an initial internal cohort ($N=2$) designed to stress-test the protocol and establish baseline latency differentials. It demonstrates computational usability under experimental conditions. It does **NOT** claim statistically generalized human performance across diverse populations or formal operational certification by disaster management agencies.
+> **Zero-Fabrication & Scientific Scope:**
+> **HUMAN DATA NOT YET AVAILABLE** for broad statistical population generalization. This pilot represents an initial exploratory internal cohort ($N=2$) under a strict ZERO-FABRICATION policy designed to stress-test the protocol and establish baseline latency differentials. It demonstrates computational usability under experimental conditions. It does **NOT** claim statistically generalized human performance across diverse populations or formal operational certification by disaster management agencies.
 
 ---
 

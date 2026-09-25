@@ -2,6 +2,7 @@
  * ArcGISSceneViewer.tsx
  * Pure 3D Geospatial Terrain Viewport for JalRakshak
  * Hosts ArcGIS Maps SDK 5.1 SceneView + Copernicus GLO-30 DSM terrain engine.
+ * Strictly guarantees idempotence, cancellation safety, and single SceneView instance.
  */
 
 import React, { useEffect, useRef, useState } from "react";
@@ -10,7 +11,7 @@ import { ArcGISTerrainEngine } from "./ArcGISTerrainEngine";
 import { AUTHORITATIVE_CAMERA_PRESETS } from "./ArcGISCameraController";
 import type { HydraulicThematicMode } from "./ArcGISHydraulicLayer";
 import type { RoadFeature, EvacuationPointFeature, RouteAlternative } from "../types";
-import { Mountain, MapPin, X } from "lucide-react";
+import { Mountain, MapPin, X, AlertTriangle } from "lucide-react";
 
 interface ArcGISSceneViewerProps {
   inundationGeoJSON: any;
@@ -22,6 +23,8 @@ interface ArcGISSceneViewerProps {
   cameraPreset?: string;
   selectedEdgeId?: string;
   onSelectEdgeId?: (edgeId: string) => void;
+  showTerrain?: boolean;
+  showRoads?: boolean;
   onSwitchTo2D?: () => void;
 }
 
@@ -40,10 +43,13 @@ export const ArcGISSceneViewer: React.FC<ArcGISSceneViewerProps> = ({
   cameraPreset = "VALLEY_OVERVIEW",
   selectedEdgeId,
   onSelectEdgeId,
+  showTerrain = true,
+  showRoads = true,
   onSwitchTo2D: _onSwitchTo2D
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const engineRef = useRef<ArcGISTerrainEngine | null>(null);
+  const [renderError, setRenderError] = useState<string | null>(null);
 
   const [cursorInfo, setCursorInfo] = useState<{ lon: number; lat: number; elevation_m: number } | null>(null);
   const [pickedEntity, setPickedEntity] = useState<{
@@ -53,27 +59,42 @@ export const ArcGISSceneViewer: React.FC<ArcGISSceneViewerProps> = ({
     coordinate: { lon: number; lat: number; elev_m: number };
   } | null>(null);
 
-  // Initialize ArcGIS 3D Scene Engine (Strictly once per lifecycle)
+  // Initialize ArcGIS 3D Scene Engine (Idempotent & StrictMode safe)
   useEffect(() => {
+    let isMounted = true;
     if (!containerRef.current) return;
 
     if (typeof window !== "undefined") {
       (window as any).__JALRAKSHAK_VIEWER_CREATED_COUNT__ += 1;
-      console.log(`[ArcGISSceneViewer] Authoritative 3D SceneView initialized. Lifecycle creation count: ${(window as any).__JALRAKSHAK_VIEWER_CREATED_COUNT__}`);
+      console.log(`[ArcGISSceneViewer] Initializing 3D SceneView. Lifecycle creation count: ${(window as any).__JALRAKSHAK_VIEWER_CREATED_COUNT__}`);
     }
 
     const engine = new ArcGISTerrainEngine(containerRef.current, {
-      onCursorMove: (info) => setCursorInfo(info),
+      onCursorMove: (info) => {
+        if (isMounted) setCursorInfo(info);
+      },
       onPickEntity: (info) => {
+        if (!isMounted) return;
         setPickedEntity(info);
         if (info.properties.edgeId && onSelectEdgeId) {
           onSelectEdgeId(info.properties.edgeId);
         }
+      },
+      onDiagnosticState: (state, details) => {
+        if (!isMounted) return;
+        if (state === "RENDER_FAILURE") {
+          setRenderError(details?.message || String(details));
+        }
       }
     });
 
+    engineRef.current = engine;
+
     engine.initialize().then(() => {
-      engineRef.current = engine;
+      if (!isMounted) {
+        engine.destroy();
+        return;
+      }
       engine.updateData(
         roads,
         evacPoints,
@@ -82,9 +103,16 @@ export const ArcGISSceneViewer: React.FC<ArcGISSceneViewerProps> = ({
         thematicMode,
         selectedTimelineStep
       );
+      engine.setTerrainVisibility(showTerrain);
+      engine.setRoadVisibility(showRoads);
+    }).catch((err) => {
+      if (isMounted) {
+        setRenderError(err?.message || String(err));
+      }
     });
 
     return () => {
+      isMounted = false;
       if (engineRef.current) {
         engineRef.current.destroy();
         engineRef.current = null;
@@ -105,6 +133,19 @@ export const ArcGISSceneViewer: React.FC<ArcGISSceneViewerProps> = ({
       );
     }
   }, [roads, evacPoints, inundationGeoJSON, selectedEdgeId, thematicMode, selectedTimelineStep]);
+
+  // Handle Layer Toggles (Terrain & Roads)
+  useEffect(() => {
+    if (engineRef.current) {
+      engineRef.current.setTerrainVisibility(showTerrain);
+    }
+  }, [showTerrain]);
+
+  useEffect(() => {
+    if (engineRef.current) {
+      engineRef.current.setRoadVisibility(showRoads);
+    }
+  }, [showRoads]);
 
   // Handle Camera Preset changes deterministically
   useEffect(() => {
@@ -127,9 +168,46 @@ export const ArcGISSceneViewer: React.FC<ArcGISSceneViewerProps> = ({
   return (
     <div style={{ position: "relative", width: "100%", height: "100%", backgroundColor: "#060913", overflow: "hidden", userSelect: "none" }}>
       {/* 3D WebGL Canvas Container */}
-      <div ref={containerRef} style={{ width: "100%", height: "100%" }} />
+      <div ref={containerRef} style={{ width: "100%", height: "100%", minHeight: "100%" }} />
 
-      {/* Road Segment Detail Panel (Section 18 Specification) */}
+      {/* Render Error Alert Overlay */}
+      {renderError && (
+        <div style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          backgroundColor: "rgba(15, 23, 42, 0.95)",
+          border: "1px solid #ef4444",
+          borderRadius: "8px",
+          padding: "20px",
+          color: "#ffffff",
+          zIndex: 1000,
+          maxWidth: "450px",
+          textAlign: "center"
+        }}>
+          <AlertTriangle size={32} color="#ef4444" style={{ margin: "0 auto 10px" }} />
+          <h3 style={{ fontSize: "14px", fontWeight: 800, marginBottom: "6px" }}>3D Terrain Render Alert</h3>
+          <p style={{ fontSize: "11px", color: "#94a3b8", marginBottom: "12px" }}>{renderError}</p>
+          <button
+            onClick={() => window.location.reload()}
+            style={{
+              padding: "6px 14px",
+              backgroundColor: "#2563eb",
+              border: "none",
+              borderRadius: "4px",
+              color: "#ffffff",
+              fontSize: "11px",
+              fontWeight: 700,
+              cursor: "pointer"
+            }}
+          >
+            Retry Renderer
+          </button>
+        </div>
+      )}
+
+      {/* Road Segment Detail Panel */}
       {pickedEntity && pickedEntity.properties.edgeId && (
         <div
           style={{
@@ -173,33 +251,29 @@ export const ArcGISSceneViewer: React.FC<ArcGISSceneViewerProps> = ({
           <div style={{ display: "flex", flexDirection: "column", gap: "4px", fontFamily: "monospace", fontSize: "11px" }}>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <span style={{ color: "#94a3b8" }}>LENGTH:</span>
-              <strong style={{ color: "#ffffff" }}>{pickedEntity.properties.length_km ? `${pickedEntity.properties.length_km} km` : "2.1 km"}</strong>
+              <strong style={{ color: "#ffffff" }}>{pickedEntity.properties.length_km ? `${pickedEntity.properties.length_km} km` : "—"}</strong>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <span style={{ color: "#94a3b8" }}>TRAVEL TIME:</span>
-              <strong style={{ color: "#fbbf24" }}>{pickedEntity.properties.travel_time || "12:39"}</strong>
+              <strong style={{ color: "#fbbf24" }}>{pickedEntity.properties.travel_time || "—"}</strong>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <span style={{ color: "#94a3b8" }}>FLOOD ARRIVAL:</span>
-              <strong style={{ color: "#38bdf8" }}>{pickedEntity.properties.flood_arrival || "T+60:00"}</strong>
+              <strong style={{ color: "#38bdf8" }}>{pickedEntity.properties.flood_arrival || "—"}</strong>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <span style={{ color: "#94a3b8" }}>MARGIN:</span>
-              <strong style={{ color: "#4ade80" }}>{pickedEntity.properties.margin || "+44:21"}</strong>
+              <strong style={{ color: "#4ade80" }}>{pickedEntity.properties.margin || "—"}</strong>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <span style={{ color: "#94a3b8" }}>STATUS:</span>
               <strong style={{ color: pickedEntity.properties.is_limiting ? "#ef4444" : "#38bdf8" }}>
-                {pickedEntity.properties.status || "LIMITING"}
+                {pickedEntity.properties.status || "FEASIBLE"}
               </strong>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <span style={{ color: "#94a3b8" }}>HYDRAULIC THRESHOLD:</span>
               <span style={{ color: "#cbd5e1" }}>h &ge; 0.30 m</span>
-            </div>
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <span style={{ color: "#94a3b8" }}>TRAVERSAL DIRECTION:</span>
-              <span style={{ color: "#cbd5e1", fontSize: "10px" }}>Malidewal &rarr; Chamba</span>
             </div>
           </div>
         </div>
@@ -250,137 +324,46 @@ export const ArcGISSceneViewer: React.FC<ArcGISSceneViewerProps> = ({
               <strong style={{ color: "#fbbf24" }}>{pickedEntity.coordinate.elev_m.toFixed(2)} m MSL</strong>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <span style={{ color: "#94a3b8" }}>Coordinates:</span>
-              <span style={{ color: "#cbd5e1" }}>{pickedEntity.coordinate.lon.toFixed(4)}°E, {pickedEntity.coordinate.lat.toFixed(4)}°N</span>
+              <span style={{ color: "#94a3b8" }}>Location:</span>
+              <span style={{ color: "#cbd5e1" }}>{pickedEntity.coordinate.lat.toFixed(4)}°N, {pickedEntity.coordinate.lon.toFixed(4)}°E</span>
             </div>
-            {Object.entries(pickedEntity.properties).map(([k, v]) => {
-              if (k === "type" || typeof v === "object") return null;
-              return (
-                <div key={k} style={{ display: "flex", justifyContent: "space-between" }}>
-                  <span style={{ color: "#94a3b8", textTransform: "capitalize" }}>{k.replace("_", " ")}:</span>
-                  <span style={{ color: "#cbd5e1" }}>{String(v)}</span>
-                </div>
-              );
-            })}
           </div>
         </div>
       )}
 
-      {/* Anchored Compact Map Legend (Section 14 Specification) */}
-      <div
-        style={{
-          position: "absolute",
-          bottom: "28px",
-          left: "14px",
-          backgroundColor: "rgba(11, 17, 32, 0.90)",
-          backdropFilter: "blur(8px)",
-          border: "1px solid rgba(255, 255, 255, 0.12)",
-          borderRadius: "5px",
-          padding: "6px 10px",
-          zIndex: 700,
-          color: "#f8fafc",
-          fontSize: "10px",
-          fontFamily: "Inter, sans-serif"
-        }}
-      >
-        {thematicMode === "DEPTH" && (
-          <div>
-            <div style={{ fontSize: "9.5px", fontWeight: 800, color: "#94a3b8", letterSpacing: "0.5px", marginBottom: "4px" }}>
-              FLOOD DEPTH (h &ge; 0.30m)
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "3px" }}>
-                <span style={{ width: "10px", height: "10px", borderRadius: "2px", backgroundColor: "#38bdf8", opacity: 0.8 }} />
-                <span style={{ color: "#cbd5e1" }}>0.3–1m</span>
-              </div>
-              <div style={{ display: "flex", alignItems: "center", gap: "3px" }}>
-                <span style={{ width: "10px", height: "10px", borderRadius: "2px", backgroundColor: "#0284c7", opacity: 0.85 }} />
-                <span style={{ color: "#cbd5e1" }}>1–3m</span>
-              </div>
-              <div style={{ display: "flex", alignItems: "center", gap: "3px" }}>
-                <span style={{ width: "10px", height: "10px", borderRadius: "2px", backgroundColor: "#0369a1", opacity: 0.9 }} />
-                <span style={{ color: "#cbd5e1" }}>3–6m</span>
-              </div>
-              <div style={{ display: "flex", alignItems: "center", gap: "3px" }}>
-                <span style={{ width: "10px", height: "10px", borderRadius: "2px", backgroundColor: "#1d4ed8", opacity: 0.9 }} />
-                <span style={{ color: "#cbd5e1" }}>6–15m</span>
-              </div>
-              <div style={{ display: "flex", alignItems: "center", gap: "3px" }}>
-                <span style={{ width: "10px", height: "10px", borderRadius: "2px", backgroundColor: "#312e81", opacity: 0.95 }} />
-                <span style={{ color: "#cbd5e1" }}>&gt;15m</span>
-              </div>
-            </div>
+      {/* Floating Bottom-Left Terrain Elevation Bar */}
+      {cursorInfo && (
+        <div
+          style={{
+            position: "absolute",
+            bottom: "16px",
+            left: "16px",
+            backgroundColor: "rgba(15, 23, 42, 0.90)",
+            backdropFilter: "blur(8px)",
+            padding: "5px 10px",
+            borderRadius: "5px",
+            border: "1px solid rgba(255, 255, 255, 0.12)",
+            fontSize: "10.5px",
+            color: "#94a3b8",
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            zIndex: 800,
+            fontFamily: "monospace"
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+            <Mountain size={12} color="#38bdf8" />
+            <span style={{ color: "#f8fafc", fontWeight: 700 }}>{cursorInfo.elevation_m} m MSL</span>
           </div>
-        )}
-
-        {thematicMode === "EXTENT" && (
-          <div>
-            <div style={{ fontSize: "9.5px", fontWeight: 800, color: "#94a3b8", letterSpacing: "0.5px", marginBottom: "3px" }}>
-              FLOOD EXTENT FOOTPRINT
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-              <span style={{ width: "12px", height: "10px", borderRadius: "2px", backgroundColor: "#0284c7", opacity: 0.6 }} />
-              <span style={{ color: "#cbd5e1" }}>Modeled Inundation (h &ge; 0.30 m)</span>
-            </div>
+          <div style={{ color: "#cbd5e1" }}>
+            {cursorInfo.lat.toFixed(4)}°N, {cursorInfo.lon.toFixed(4)}°E
           </div>
-        )}
-
-        {thematicMode === "ARRIVAL" && (
-          <div>
-            <div style={{ fontSize: "9.5px", fontWeight: 800, color: "#94a3b8", letterSpacing: "0.5px", marginBottom: "4px" }}>
-              FLOOD ARRIVAL ISOCHRONES
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "3px" }}>
-                <span style={{ width: "10px", height: "10px", borderRadius: "2px", backgroundColor: "#ef4444", opacity: 0.8 }} />
-                <span style={{ color: "#cbd5e1" }}>&lt;30m</span>
-              </div>
-              <div style={{ display: "flex", alignItems: "center", gap: "3px" }}>
-                <span style={{ width: "10px", height: "10px", borderRadius: "2px", backgroundColor: "#f97316", opacity: 0.8 }} />
-                <span style={{ color: "#cbd5e1" }}>30–45m</span>
-              </div>
-              <div style={{ display: "flex", alignItems: "center", gap: "3px" }}>
-                <span style={{ width: "10px", height: "10px", borderRadius: "2px", backgroundColor: "#f59e0b", opacity: 0.8 }} />
-                <span style={{ color: "#cbd5e1" }}>45–60m</span>
-              </div>
-              <div style={{ display: "flex", alignItems: "center", gap: "3px" }}>
-                <span style={{ width: "10px", height: "10px", borderRadius: "2px", backgroundColor: "#0284c7", opacity: 0.8 }} />
-                <span style={{ color: "#cbd5e1" }}>60–90m</span>
-              </div>
-            </div>
+          <div style={{ color: "#38bdf8", fontWeight: 700 }}>
+            Copernicus GLO-30 DSM
           </div>
-        )}
-      </div>
-
-      {/* Real-time Cursor Terrain Inspection Bar (Top Left sub-badge) */}
-      <div
-        style={{
-          position: "absolute",
-          bottom: "6px",
-          left: "14px",
-          backgroundColor: "rgba(11, 17, 32, 0.8)",
-          backdropFilter: "blur(6px)",
-          padding: "2px 6px",
-          borderRadius: "3px",
-          border: "1px solid rgba(255, 255, 255, 0.08)",
-          zIndex: 700,
-          display: "flex",
-          alignItems: "center",
-          gap: "6px",
-          fontSize: "9px",
-          color: "#94a3b8",
-          fontFamily: "monospace"
-        }}
-      >
-        <Mountain size={10} color="#38bdf8" />
-        {cursorInfo ? (
-          <span>
-            LAT: <strong style={{ color: "#ffffff" }}>{cursorInfo.lat.toFixed(4)}°N</strong> | LON: <strong style={{ color: "#ffffff" }}>{cursorInfo.lon.toFixed(4)}°E</strong> | ELEV: <strong style={{ color: "#fbbf24" }}>{cursorInfo.elevation_m.toFixed(1)}m</strong>
-          </span>
-        ) : (
-          <span>Copernicus GLO-30 DSM (1-arcsec) — ArcGIS Maps SDK 5.1</span>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
