@@ -53,40 +53,64 @@ export class ArcGISHydraulicLayer {
 
       // Restrained Government Intelligence Palette (No yellow blankets, seamless terrain drape)
       let fillColor: number[]; // [r, g, b, a]
+      let outlineColor: number[] = [56, 189, 248, 0.6];
+      let outlineWidth: number = 1.0;
 
       if (mode === "EXTENT") {
         // Mode 1: FLOOD EXTENT (Binary footprint h >= 0.30m)
-        fillColor = [2, 132, 199, 0.55]; // Aquatic cyan-blue
+        fillColor = [14, 165, 233, 0.75]; // Aquatic cyan
+        outlineColor = [56, 189, 248, 0.95];
+        outlineWidth = 1.5;
       } else if (mode === "DEPTH") {
-        // Mode 2: FLOOD DEPTH (Continuous multi-hue blue depth ramp)
+        // Mode 2: FLOOD DEPTH (Continuous multi-hue depth ramp)
         if (maxDepth < 0.30) {
           return;
         } else if (maxDepth < 1.0) {
-          fillColor = [56, 189, 248, 0.55]; // 0.3–1m: Light blue
+          fillColor = [56, 189, 248, 0.75]; // 0.3–1m: Light cyan
+          outlineColor = [125, 211, 252, 0.9];
+          outlineWidth = 1.0;
         } else if (maxDepth < 3.0) {
-          fillColor = [2, 132, 199, 0.65]; // 1–3m: Medium blue
+          fillColor = [2, 132, 199, 0.80]; // 1–3m: Medium blue
+          outlineColor = [56, 189, 248, 0.9];
+          outlineWidth = 1.0;
         } else if (maxDepth < 6.0) {
-          fillColor = [3, 105, 161, 0.75]; // 3–6m: Deep blue
+          fillColor = [37, 99, 235, 0.85]; // 3–6m: Deep royal blue
+          outlineColor = [96, 165, 250, 0.9];
+          outlineWidth = 1.2;
         } else if (maxDepth < 15.0) {
-          fillColor = [29, 78, 216, 0.85]; // 6–15m: Dark blue
+          fillColor = [29, 78, 216, 0.90]; // 6–15m: Dark blue
+          outlineColor = [147, 197, 253, 0.9];
+          outlineWidth = 1.5;
         } else {
-          fillColor = [49, 46, 129, 0.90]; // >15m: Extreme indigo
+          fillColor = [49, 46, 129, 0.95]; // >15m: Extreme indigo
+          outlineColor = [199, 210, 254, 1.0];
+          outlineWidth = 1.8;
         }
       } else if (mode === "ARRIVAL") {
         // Mode 3: FLOOD ARRIVAL (Isochrone temporal bands)
         if (arrivalMin <= 30) {
-          fillColor = [239, 68, 68, 0.70]; // <30 min: Critical hazard
+          fillColor = [239, 68, 68, 0.85]; // <30 min: Critical hazard (Crimson)
+          outlineColor = [254, 202, 202, 1.0];
+          outlineWidth = 1.5;
         } else if (arrivalMin <= 45) {
-          fillColor = [249, 115, 22, 0.65]; // 30–45 min: High hazard
+          fillColor = [249, 115, 22, 0.80]; // 30–45 min: High hazard (Orange)
+          outlineColor = [254, 215, 170, 1.0];
+          outlineWidth = 1.2;
         } else if (arrivalMin <= 60) {
-          fillColor = [245, 158, 11, 0.60]; // 45–60 min: Moderate hazard
+          fillColor = [245, 158, 11, 0.75]; // 45–60 min: Moderate hazard (Amber)
+          outlineColor = [254, 240, 138, 1.0];
+          outlineWidth = 1.2;
         } else if (arrivalMin <= 90) {
-          fillColor = [2, 132, 199, 0.55]; // 60–90 min: Low hazard
+          fillColor = [2, 132, 199, 0.70]; // 60–90 min: Low hazard (Blue)
+          outlineColor = [186, 230, 253, 1.0];
+          outlineWidth = 1.0;
         } else {
-          fillColor = [51, 65, 85, 0.50]; // >90 min: Minimal hazard
+          fillColor = [71, 85, 105, 0.60]; // >90 min: Minimal hazard (Slate)
+          outlineColor = [203, 213, 225, 0.8];
+          outlineWidth = 1.0;
         }
       } else {
-        fillColor = [2, 132, 199, 0.55];
+        fillColor = [14, 165, 233, 0.75];
       }
 
       const geom = feat.geometry;
@@ -99,8 +123,8 @@ export class ArcGISHydraulicLayer {
         const symbol = new SimpleFillSymbol({
           color: fillColor,
           outline: {
-            color: [0, 0, 0, 0], // No outline to avoid z-fighting artifacts
-            width: 0
+            color: outlineColor,
+            width: outlineWidth
           }
         });
 
@@ -112,7 +136,7 @@ export class ArcGISHydraulicLayer {
             cellId: `HEC-CELL-${idx + 1}`,
             depth_m: maxDepth,
             arrival_min: arrivalMin,
-            wse_m: props.wse_m || 650.0 + maxDepth,
+            wse_m: props.wse_m !== undefined ? props.wse_m : null,
             timestep: timeStep
           }
         });
@@ -128,8 +152,8 @@ export class ArcGISHydraulicLayer {
           const symbol = new SimpleFillSymbol({
             color: fillColor,
             outline: {
-              color: [0, 0, 0, 0],
-              width: 0
+              color: outlineColor,
+              width: outlineWidth
             }
           });
 
@@ -141,7 +165,7 @@ export class ArcGISHydraulicLayer {
               cellId: `HEC-CELL-${idx + 1}`,
               depth_m: maxDepth,
               arrival_min: arrivalMin,
-              wse_m: props.wse_m || 650.0 + maxDepth,
+              wse_m: props.wse_m !== undefined ? props.wse_m : null,
               timestep: timeStep
             }
           });

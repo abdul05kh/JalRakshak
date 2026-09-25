@@ -69,7 +69,7 @@ const LOCKED_SCENARIO_DECISIONS: Record<string, Record<string, {
       limitingEdgeId: "R02-E07",
       limitingSegmentName: "Koteshwar Riverbank Limiting Segment",
       peakDischargeM3s: 65000,
-      scenarioName: "Reference Froehlich piping scenario (Qp = 65,000 m3/s)",
+      scenarioName: "CENTRAL (Qp = 65,000 m³/s)",
       sourceArtifact: "tehri_15km_scenario_central.p01.hdf"
     },
     R01: {
@@ -79,7 +79,7 @@ const LOCKED_SCENARIO_DECISIONS: Record<string, Record<string, {
       limitingEdgeId: "NONE",
       limitingSegmentName: "High Ground Ridge Corridor",
       peakDischargeM3s: 65000,
-      scenarioName: "Reference Froehlich piping scenario (Qp = 65,000 m3/s)",
+      scenarioName: "CENTRAL (Qp = 65,000 m³/s)",
       sourceArtifact: "tehri_15km_scenario_central.p01.hdf"
     }
   },
