@@ -40,31 +40,31 @@ export const FloatingDecisionCard: React.FC<FloatingDecisionCardProps> = ({
     switch (status) {
       case "FEASIBLE":
         return {
-          bg: "rgba(34, 197, 94, 0.12)",
-          border: "#22c55e",
-          text: "#4ade80",
-          tagBg: "rgba(34, 197, 94, 0.25)",
+          bg: "rgba(56, 189, 248, 0.10)",
+          border: "#38bdf8",
+          text: "#38bdf8",
+          tagBg: "rgba(56, 189, 248, 0.20)",
           badgeText: "FEASIBLE",
-          icon: <CheckCircle2 size={16} strokeWidth={2.5} color="#4ade80" />
+          icon: <CheckCircle2 size={15} strokeWidth={2.5} color="#38bdf8" />
         };
       case "LOW_MARGIN":
       case "LOW MARGIN":
         return {
-          bg: "rgba(245, 158, 11, 0.12)",
+          bg: "rgba(245, 158, 11, 0.10)",
           border: "#f59e0b",
           text: "#fbbf24",
-          tagBg: "rgba(245, 158, 11, 0.25)",
+          tagBg: "rgba(245, 158, 11, 0.20)",
           badgeText: "LOW MARGIN",
-          icon: <AlertTriangle size={16} strokeWidth={2.5} color="#fbbf24" />
+          icon: <AlertTriangle size={15} strokeWidth={2.5} color="#fbbf24" />
         };
       case "INFEASIBLE":
         return {
-          bg: "rgba(239, 68, 68, 0.12)",
+          bg: "rgba(239, 68, 68, 0.10)",
           border: "#ef4444",
           text: "#f87171",
-          tagBg: "rgba(239, 68, 68, 0.25)",
+          tagBg: "rgba(239, 68, 68, 0.20)",
           badgeText: "INFEASIBLE",
-          icon: <XCircle size={16} strokeWidth={2.5} color="#f87171" />
+          icon: <XCircle size={15} strokeWidth={2.5} color="#f87171" />
         };
       default:
         return {

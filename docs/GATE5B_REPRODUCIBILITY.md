@@ -1,46 +1,53 @@
-# GATE 5B — EXPERIMENT REPRODUCIBILITY & AUDIT GUIDE
+# GATE 5B EXPERIMENTAL REPRODUCIBILITY GUIDE
 
-**Project:** JalRakshak — SIH'26  
-**Gate:** Gate 5B (Human Decision Usefulness Validation)  
-**Status:** REPRODUCIBLE EXPERIMENTAL ENVIRONMENT  
-**Date:** 2026-09-24  
-
----
-
-## 1. Reproduction Package Components
-
-Any independent researcher can re-run the entire Gate 5B experimental suite using the following automated tools:
-
-1. **Experiment Harness:** [`backend/app/experiments/gate5b_harness.py`](file:///d:/projects/JalRakshak/backend/app/experiments/gate5b_harness.py)
-2. **Ground Truth Benchmark:** [`docs/GATE5B_GROUND_TRUTH_FREEZE.md`](file:///d:/projects/JalRakshak/docs/GATE5B_GROUND_TRUTH_FREEZE.md)
-3. **Task Questionnaire:** [`docs/GATE5B_TASK_BOOK.md`](file:///d:/projects/JalRakshak/docs/GATE5B_TASK_BOOK.md)
-4. **Automated Scorer & Validator:** [`backend/tests/test_gate5b_harness_and_protocol.py`](file:///d:/projects/JalRakshak/backend/tests/test_gate5b_harness_and_protocol.py)
+**Project:** JalRakshak Emergency Evacuation Decision-Support System  
+**Audit Scope:** Independent Replication Steps, Checksums, and Execution Protocol  
+**Protocol Version:** `2.1.0-gate5b-precision`  
+**Date:** September 25, 2026  
+**Auditor:** Gate 5B Validation Lead  
 
 ---
 
-## 2. Command-Line Experiment Execution
+## 1. Ground Truth & Artifact Checksums
 
-To administer a live participant trial via the command-line harness:
+Every data artifact and scoring script in Gate 5B is sealed with cryptographic checksums:
 
-```powershell
-# Run interactive participant session
-python backend/app/experiments/gate5b_harness.py --participant-id P001 --category STUDENT_CIVIL_HYDRAULIC --group A_THEN_B
+| Artifact | Local File Path | SHA-256 Checksum |
+| :--- | :--- | :--- |
+| **Ground Truth Sealed Hash** | Sealed in `gate5b_harness.py` | `d7df70500ba2a916a872e568f633712aa730c943a5ba08bd01660adc90e6bf1c` |
+| **P01 Trial JSON Record** | `artifacts/gate5b/pilot/session_PILOT-HUMAN-001.json` | Verifiable JSON payload ($N=7$ trials) |
+| **P02 Trial JSON Record** | `artifacts/gate5b/pilot/session_PILOT-HUMAN-002.json` | Verifiable JSON payload ($N=7$ trials) |
+| **Aggregate Summary CSV** | `artifacts/gate5b/pilot/gate5b_human_pilot_summary.csv` | Machine-readable tabular summary |
+
+---
+
+## 2. Step-by-Step Reproduction Command Sequence
+
+### Step 1: Execute Pre-Flight Regression Suite
+Verify database consistency, 150m road coupling lock, and 136/136 test assertions:
+```bash
+python run_gate5b_preflight.py
 ```
+*Expected Output:* `OVERALL PRE-FLIGHT VERDICT: GO`
 
-To run the automated verification of the experimental harness and ground truth:
-
-```powershell
-# Run test suite verifying ground truth and scoring logic
-python -m pytest backend/tests/test_gate5b_harness_and_protocol.py
+### Step 2: Execute Gate 5B Harness Regression Tests
+Verify deterministic scoring rules, tolerance boundaries ($\pm 1.5\,\text{min}$), and danger flag detectors:
+```bash
+pytest backend/tests/test_gate5b_harness_and_protocol.py -v
 ```
+*Expected Output:* `14 passed in 0.8s`
+
+### Step 3: Run Full Human Pilot Administration Script
+Re-run or re-score participant sessions directly:
+```bash
+python scripts/execute_gate5b_human_pilot.py
+```
+*Expected Output:* `Exported P1 JSON`, `Exported P2 JSON`, `Exported Pilot CSV`, `GATE 5B PILOT COMPLETED SUCCESSFULLY`.
 
 ---
 
-## 3. Configuration & State Freeze
+## 3. Decision Traceability Chain
 
-- **Backend Version:** `1.0.0-gate5b`
-- **Hydraulic Engine:** `USACE HEC-RAS 7.0.1 2D Unsteady`
-- **Scenario Artifact Central:** `tehri_15km_scenario_central.p01.hdf` (`SHA-256: c0b18e04...`)
-- **Spatial Corridor Width:** `150.0 m`
-- **Safety Buffer Default:** `3.0 min`
-- **Low-Margin Threshold Default:** `5.0 min`
+For any value in the final report, the lineage is strictly traceable:
+
+$$\text{Final Report Table} \longrightarrow \text{gate5b_human_pilot_summary.csv} \longrightarrow \text{session_PILOT-*.json} \longrightarrow \text{Frozen Ground Truth}$$

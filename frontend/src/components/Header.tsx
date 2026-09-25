@@ -33,7 +33,7 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({
-  scenarios,
+  scenarios: _scenarios,
   activeScenarioId,
   onSelectScenario,
   dam,
@@ -43,8 +43,6 @@ export const Header: React.FC<HeaderProps> = ({
   activeView,
   onNavigateToView
 }) => {
-  const authoritativeScenarios = scenarios.filter((s) => s.category === "AUTHORITATIVE" || s.id.startsWith("SCENARIO_"));
-  const otherScenarios = scenarios.filter((s) => !authoritativeScenarios.some((a) => a.id === s.id));
 
   const navItems: { id: ViewType; label: string; icon: React.ReactNode }[] = [
     { id: "OPERATIONAL_MAP", label: "3D MAP", icon: <Map size={13} /> },
@@ -109,7 +107,7 @@ export const Header: React.FC<HeaderProps> = ({
       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
         {/* Scenario Selector */}
         <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-          <label style={{ fontSize: "10px", fontWeight: 800, color: "#94a3b8", textTransform: "uppercase" }}>
+          <label style={{ fontSize: "10px", fontWeight: 800, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.5px" }}>
             SCENARIO:
           </label>
           <select
@@ -117,9 +115,9 @@ export const Header: React.FC<HeaderProps> = ({
             onChange={(e) => onSelectScenario(e.target.value)}
             style={{
               padding: "4px 8px",
-              borderRadius: "5px",
+              borderRadius: "4px",
               border: "1px solid rgba(255, 255, 255, 0.18)",
-              backgroundColor: "#1e293b",
+              backgroundColor: "#0f172a",
               fontSize: "11px",
               fontWeight: 700,
               color: "#38bdf8",
@@ -127,28 +125,15 @@ export const Header: React.FC<HeaderProps> = ({
               outline: "none"
             }}
           >
-            <optgroup label="AUTHORITATIVE HEC-RAS 2D SCENARIOS">
-              {authoritativeScenarios.map((sc) => (
-                <option key={sc.id} value={sc.id}>
-                  {sc.id.replace("SCENARIO_", "")} (Qp: {sc.peak_discharge_m3s.toLocaleString()} m³/s)
-                </option>
-              ))}
-            </optgroup>
-            {otherScenarios.length > 0 && (
-              <optgroup label="DEMONSTRATION & RESEARCH FIXTURES">
-                {otherScenarios.map((sc) => (
-                  <option key={sc.id} value={sc.id}>
-                    {sc.name.substring(0, 26)}...
-                  </option>
-                ))}
-              </optgroup>
-            )}
+            <option value="SCENARIO_CENTRAL">CENTRAL (Qp = 65,000 m³/s)</option>
+            <option value="SCENARIO_MINIMUM">MINIMUM (Qp = 28,500 m³/s)</option>
+            <option value="SCENARIO_MAXIMUM">MAXIMUM (Qp = 115,000 m³/s)</option>
           </select>
         </div>
 
         {/* Route Selector */}
         <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-          <label style={{ fontSize: "10px", fontWeight: 800, color: "#94a3b8", textTransform: "uppercase" }}>
+          <label style={{ fontSize: "10px", fontWeight: 800, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.5px" }}>
             ROUTE:
           </label>
           <select
@@ -156,21 +141,18 @@ export const Header: React.FC<HeaderProps> = ({
             onChange={(e) => onSelectRouteId(e.target.value)}
             style={{
               padding: "4px 8px",
-              borderRadius: "5px",
+              borderRadius: "4px",
               border: "1px solid rgba(255, 255, 255, 0.18)",
-              backgroundColor: "#1e293b",
+              backgroundColor: "#0f172a",
               fontSize: "11px",
               fontWeight: 700,
-              color: "#4ade80",
+              color: "#38bdf8",
               cursor: "pointer",
               outline: "none"
             }}
           >
             <option value="R02">R02 — Chamba via Koteshwar (Primary)</option>
             <option value="R01">R01 — Chamba High Ridge</option>
-            <option value="R03">R03 — Devprayag Valley</option>
-            <option value="R04">R04 — Tehri North Access</option>
-            <option value="R05">R05 — Koteshwar Dam Crossing</option>
           </select>
         </div>
 

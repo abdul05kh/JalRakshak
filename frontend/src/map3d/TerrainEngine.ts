@@ -61,9 +61,25 @@ export class TerrainEngine {
     this.terrainProviderInstance = new JalRakshakTerrainProvider();
     const terrainProvider = await this.terrainProviderInstance.initialize();
 
-    // 2. Initialize Cesium Viewer with scientific visual settings
+    // 2. Create dedicated credit container to neatly host attribution without map contamination
+    let creditEl = this.container.querySelector(".cesium-credit-container") as HTMLElement;
+    if (!creditEl) {
+      creditEl = document.createElement("div");
+      creditEl.className = "cesium-credit-container";
+      creditEl.style.position = "absolute";
+      creditEl.style.bottom = "2px";
+      creditEl.style.right = "8px";
+      creditEl.style.fontSize = "9px";
+      creditEl.style.opacity = "0.6";
+      creditEl.style.pointerEvents = "none";
+      creditEl.style.zIndex = "500";
+      this.container.appendChild(creditEl);
+    }
+
+    // 3. Initialize Cesium Viewer with scientific visual settings
     this.viewer = new Cesium.Viewer(this.container, {
       terrainProvider,
+      creditContainer: creditEl,
       animation: false,
       timeline: false,
       baseLayerPicker: false,

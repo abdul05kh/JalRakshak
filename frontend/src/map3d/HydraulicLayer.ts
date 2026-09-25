@@ -1,7 +1,7 @@
 /**
  * HydraulicLayer.ts
- * Manages dynamic HEC-RAS hydraulic flood inundation, depth ramps, arrival isochrones,
- * and 2D flow area computational mesh cells on 3D terrain.
+ * Manages dynamic HEC-RAS hydraulic flood inundation, continuous depth ramps,
+ * arrival isochrones, and computational 2D flow area on 3D terrain.
  */
 
 import * as Cesium from "cesium";
@@ -12,7 +12,6 @@ export class HydraulicLayer {
   private viewer: Cesium.Viewer;
   private inundationEntities: Cesium.Entity[] = [];
   private meshEntities: Cesium.Entity[] = [];
-  private isMeshVisible = false;
 
   constructor(viewer: Cesium.Viewer) {
     this.viewer = viewer;
@@ -41,28 +40,47 @@ export class HydraulicLayer {
         return;
       }
 
-      let color = Cesium.Color.fromCssColorString("#0284c7").withAlpha(0.65);
+      // Restrained Government Intelligence Colormap (No yellow blankets, seamless terrain drape)
+      let color: Cesium.Color;
 
-      if (mode === "DEPTH") {
-        if (maxDepth < 2.0) {
-          color = Cesium.Color.fromCssColorString("#38bdf8").withAlpha(0.60); // Shallow
-        } else if (maxDepth < 5.0) {
-          color = Cesium.Color.fromCssColorString("#0284c7").withAlpha(0.70); // Moderate
-        } else if (maxDepth < 10.0) {
-          color = Cesium.Color.fromCssColorString("#1d4ed8").withAlpha(0.80); // Deep
+      if (mode === "EXTENT") {
+        // Mode 1: FLOOD EXTENT (Binary modeled footprint h >= 0.30m)
+        color = Cesium.Color.fromCssColorString("#0284c7").withAlpha(0.55);
+      } else if (mode === "DEPTH") {
+        // Mode 2: FLOOD DEPTH (Continuous multi-hue hydraulic blue ramp)
+        if (maxDepth < 0.30) {
+          return; // Sub-threshold (<0.30m transparent)
+        } else if (maxDepth < 1.0) {
+          // 0.30 - 1.0m: Light hydraulic blue
+          color = Cesium.Color.fromCssColorString("#38bdf8").withAlpha(0.55);
+        } else if (maxDepth < 3.0) {
+          // 1.0 - 3.0m: Medium cyan-blue
+          color = Cesium.Color.fromCssColorString("#0284c7").withAlpha(0.65);
+        } else if (maxDepth < 6.0) {
+          // 3.0 - 6.0m: Deeper blue
+          color = Cesium.Color.fromCssColorString("#0369a1").withAlpha(0.75);
+        } else if (maxDepth < 15.0) {
+          // 6.0 - 15.0m: Dark high-depth blue
+          color = Cesium.Color.fromCssColorString("#1d4ed8").withAlpha(0.85);
         } else {
-          color = Cesium.Color.fromCssColorString("#312e81").withAlpha(0.85); // Extreme depth
+          // > 15.0m: Extreme depth indigo
+          color = Cesium.Color.fromCssColorString("#312e81").withAlpha(0.90);
         }
       } else if (mode === "ARRIVAL") {
-        if (arrivalMin <= 15) {
-          color = Cesium.Color.fromCssColorString("#ef4444").withAlpha(0.75); // Extreme hazard (<15m)
-        } else if (arrivalMin <= 30) {
-          color = Cesium.Color.fromCssColorString("#f97316").withAlpha(0.70); // High hazard (15-30m)
+        // Mode 3: FLOOD ARRIVAL (Isochrone temporal bands)
+        if (arrivalMin <= 30) {
+          color = Cesium.Color.fromCssColorString("#ef4444").withAlpha(0.70); // <30 min: Critical
+        } else if (arrivalMin <= 45) {
+          color = Cesium.Color.fromCssColorString("#f97316").withAlpha(0.65); // 30-45 min: High
         } else if (arrivalMin <= 60) {
-          color = Cesium.Color.fromCssColorString("#eab308").withAlpha(0.65); // Moderate (30-60m)
+          color = Cesium.Color.fromCssColorString("#f59e0b").withAlpha(0.60); // 45-60 min: Moderate
+        } else if (arrivalMin <= 90) {
+          color = Cesium.Color.fromCssColorString("#0284c7").withAlpha(0.55); // 60-90 min: Low
         } else {
-          color = Cesium.Color.fromCssColorString("#10b981").withAlpha(0.60); // Low (>60m)
+          color = Cesium.Color.fromCssColorString("#334155").withAlpha(0.50); // >90 min: Minimal
         }
+      } else {
+        color = Cesium.Color.fromCssColorString("#0284c7").withAlpha(0.55);
       }
 
       const geom = feat.geometry;
@@ -83,8 +101,7 @@ export class HydraulicLayer {
             hierarchy: new Cesium.PolygonHierarchy(positions),
             classificationType: Cesium.ClassificationType.TERRAIN,
             material: color,
-            outline: true,
-            outlineColor: Cesium.Color.fromCssColorString("#0369a1").withAlpha(0.5)
+            outline: false // Explicitly disable outline to eliminate z-fighting raster artifacts
           }
         });
         this.inundationEntities.push(entity);
@@ -105,69 +122,17 @@ export class HydraulicLayer {
             polygon: {
               hierarchy: new Cesium.PolygonHierarchy(positions),
               classificationType: Cesium.ClassificationType.TERRAIN,
-              material: color
+              material: color,
+              outline: false
             }
           });
           this.inundationEntities.push(entity);
         });
       }
     });
-
-    // Generate HEC-RAS 2D computational cell mesh wireframes
-    this.generateCellMesh();
-  }
-
-  private generateCellMesh(): void {
-    this.clearMesh();
-    const gridCols = 8;
-    const gridRows = 14;
-    const minLon = 78.46;
-    const maxLon = 78.53;
-    const minLat = 30.26;
-    const maxLat = 30.39;
-
-    const dLon = (maxLon - minLon) / gridCols;
-    const dLat = (maxLat - minLat) / gridRows;
-
-    for (let r = 0; r < gridRows; r++) {
-      for (let c = 0; c < gridCols; c++) {
-        const cMinLon = minLon + c * dLon;
-        const cMaxLon = cMinLon + dLon;
-        const cMinLat = minLat + r * dLat;
-        const cMaxLat = cMinLat + dLat;
-
-        const cellPositions = [
-          Cesium.Cartesian3.fromDegrees(cMinLon, cMinLat),
-          Cesium.Cartesian3.fromDegrees(cMaxLon, cMinLat),
-          Cesium.Cartesian3.fromDegrees(cMaxLon, cMaxLat),
-          Cesium.Cartesian3.fromDegrees(cMinLon, cMaxLat),
-          Cesium.Cartesian3.fromDegrees(cMinLon, cMinLat)
-        ];
-
-        const cellEntity = this.viewer.entities.add({
-          name: `HEC-RAS 2D Mesh Cell [${r}, ${c}]`,
-          properties: new Cesium.PropertyBag({
-            cellId: `2D-CELL-${r * gridCols + c + 1}`,
-            area_m2: Math.round(dLon * 111320 * dLat * 111320),
-            cellCenter: [(cMinLon + cMaxLon) / 2, (cMinLat + cMaxLat) / 2]
-          }),
-          polyline: {
-            positions: cellPositions,
-            clampToGround: true,
-            width: 1.5,
-            material: new Cesium.ColorMaterialProperty(
-              Cesium.Color.fromCssColorString("#38bdf8").withAlpha(0.35)
-            )
-          }
-        });
-        cellEntity.show = this.isMeshVisible;
-        this.meshEntities.push(cellEntity);
-      }
-    }
   }
 
   public setVisibility(flood: boolean, mesh: boolean): void {
-    this.isMeshVisible = mesh;
     this.inundationEntities.forEach((e) => (e.show = flood));
     this.meshEntities.forEach((e) => (e.show = mesh));
   }

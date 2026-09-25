@@ -255,12 +255,14 @@ export const App: React.FC = () => {
         )}
       </main>
 
-      {/* Authoritative State Consistency Debug Panel */}
-      <StateDebugPanel
-        activeScenarioId={activeScenarioId}
-        selectedRouteId={selectedRouteId}
-        activeTimestepMin={activeTimestepMin}
-      />
+      {/* Developer State Debug Panel (Gated behind dev flag / Ctrl+Shift+D) */}
+      {(typeof window !== "undefined" && (window as any).__JALRAKSHAK_ENABLE_DEV_PANEL__) && (
+        <StateDebugPanel
+          activeScenarioId={activeScenarioId}
+          selectedRouteId={selectedRouteId}
+          activeTimestepMin={activeTimestepMin}
+        />
+      )}
     </div>
   );
 };

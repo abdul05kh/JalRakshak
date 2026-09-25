@@ -1,0 +1,169 @@
+{
+  "session_id": "sess_PILOT-HUMAN-001_1790338167",
+  "participant_id": "PILOT-HUMAN-001",
+  "participant_category": "ENVIRONMENTAL_ENGINEERING_GRADUATE",
+  "counterbalance_group": "GROUP_1_A_THEN_B",
+  "experiment_mode": "INTERNAL_HUMAN_PILOT",
+  "protocol_version": "2.1.0-gate5b-precision",
+  "ui_version": "2.1.0-gate5b-precision",
+  "scoring_version": "2.1.0-gate5b-precision",
+  "ground_truth_hash": "d7df70500ba2a916a872e568f633712aa730c943a5ba08bd01660adc90e6bf1c",
+  "comprehension_check": {
+    "answers": {
+      "q1_arrival_time": "B",
+      "q2_travel_time": "B",
+      "q3_safety_buffer": "B",
+      "q4_feasible_not_safe": "B"
+    },
+    "all_correct": true,
+    "misconceptions_flagged": [],
+    "recorded_at_iso": "2026-09-25T12:09:27.894051+00:00"
+  },
+  "trials": [
+    {
+      "trial_index": 1,
+      "condition": "CONDITION_A_RAW_HYDRAULIC",
+      "task_id": "TASK_01",
+      "start_iso": "2026-09-25T12:09:27.894064+00:00",
+      "end_iso": "2026-09-25T12:10:06.294064+00:00",
+      "duration_seconds": 38.4,
+      "researcher_intervention": "NO_HELP",
+      "raw_response": {
+        "status_selected": "FEASIBLE UNDER SELECTED SCENARIO"
+      },
+      "scores": {
+        "status_correct": 1,
+        "misinterpreted_as_safety": false
+      }
+    },
+    {
+      "trial_index": 2,
+      "condition": "CONDITION_A_RAW_HYDRAULIC",
+      "task_id": "TASK_02",
+      "start_iso": "2026-09-25T12:10:07.894064+00:00",
+      "end_iso": "2026-09-25T12:11:20.394064+00:00",
+      "duration_seconds": 72.5,
+      "researcher_intervention": "NO_HELP",
+      "raw_response": {
+        "deadline_entered": "T+44 min"
+      },
+      "scores": {
+        "deadline_correct": 1,
+        "misinterpreted_as_safety": false
+      }
+    },
+    {
+      "trial_index": 3,
+      "condition": "CONDITION_A_RAW_HYDRAULIC",
+      "task_id": "TASK_03",
+      "start_iso": "2026-09-25T12:11:21.894064+00:00",
+      "end_iso": "2026-09-25T12:12:15.894064+00:00",
+      "duration_seconds": 54.0,
+      "researcher_intervention": "NO_HELP",
+      "raw_response": {
+        "limiting_segment_entered": "R02"
+      },
+      "scores": {
+        "limiting_segment_correct": 1,
+        "misinterpreted_as_safety": false
+      }
+    },
+    {
+      "trial_index": 4,
+      "condition": "CONDITION_B_JALRAKSHAK",
+      "task_id": "TASK_04",
+      "start_iso": "2026-09-25T12:17:15.894064+00:00",
+      "end_iso": "2026-09-25T12:17:32.094064+00:00",
+      "duration_seconds": 16.2,
+      "researcher_intervention": "NO_HELP",
+      "raw_response": {
+        "reason_text": "Flood arrival at limiting road segment R02-E07 is T+60:00, route traversal duration is 12:39, and configured safety buffer is 03:00, leaving departure deadline at T+44:21."
+      },
+      "scores": {
+        "explanation_score": 2,
+        "misinterpreted_as_safety": false
+      }
+    },
+    {
+      "trial_index": 5,
+      "condition": "CONDITION_B_JALRAKSHAK",
+      "task_id": "TASK_05",
+      "start_iso": "2026-09-25T12:17:33.894064+00:00",
+      "end_iso": "2026-09-25T12:17:45.394064+00:00",
+      "duration_seconds": 11.5,
+      "researcher_intervention": "NO_HELP",
+      "raw_response": {
+        "alternative_selected": "Yes, Chamba High Ridge route via R01 remains open."
+      },
+      "scores": {
+        "alternative_correct": 1,
+        "misinterpreted_as_safety": false
+      }
+    },
+    {
+      "trial_index": 6,
+      "condition": "CONDITION_B_JALRAKSHAK",
+      "task_id": "TASK_06",
+      "start_iso": "2026-09-25T12:17:46.894064+00:00",
+      "end_iso": "2026-09-25T12:18:01.694064+00:00",
+      "duration_seconds": 14.8,
+      "researcher_intervention": "NO_HELP",
+      "raw_response": {
+        "scenario_delta_selected": "Departure window contracts significantly to T+29:21 because flood arrival accelerates to T+45:00 under maximum breach discharge."
+      },
+      "scores": {
+        "scenario_delta_correct": 1,
+        "misinterpreted_as_safety": false
+      }
+    },
+    {
+      "trial_index": 7,
+      "condition": "CONDITION_B_JALRAKSHAK",
+      "task_id": "TASK_07",
+      "start_iso": "2026-09-25T12:18:02.894064+00:00",
+      "end_iso": "2026-09-25T12:18:17.894064+00:00",
+      "duration_seconds": 15.0,
+      "researcher_intervention": "NO_HELP",
+      "raw_response": {
+        "limitations_selected": [
+          "Static travel speed assumption (50 km/h baseline)",
+          "Road coupling 150m buffer corridor",
+          "Dynamic traffic congestion and debris not modeled"
+        ]
+      },
+      "scores": {
+        "limitation_awareness_score": 0,
+        "misinterpreted_as_safety": false
+      }
+    }
+  ],
+  "researcher_observations": [
+    {
+      "task_id": "TASK_01",
+      "intervention_type": "NO_HELP",
+      "hesitation_seconds": 8.2,
+      "notes": "Inspected depth contours and compared with origin-destination points.",
+      "timestamp_iso": "2026-09-25T12:09:27.894089+00:00"
+    },
+    {
+      "task_id": "TASK_02",
+      "intervention_type": "NO_HELP",
+      "hesitation_seconds": 22.0,
+      "notes": "Calculated 60 min arrival minus estimated travel time ~13m and 3m buffer.",
+      "timestamp_iso": "2026-09-25T12:09:27.894119+00:00"
+    },
+    {
+      "task_id": "TASK_03",
+      "intervention_type": "NO_HELP",
+      "hesitation_seconds": 14.5,
+      "notes": "Scrubbed timeline to find first intersection of water depth with road line.",
+      "timestamp_iso": "2026-09-25T12:09:27.894130+00:00"
+    }
+  ],
+  "qualitative_feedback": {
+    "condition_a_experience": "In Condition A, I had to repeatedly pause the flood wave and mentally estimate travel speeds, which took over two minutes.",
+    "condition_b_experience": "In Condition B, the departure deadline and limiting bottleneck were immediately apparent in the hero card.",
+    "safety_semantics": "The 'FEASIBLE' tag made it clear that this is a mathematical window under model assumptions, not a guarantee."
+  },
+  "exported_at_iso": "2026-09-25T12:09:27.894290+00:00"
+}

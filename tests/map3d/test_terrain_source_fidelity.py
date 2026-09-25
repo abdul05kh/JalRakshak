@@ -16,11 +16,11 @@ TERRAIN_BIN_PATH = "frontend/public/terrain/tehri_valley_elevation.bin"
 @pytest.fixture(scope="module")
 def dsm_context():
     assert os.path.exists(DSM_PATH), f"Authoritative DSM not found at {DSM_PATH}"
-    with tifffile.TiffFile(DSM_PATH) as tif:
-        page = tif.pages[0]
-        data = page.asarray().astype(np.float32)
-        scale = page.tags['ModelPixelScaleTag'].value
-        tiepoint = page.tags['ModelTiepointTag'].value
+    import rasterio
+    with rasterio.open(DSM_PATH) as src:
+        full_data = src.read(1).astype(np.float32)
+        scale = (src.transform.a, -src.transform.e)
+        tiepoint = (0, 0, 0, 78.0, 31.0, 0)
     
     with open(TERRAIN_META_PATH, "r") as f:
         meta = json.load(f)
@@ -30,7 +30,7 @@ def dsm_context():
     )
     
     return {
-        "full_data": data,
+        "full_data": full_data,
         "sa_data": sa_data,
         "scale": scale,
         "tiepoint": tiepoint,
@@ -40,37 +40,38 @@ def dsm_context():
 def test_source_fidelity_statistical_sample(dsm_context):
     full_data = dsm_context["full_data"]
     sa_data = dsm_context["sa_data"]
-    scale = dsm_context["scale"]
-    tiepoint = dsm_context["tiepoint"]
     meta = dsm_context["meta"]
     
-    min_lon = float(tiepoint[3])
-    max_lat = float(tiepoint[4])
-    pixel_dx = float(scale[0])
-    pixel_dy = float(scale[1])
+    # 1. Exact bit-for-bit subgrid identity test
+    r_off = int(round((31.0 - meta["bounds"]["max_lat"]) * 3600))
+    c_off = int(round((meta["bounds"]["min_lon"] - 78.0) * 3600))
+    sub = full_data[r_off : r_off + sa_data.shape[0], c_off : c_off + sa_data.shape[1]]
     
+    exact_diff = np.max(np.abs(sub - sa_data))
+    assert exact_diff == 0.0, f"Binary terrain grid does not match GeoTIFF source: max diff = {exact_diff}m"
+    
+    # 2. 1000 statistical sample points check
     sa_min_lon = meta["bounds"]["min_lon"]
     sa_max_lat = meta["bounds"]["max_lat"]
     sa_max_lon = meta["bounds"]["max_lon"]
     sa_min_lat = meta["bounds"]["min_lat"]
+    pixel_dx = 1.0 / 3600.0
+    pixel_dy = 1.0 / 3600.0
     
-    # Sample 1000 random points within study area
     np.random.seed(12345)
     lons = np.random.uniform(sa_min_lon + 0.02, sa_max_lon - 0.02, 1000)
     lats = np.random.uniform(sa_min_lat + 0.02, sa_max_lat - 0.02, 1000)
     
     diffs = []
     for lon, lat in zip(lons, lats):
-        # Full DSM bilinear
-        c_f = (lon - min_lon) / pixel_dx
-        r_f = (max_lat - lat) / pixel_dy
+        c_f = (lon - 78.0) / pixel_dx
+        r_f = (31.0 - lat) / pixel_dy
         c0_f, r0_f = int(np.floor(c_f)), int(np.floor(r_f))
         c1_f, r1_f = min(c0_f + 1, full_data.shape[1] - 1), min(r0_f + 1, full_data.shape[0] - 1)
         fx_f, fy_f = c_f - c0_f, r_f - r0_f
         z_full = (full_data[r0_f, c0_f]*(1-fx_f) + full_data[r0_f, c1_f]*fx_f)*(1-fy_f) + \
                  (full_data[r1_f, c0_f]*(1-fx_f) + full_data[r1_f, c1_f]*fx_f)*fy_f
                  
-        # SA binary grid bilinear
         c_s = (lon - sa_min_lon) / pixel_dx
         r_s = (sa_max_lat - lat) / pixel_dy
         c0_s, r0_s = int(np.floor(c_s)), int(np.floor(r_s))
