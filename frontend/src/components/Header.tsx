@@ -18,7 +18,8 @@ export type ViewType =
   | "ARCHITECTURE"
   | "FEASIBILITY"
   | "SCIENCE_VALIDATION" 
-  | "PROVENANCE";
+  | "PROVENANCE"
+  | "ARCGIS_TERRAIN_TEST";
 
 interface HeaderProps {
   scenarios: ScenarioSummary[];
@@ -50,7 +51,8 @@ export const Header: React.FC<HeaderProps> = ({
     { id: "EVACUATION_DECISION", label: "DECISION", icon: <Clock size={13} /> },
     { id: "ROAD_IMPACT", label: "ROAD IMPACT", icon: <Network size={13} /> },
     { id: "SCIENCE_VALIDATION", label: "SCIENCE", icon: <Award size={13} /> },
-    { id: "PROVENANCE", label: "PROVENANCE", icon: <FileCheck size={13} /> }
+    { id: "PROVENANCE", label: "PROVENANCE", icon: <FileCheck size={13} /> },
+    { id: "ARCGIS_TERRAIN_TEST", label: "TERRAIN TEST", icon: <ShieldCheck size={13} /> }
   ];
 
   return (

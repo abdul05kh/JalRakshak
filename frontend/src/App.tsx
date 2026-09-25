@@ -8,6 +8,7 @@ import { ArchitectureView } from "./views/ArchitectureView";
 import { FeasibilityView } from "./views/FeasibilityView";
 import { ScienceValidationView } from "./views/ScienceValidationView";
 import { ProvenanceView } from "./views/ProvenanceView";
+import { ArcGISTerrainTestView } from "./views/ArcGISTerrainTestView";
 import { StateDebugPanel } from "./components/StateDebugPanel";
 
 import type {
@@ -28,7 +29,12 @@ import {
 
 export const App: React.FC = () => {
   // Navigation View State: Dedicated Full-Screen Pages
-  const [activeView, setActiveView] = useState<ViewType>("OPERATIONAL_MAP");
+  const [activeView, setActiveView] = useState<ViewType>(() => {
+    if (typeof window !== "undefined" && window.location.pathname === "/arcgis-terrain-test") {
+      return "ARCGIS_TERRAIN_TEST";
+    }
+    return "OPERATIONAL_MAP";
+  });
 
   // Scenarios & Dam Metadata
   const [scenarios, setScenarios] = useState<ScenarioSummary[]>([]);
@@ -250,6 +256,12 @@ export const App: React.FC = () => {
           <ProvenanceView
             scenarios={scenarios}
             activeScenarioId={activeScenarioId}
+            onNavigateToView={(view) => setActiveView(view as ViewType)}
+          />
+        )}
+
+        {activeView === "ARCGIS_TERRAIN_TEST" && (
+          <ArcGISTerrainTestView
             onNavigateToView={(view) => setActiveView(view as ViewType)}
           />
         )}

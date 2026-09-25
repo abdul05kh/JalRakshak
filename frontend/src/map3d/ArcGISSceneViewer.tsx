@@ -1,23 +1,23 @@
 /**
- * CesiumViewer.tsx
+ * ArcGISSceneViewer.tsx
  * Pure 3D Geospatial Terrain Viewport for JalRakshak
- * Hosts CesiumJS Viewer + Copernicus GLO-30 DSM terrain engine.
+ * Hosts ArcGIS Maps SDK 5.1 SceneView + Copernicus GLO-30 DSM terrain engine.
  */
 
 import React, { useEffect, useRef, useState } from "react";
-import { TerrainEngine } from "./TerrainEngine";
-import { AUTHORITATIVE_CAMERA_PRESETS } from "./CameraController";
-import { DEFAULT_LAYER_STATE } from "./LayerController";
-import type { Map3DLayerState } from "./LayerController";
+import "@arcgis/core/assets/esri/themes/dark/main.css";
+import { ArcGISTerrainEngine } from "./ArcGISTerrainEngine";
+import { AUTHORITATIVE_CAMERA_PRESETS } from "./ArcGISCameraController";
+import type { HydraulicThematicMode } from "./ArcGISHydraulicLayer";
 import type { RoadFeature, EvacuationPointFeature, RouteAlternative } from "../types";
 import { Mountain, MapPin, X } from "lucide-react";
 
-interface CesiumViewerProps {
+interface ArcGISSceneViewerProps {
   inundationGeoJSON: any;
   roads: RoadFeature[];
   evacPoints: EvacuationPointFeature[];
   activeRoute: RouteAlternative | null;
-  thematicMode?: "EXTENT" | "DEPTH" | "ARRIVAL";
+  thematicMode?: HydraulicThematicMode;
   selectedTimelineStep?: string;
   cameraPreset?: string;
   selectedEdgeId?: string;
@@ -30,7 +30,7 @@ if (typeof window !== "undefined") {
   (window as any).__JALRAKSHAK_VIEWER_CREATED_COUNT__ = (window as any).__JALRAKSHAK_VIEWER_CREATED_COUNT__ || 0;
 }
 
-export const CesiumViewer: React.FC<CesiumViewerProps> = ({
+export const ArcGISSceneViewer: React.FC<ArcGISSceneViewerProps> = ({
   inundationGeoJSON,
   roads,
   evacPoints,
@@ -43,10 +43,9 @@ export const CesiumViewer: React.FC<CesiumViewerProps> = ({
   onSwitchTo2D: _onSwitchTo2D
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const engineRef = useRef<TerrainEngine | null>(null);
+  const engineRef = useRef<ArcGISTerrainEngine | null>(null);
 
   const [cursorInfo, setCursorInfo] = useState<{ lon: number; lat: number; elevation_m: number } | null>(null);
-  const [layerState] = useState<Map3DLayerState>({ ...DEFAULT_LAYER_STATE });
   const [pickedEntity, setPickedEntity] = useState<{
     type: string;
     title: string;
@@ -54,16 +53,16 @@ export const CesiumViewer: React.FC<CesiumViewerProps> = ({
     coordinate: { lon: number; lat: number; elev_m: number };
   } | null>(null);
 
-  // Initialize Cesium 3D Terrain Engine (Strictly once per lifecycle)
+  // Initialize ArcGIS 3D Scene Engine (Strictly once per lifecycle)
   useEffect(() => {
     if (!containerRef.current) return;
 
     if (typeof window !== "undefined") {
       (window as any).__JALRAKSHAK_VIEWER_CREATED_COUNT__ += 1;
-      console.log(`[CesiumViewer] Authoritative 3D Viewer initialized. Lifecycle creation count: ${(window as any).__JALRAKSHAK_VIEWER_CREATED_COUNT__}`);
+      console.log(`[ArcGISSceneViewer] Authoritative 3D SceneView initialized. Lifecycle creation count: ${(window as any).__JALRAKSHAK_VIEWER_CREATED_COUNT__}`);
     }
 
-    const engine = new TerrainEngine(containerRef.current, {
+    const engine = new ArcGISTerrainEngine(containerRef.current, {
       onCursorMove: (info) => setCursorInfo(info),
       onPickEntity: (info) => {
         setPickedEntity(info);
@@ -93,7 +92,7 @@ export const CesiumViewer: React.FC<CesiumViewerProps> = ({
     };
   }, []);
 
-  // Dynamically update data, timestep, and thematic mode without recreating viewer
+  // Dynamically update data, timestep, and thematic mode without recreating SceneView
   useEffect(() => {
     if (engineRef.current) {
       engineRef.current.updateData(
@@ -125,19 +124,12 @@ export const CesiumViewer: React.FC<CesiumViewerProps> = ({
     }
   }, [cameraPreset]);
 
-  // Update Layer State
-  useEffect(() => {
-    if (engineRef.current) {
-      engineRef.current.setLayerState(layerState);
-    }
-  }, [layerState]);
-
   return (
-    <div style={{ position: "relative", width: "100%", height: "100%", backgroundColor: "#090d16", overflow: "hidden", userSelect: "none" }}>
+    <div style={{ position: "relative", width: "100%", height: "100%", backgroundColor: "#060913", overflow: "hidden", userSelect: "none" }}>
       {/* 3D WebGL Canvas Container */}
       <div ref={containerRef} style={{ width: "100%", height: "100%" }} />
 
-      {/* Road Segment Detail Panel (Section 16 Specification) */}
+      {/* Road Segment Detail Panel (Section 18 Specification) */}
       {pickedEntity && pickedEntity.properties.edgeId && (
         <div
           style={{
@@ -274,7 +266,7 @@ export const CesiumViewer: React.FC<CesiumViewerProps> = ({
         </div>
       )}
 
-      {/* Anchored Compact Map Legend (Section 8 Specification) */}
+      {/* Anchored Compact Map Legend (Section 14 Specification) */}
       <div
         style={{
           position: "absolute",
@@ -386,7 +378,7 @@ export const CesiumViewer: React.FC<CesiumViewerProps> = ({
             LAT: <strong style={{ color: "#ffffff" }}>{cursorInfo.lat.toFixed(4)}°N</strong> | LON: <strong style={{ color: "#ffffff" }}>{cursorInfo.lon.toFixed(4)}°E</strong> | ELEV: <strong style={{ color: "#fbbf24" }}>{cursorInfo.elevation_m.toFixed(1)}m</strong>
           </span>
         ) : (
-          <span>Copernicus GLO-30 DSM (1-arcsec)</span>
+          <span>Copernicus GLO-30 DSM (1-arcsec) — ArcGIS Maps SDK 5.1</span>
         )}
       </div>
     </div>

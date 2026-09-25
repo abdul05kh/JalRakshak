@@ -6,7 +6,6 @@ Verifies that elevation values extracted by the terrain engine match the authori
 import os
 import json
 import pytest
-import tifffile
 import numpy as np
 
 DSM_PATH = "data/tehri/raw/Copernicus_DSM_COG_10_N30_00_E078_00_DEM.tif"
