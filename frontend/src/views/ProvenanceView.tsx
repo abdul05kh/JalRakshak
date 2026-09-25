@@ -140,7 +140,7 @@ export const ProvenanceView: React.FC<ProvenanceViewProps> = () => {
               All {verifiedCount} Core Artifacts Match Verified Hashes
             </div>
             <div style={{ fontSize: "12px", color: "#94a3b8" }}>
-              SHA-256 hashes cryptographically prove zero unauthorized modifications to simulation runs or road coordinates.
+              SHA-256 confirms that current artifact file bytes match registered baseline checksum signatures to verify data integrity.
             </div>
           </div>
 

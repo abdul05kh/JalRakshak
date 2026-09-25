@@ -22,85 +22,85 @@ export interface CameraPresetConfig {
 
 export const AUTHORITATIVE_CAMERA_PRESETS: Record<string, CameraPresetConfig> = {
   VALLEY_OVERVIEW: {
-    target: [78.475, 30.290],
-    heading: 32,
-    tilt: 58,
+    target: [78.480, 30.310],
+    heading: 20,
+    tilt: 45,
     position: {
       longitude: 78.445,
-      latitude: 30.230,
-      z: 3200
+      latitude: 30.220,
+      z: 4200
     },
     label: "Tehri Valley Overview",
     description: "30km Bhagirathi River Gorge & Valley 3D Terrain"
   },
   TEHRI_DAM: {
-    target: [78.4803, 30.378],
-    heading: 18,
-    tilt: 60,
+    target: [78.4803, 30.3780],
+    heading: 15,
+    tilt: 50,
     position: {
-      longitude: 78.472,
-      latitude: 30.355,
-      z: 1450
+      longitude: 78.468,
+      latitude: 30.345,
+      z: 2200
     },
     label: "Tehri Dam Crest",
     description: "260.5m Earth & Rockfill Dam Structure (830m Crest MSL)"
   },
   BREACH_LOCATION: {
-    target: [78.479, 30.375],
-    heading: 45,
-    tilt: 65,
+    target: [78.4790, 30.3750],
+    heading: 25,
+    tilt: 48,
     position: {
-      longitude: 78.470,
-      latitude: 30.360,
-      z: 1200
+      longitude: 78.465,
+      latitude: 30.340,
+      z: 2100
     },
     label: "Breach Invert (635m Model Assumption)",
     description: "Modeled Crest Failure — Invert 635m MSL Assumption"
   },
   DOWNSTREAM_VALLEY: {
-    target: [78.490, 30.320],
-    heading: 25,
-    tilt: 55,
+    target: [78.495, 30.310],
+    heading: 140,
+    tilt: 50,
     position: {
-      longitude: 78.460,
-      latitude: 30.260,
-      z: 2200
+      longitude: 78.465,
+      latitude: 30.355,
+      z: 2800
     },
     label: "Downstream Alluvial Corridor",
     description: "Bhagirathi Gorge downstream expansion reach"
   },
   R02_ROUTE: {
-    target: [78.492, 30.315],
-    heading: 345,
-    tilt: 56,
+    target: [78.485, 30.320],
+    heading: 65,
+    tilt: 45,
     position: {
-      longitude: 78.515,
-      latitude: 30.245,
-      z: 2100
+      longitude: 78.435,
+      latitude: 30.300,
+      z: 3400
     },
     label: "Route R02 Evacuation Corridor",
     description: "Malidewal to Koteshwar / Chamba corridor"
   },
   R02_E07_LIMITING: {
     target: [78.502, 30.2825],
-    heading: 50,
-    tilt: 62,
+    heading: 35,
+    tilt: 45,
     position: {
-      longitude: 78.485,
-      latitude: 30.268,
-      z: 1250
+      longitude: 78.480,
+      latitude: 30.255,
+      z: 2000
     },
     label: "Limiting Segment R02-E07",
     description: "Koteshwar Riverbank Limiting Bottleneck (Arrival T+60:00)"
   },
   CHAMBA_SHELTER: {
     target: [78.3965, 30.3475],
-    heading: 340,
-    tilt: 55,
+    heading: 30,
+    tilt: 45,
     position: {
-      longitude: 78.415,
+      longitude: 78.375,
       latitude: 30.315,
-      z: 2400
+      z: 3200
     },
     label: "Chamba High-Ground Shelter",
     description: "Designated High-Ground Evacuation Facility (1650m MSL)"
