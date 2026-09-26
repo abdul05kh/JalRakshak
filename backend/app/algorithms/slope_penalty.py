@@ -7,7 +7,7 @@ def calculate_slope_adjusted_speed(nominal_speed_kmh: float, elevation_change_m:
     theta = math.atan(grade)
     
     if theta > 0:
-        slope_penalty = 1.0 + 3.5 * (math.sin(theta) ** 2)
+        slope_penalty = 1.0 + 2.5 * math.sin(theta) + 5.0 * (math.sin(theta) ** 2)
     else:
         slope_penalty = 1.0
         
