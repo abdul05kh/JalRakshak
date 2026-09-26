@@ -30,11 +30,11 @@ interface FloodSimulationViewProps {
 }
 
 const PHASES = [
-  { startSec: 0, endSec: 15, label: "Phase 1: Reservoir Equilibrium (830m FRL)", color: "#38bdf8", time: "T+00:00" },
-  { startSec: 15, endSec: 30, label: "Phase 2: Dam Breach & Surge Release (65,000 m³/s)", color: "#f59e0b", time: "T+15:00" },
-  { startSec: 30, endSec: 55, label: "Phase 3: Canyon Flood Wave Propagation", color: "#f97316", time: "T+35:00" },
-  { startSec: 55, endSec: 72, label: "Phase 4: Settlements Exposed & Route R02 Traversal", color: "#ec4899", time: "T+50:00" },
-  { startSec: 72, endSec: 90, label: "Phase 5: Limiting Segment Cutoff & Evacuation Decision", color: "#10b981", time: "T+60:00" },
+  { startSec: 0, endSec: 18, label: "Phase 1: Reservoir Baseline (830.0m FRL)", color: "#38bdf8", time: "T+00:00" },
+  { startSec: 18, endSec: 38, label: "Phase 2: Dam Breach Onset & Surge (65,000 m³/s)", color: "#f59e0b", time: "T+18:00" },
+  { startSec: 38, endSec: 70, label: "Phase 3: Canyon Surge Wave Propagation", color: "#f97316", time: "T+38:00" },
+  { startSec: 70, endSec: 95, label: "Phase 4: Settlements Exposed & Route R02 Convoy", color: "#ec4899", time: "T+50:00" },
+  { startSec: 95, endSec: 120, label: "Phase 5: Limiting Segment Cutoff & Evacuation Decision", color: "#10b981", time: "T+60:00" },
 ];
 
 export const FloodSimulationView: React.FC<FloodSimulationViewProps> = ({
@@ -45,15 +45,15 @@ export const FloodSimulationView: React.FC<FloodSimulationViewProps> = ({
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
   const [currentTime, setCurrentTime] = useState<number>(0);
-  const [duration, setDuration] = useState<number>(90);
+  const [duration, setDuration] = useState<number>(120);
   const [playbackSpeed, setPlaybackSpeed] = useState<number>(1.0);
   const [isMuted, setIsMuted] = useState<boolean>(true);
   const [showProvenanceModal, setShowProvenanceModal] = useState<boolean>(false);
 
   const activeSc = scenarios.find((s) => s.id === activeScenarioId);
 
-  // Calculate simulated hydraulic model time (0 to 120 minutes)
-  const currentModelMinutes = (currentTime / (duration || 90)) * 120;
+  // Model elapsed disaster time (0 to 120 minutes)
+  const currentModelMinutes = (currentTime / (duration || 120)) * 120;
   const currentPhase = PHASES.find(p => currentTime >= p.startSec && currentTime < p.endSec) || PHASES[PHASES.length - 1];
 
   const formatVideoTime = (seconds: number) => {
@@ -107,7 +107,7 @@ export const FloodSimulationView: React.FC<FloodSimulationViewProps> = ({
 
   const handleLoadedMetadata = () => {
     if (!videoRef.current) return;
-    setDuration(videoRef.current.duration || 90);
+    setDuration(videoRef.current.duration || 120);
   };
 
   return (
@@ -279,7 +279,7 @@ export const FloodSimulationView: React.FC<FloodSimulationViewProps> = ({
         </div>
 
         {/* Climax Decision Overlay Trigger (when video is in final phase) */}
-        {currentTime >= 72 && (
+        {currentTime >= 95 && (
           <div style={{
             position: "absolute",
             bottom: "80px",
@@ -356,7 +356,7 @@ export const FloodSimulationView: React.FC<FloodSimulationViewProps> = ({
             <input
               type="range"
               min="0"
-              max={duration || 90}
+              max={duration || 120}
               step="0.1"
               value={currentTime}
               onChange={handleSeek}
@@ -504,7 +504,7 @@ export const FloodSimulationView: React.FC<FloodSimulationViewProps> = ({
             </h3>
             
             <p style={{ fontSize: "13px", color: "#cbd5e1", lineHeight: 1.6 }}>
-              The cinematic simulation is a pre-rendered 24fps Full HD visual narrative derived from native 
+              The cinematic simulation is a pre-rendered 30fps Full HD visual narrative derived from native 
               <strong> HEC-RAS 2D unsteady flow equations</strong> (6,677 flexible mesh cells, 25 time steps).
             </p>
 
