@@ -1,7 +1,7 @@
 # JalRakshak RC2.4 — Cinematic Video Simulation Specification
 
 ## 1. Executive Summary
-JalRakshak RC2.4 introduces a dedicated, high-performance **Cinematic Video Simulation** (`frontend/public/simulation/jalrakshak_cinematic.mp4`), generated directly from authentic USACE HEC-RAS 7.0.1 2D unsteady flow results, Copernicus GLO-30 DSM terrain elevation, and the backend Evacuation Window Engine (EWE).
+JalRakshak RC2.4 introduces a dedicated, high-performance **Cinematic Video Simulation** (`frontend/public/simulation/jalrakshak_cinematic.mp4`). Cinematic visualization derived from HEC-RAS temporal hydraulic results. Presentation-only camera, breach, route and annotation elements are added for visual communication.
 
 ---
 

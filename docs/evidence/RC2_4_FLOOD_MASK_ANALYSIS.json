@@ -1,0 +1,152 @@
+{
+  "T+00s": {
+    "pixel_count": 0,
+    "bounding_box": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "centroid": [
+      0,
+      0
+    ],
+    "area_km2": 0.0,
+    "downstream_extent_km": 0.0
+  },
+  "T+10s": {
+    "pixel_count": 0,
+    "bounding_box": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "centroid": [
+      0,
+      0
+    ],
+    "area_km2": 0.0,
+    "downstream_extent_km": 0.0
+  },
+  "T+20s": {
+    "pixel_count": 319,
+    "bounding_box": [
+      905,
+      478,
+      939,
+      533
+    ],
+    "centroid": [
+      922,
+      504
+    ],
+    "area_km2": 0.07,
+    "downstream_extent_km": 1.0
+  },
+  "T+30s": {
+    "pixel_count": 1646,
+    "bounding_box": [
+      870,
+      449,
+      931,
+      580
+    ],
+    "centroid": [
+      896,
+      507
+    ],
+    "area_km2": 0.37,
+    "downstream_extent_km": 2.2
+  },
+  "T+40s": {
+    "pixel_count": 1976,
+    "bounding_box": [
+      847,
+      422,
+      922,
+      612
+    ],
+    "centroid": [
+      881,
+      499
+    ],
+    "area_km2": 0.44,
+    "downstream_extent_km": 3.1
+  },
+  "T+50s": {
+    "pixel_count": 2158,
+    "bounding_box": [
+      834,
+      398,
+      912,
+      640
+    ],
+    "centroid": [
+      866,
+      500
+    ],
+    "area_km2": 0.49,
+    "downstream_extent_km": 3.8
+  },
+  "T+60s": {
+    "pixel_count": 2794,
+    "bounding_box": [
+      828,
+      375,
+      928,
+      678
+    ],
+    "centroid": [
+      865,
+      524
+    ],
+    "area_km2": 0.63,
+    "downstream_extent_km": 4.8
+  },
+  "T+70s": {
+    "pixel_count": 3381,
+    "bounding_box": [
+      823,
+      353,
+      995,
+      717
+    ],
+    "centroid": [
+      882,
+      548
+    ],
+    "area_km2": 0.76,
+    "downstream_extent_km": 6.0
+  },
+  "T+80s": {
+    "pixel_count": 3093,
+    "bounding_box": [
+      817,
+      333,
+      1088,
+      815
+    ],
+    "centroid": [
+      895,
+      549
+    ],
+    "area_km2": 0.7,
+    "downstream_extent_km": 8.3
+  },
+  "T+90s": {
+    "pixel_count": 3838,
+    "bounding_box": [
+      813,
+      316,
+      1159,
+      896
+    ],
+    "centroid": [
+      944,
+      606
+    ],
+    "area_km2": 0.86,
+    "downstream_extent_km": 10.1
+  }
+}
