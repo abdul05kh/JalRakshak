@@ -5,13 +5,13 @@
 
 import type { SimulationPhase } from "./types";
 
-export const SIMULATION_TOTAL_DURATION_SEC = 140;
+export const SIMULATION_TOTAL_DURATION_SEC = 90;
 
 export const SIMULATION_PHASES: SimulationPhase[] = [
   {
     id: "INTRO_DAM",
     startTimeSec: 0,
-    endTimeSec: 14,
+    endTimeSec: 10,
     title: "Tehri Dam Reservoir & Upstream Basin",
     subtitle: "Bhagirathi River, Uttarakhand — Gross Storage at 830m FRL Baseline",
     badge: "RESERVOIR EQUILIBRIUM",
@@ -22,8 +22,8 @@ export const SIMULATION_PHASES: SimulationPhase[] = [
   },
   {
     id: "BREACH_INITIATION",
-    startTimeSec: 14,
-    endTimeSec: 28,
+    startTimeSec: 10,
+    endTimeSec: 22,
     title: "Breach Initiation at 635m Invert",
     subtitle: "Deterministic Parametric Piping Development (Qp = 65,000 m³/s Central Scenario)",
     badge: "BREACH INITIATION",
@@ -34,8 +34,8 @@ export const SIMULATION_PHASES: SimulationPhase[] = [
   },
   {
     id: "FLOOD_RELEASE",
-    startTimeSec: 28,
-    endTimeSec: 44,
+    startTimeSec: 22,
+    endTimeSec: 40,
     title: "Peak Hydrodynamic Wavefront Release",
     subtitle: "High-Velocity Surge Entering Steep V-Shaped Himalayan Gorge",
     badge: "DISCHARGE RELEASE",
@@ -46,8 +46,8 @@ export const SIMULATION_PHASES: SimulationPhase[] = [
   },
   {
     id: "FLOOD_PROPAGATION",
-    startTimeSec: 44,
-    endTimeSec: 62,
+    startTimeSec: 40,
+    endTimeSec: 58,
     title: "Downstream Hydraulic Wavefront Propagation",
     subtitle: "HEC-RAS 2D Unsteady Shallow Water Equations Channeled by GLO-30 DSM Topography",
     badge: "VALLEY PROPAGATION",
@@ -58,8 +58,8 @@ export const SIMULATION_PHASES: SimulationPhase[] = [
   },
   {
     id: "SETTLEMENT_EXPOSURE",
-    startTimeSec: 62,
-    endTimeSec: 78,
+    startTimeSec: 58,
+    endTimeSec: 72,
     title: "Downstream Settlement Exposure",
     subtitle: "Floodwaters Entering Malidewal & Tipri Lowland Terraces",
     badge: "SETTLEMENT EXPOSURE",
@@ -70,8 +70,8 @@ export const SIMULATION_PHASES: SimulationPhase[] = [
   },
   {
     id: "ROAD_IMPACT",
-    startTimeSec: 78,
-    endTimeSec: 92,
+    startTimeSec: 72,
+    endTimeSec: 82,
     title: "Transport Network Intersection & Route R02",
     subtitle: "Spatial 150m Perpendicular Hydraulic Coupling Evaluated",
     badge: "ROAD IMPACT",
@@ -81,21 +81,9 @@ export const SIMULATION_PHASES: SimulationPhase[] = [
     narrativeText: "Evacuation route R02 (Malidewal → Chamba) coupled to advancing flood boundary."
   },
   {
-    id: "ROUTE_TRAVERSAL",
-    startTimeSec: 92,
-    endTimeSec: 106,
-    title: "Modeled Evacuation Traversal Progression",
-    subtitle: "Cumulative Traversal Time Evaluated Across Segments E01 → E07",
-    badge: "TRAVERSAL PROGRESSION",
-    badgeColor: "#06b6d4",
-    cameraPreset: "R02_ROUTE",
-    targetHydraulicTimeMin: 55,
-    narrativeText: "Vehicles proceed along road geometry toward high-ground Chamba shelter."
-  },
-  {
     id: "LIMITING_EDGE",
-    startTimeSec: 106,
-    endTimeSec: 118,
+    startTimeSec: 82,
+    endTimeSec: 86,
     title: "Limiting Segment R02-E07 Threshold Reached",
     subtitle: "Water Depth Exceeds h ≥ 0.30m at T+60:00 on Koteshwar Riverbank Corridor",
     badge: "HYDRAULIC CLOSURE",
@@ -105,21 +93,9 @@ export const SIMULATION_PHASES: SimulationPhase[] = [
     narrativeText: "Flood arrival at limiting segment R02-E07 closes evacuation corridor at T+60:00."
   },
   {
-    id: "DECISION_TRANSFORMATION",
-    startTimeSec: 118,
-    endTimeSec: 130,
-    title: "JalRakshak Decision Transformation",
-    subtitle: "Translating HEC-RAS Physics into Evacuation Window Engine (EWE) Decision",
-    badge: "EWE TRANSFORMATION",
-    badgeColor: "#8b5cf6",
-    cameraPreset: "R02_ROUTE",
-    targetHydraulicTimeMin: 60,
-    narrativeText: "JalRakshak solves D = min(Ai - Ti - B) to convert hydraulic wave into action deadline."
-  },
-  {
     id: "DECISION_REVEAL",
-    startTimeSec: 130,
-    endTimeSec: 140,
+    startTimeSec: 86,
+    endTimeSec: 90,
     title: "Latest Feasible Departure: LEAVE BY T+44:21",
     subtitle: "Actionable Evacuation Window for Central Scenario (Qp = 65,000 m³/s)",
     badge: "ACTIONABLE DEADLINE",
