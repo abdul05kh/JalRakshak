@@ -1,0 +1,25 @@
+{
+  "standard": "National Disaster Management Authority Flood Guidelines",
+  "alert_levels": {
+    "STAGE_1_WATCH": {
+      "threshold": "Reservoir level > 825m FRL",
+      "action": "Continuous telemetry monitoring and EOC notification"
+    },
+    "STAGE_2_WARNING": {
+      "threshold": "Inflow > 10,000 m3/s or minor structural seepage",
+      "action": "Pre-position SDRF and notify downstream villages"
+    },
+    "STAGE_3_EMERGENCY": {
+      "threshold": "Spillway capacity exceeded or partial breach",
+      "action": "Sound sirens, enforce Route R02 priority evacuation"
+    },
+    "STAGE_4_CATASTROPHIC": {
+      "threshold": "Major dam break breach confirmed",
+      "action": "Full emergency deployment, high-ground shelter activation"
+    },
+    "STAGE_5_RECOVERY": {
+      "threshold": "Water receded below high danger mark",
+      "action": "Search and rescue, infrastructure damage assessment"
+    }
+  }
+}
