@@ -3,8 +3,10 @@ import json
 from typing import Dict, List, Any, Optional
 from datetime import datetime, timezone
 
+import numpy as np
 from backend.app.domain.hecras_adapter import HecRasHdfAdapter, DEFAULT_REAL_HECRAS_HDF_PATH
 from backend.app.domain.road_hydraulic_mapper import RoadHydraulicMapper
+from backend.app.domain.geo_transform import GeoTransformer
 
 DATA_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "data"))
 STUDY_DIR = os.path.join(DATA_DIR, "study_area")
@@ -146,9 +148,11 @@ class Database:
                                 }
                             }
 
+                            inundation_fc = self._generate_temporal_inundation_geojson(hyd_data, sc_key)
+
                             self.scenarios[sc_key] = {
                                 "manifest": manifest_entry,
-                                "inundation": {"type": "FeatureCollection", "features": []},
+                                "inundation": inundation_fc,
                                 "edge_hydraulics": edge_hydraulics,
                                 "source_type": "HECRAS_REAL_RESULT",
                                 "hydraulic_data": hyd_data,
@@ -210,6 +214,54 @@ class Database:
                 }
             except Exception as e:
                 print(f"Warning: Failed to load genuine HEC-RAS HDF5 artifact: {e}")
+
+    def _generate_temporal_inundation_geojson(self, hyd_data: Any, scenario_id: str) -> Dict[str, Any]:
+        """
+        Extract spatial-temporal 2D HEC-RAS hydraulic mesh cell footprint for 3D visualization.
+        Produces genuine polygon geometries with per-cell arrival times and depth series.
+        """
+        gt = GeoTransformer(target_crs="EPSG:32644", source_crs="EPSG:4326")
+        inundated_mask = (hyd_data.cell_arrival_times_sec < 99999) & (np.max(hyd_data.depth_series_m, axis=0) >= 0.30)
+        inundated_indices = np.where(inundated_mask)[0]
+
+        features = []
+        half_w = 50.0  # 100m nominal grid cell half-width
+
+        for idx in inundated_indices:
+            cx, cy = hyd_data.cell_coords[idx]
+            arr_s = float(hyd_data.cell_arrival_times_sec[idx])
+            arr_min = round(arr_s / 60.0, 1)
+            max_d = round(float(np.max(hyd_data.depth_series_m[:, idx])), 2)
+
+            corners_utm = [
+                (cx - half_w, cy - half_w),
+                (cx + half_w, cy - half_w),
+                (cx + half_w, cy + half_w),
+                (cx - half_w, cy + half_w),
+                (cx - half_w, cy - half_w)
+            ]
+            coords_wgs84 = [list(gt.utm_to_wgs84(ux, uy)) for ux, uy in corners_utm]
+
+            features.append({
+                "type": "Feature",
+                "properties": {
+                    "cell_id": f"HEC-CELL-{int(idx)}",
+                    "scenario_id": scenario_id,
+                    "arrival_s": arr_s,
+                    "arrival_min": arr_min,
+                    "max_depth_m": max_d,
+                    "depth_series": [round(float(d), 2) for d in hyd_data.depth_series_m[:, idx]]
+                },
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [coords_wgs84]
+                }
+            })
+
+        return {
+            "type": "FeatureCollection",
+            "features": features
+        }
 
     def get_dam(self, dam_id: str) -> Optional[Dict[str, Any]]:
         return self.dams.get(dam_id)

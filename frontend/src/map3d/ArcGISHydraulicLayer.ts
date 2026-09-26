@@ -44,10 +44,18 @@ export class ArcGISHydraulicLayer {
     geoJsonData.features.forEach((feat: any, idx: number) => {
       const props = feat.properties || {};
       const maxDepth = props.max_depth_m || props.depth_m || 5.0;
-      const arrivalMin = props.arrival_min || (props.arrival_s ? props.arrival_s / 60 : 15.0);
+      const arrivalMin = props.arrival_min !== undefined ? props.arrival_min : (props.arrival_s ? props.arrival_s / 60 : 15.0);
 
       // Time filtering: only show inundated cells that flood at or before currentTimeMin
-      if (arrivalMin > currentTimeMin && currentTimeMin > 0) {
+      if (arrivalMin > currentTimeMin) {
+        return;
+      }
+
+      // Dynamic timestep depth if available
+      const timestepIdx = props.depth_series ? Math.min(Math.floor(currentTimeMin / 5), props.depth_series.length - 1) : 0;
+      const activeDepth = props.depth_series ? props.depth_series[timestepIdx] : maxDepth;
+
+      if (activeDepth < 0.30 && mode !== "ARRIVAL") {
         return;
       }
 
@@ -62,22 +70,20 @@ export class ArcGISHydraulicLayer {
         outlineColor = [56, 189, 248, 0.95];
         outlineWidth = 1.5;
       } else if (mode === "DEPTH") {
-        // Mode 2: FLOOD DEPTH (Continuous multi-hue depth ramp)
-        if (maxDepth < 0.30) {
-          return;
-        } else if (maxDepth < 1.0) {
+        // Mode 2: FLOOD DEPTH (Continuous multi-hue depth ramp using active timestep depth)
+        if (activeDepth < 1.0) {
           fillColor = [56, 189, 248, 0.75]; // 0.3–1m: Light cyan
           outlineColor = [125, 211, 252, 0.9];
           outlineWidth = 1.0;
-        } else if (maxDepth < 3.0) {
+        } else if (activeDepth < 3.0) {
           fillColor = [2, 132, 199, 0.80]; // 1–3m: Medium blue
           outlineColor = [56, 189, 248, 0.9];
           outlineWidth = 1.0;
-        } else if (maxDepth < 6.0) {
+        } else if (activeDepth < 6.0) {
           fillColor = [37, 99, 235, 0.85]; // 3–6m: Deep royal blue
           outlineColor = [96, 165, 250, 0.9];
           outlineWidth = 1.2;
-        } else if (maxDepth < 15.0) {
+        } else if (activeDepth < 15.0) {
           fillColor = [29, 78, 216, 0.90]; // 6–15m: Dark blue
           outlineColor = [147, 197, 253, 0.9];
           outlineWidth = 1.5;
