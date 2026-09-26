@@ -1,0 +1,44 @@
+{
+  "reservoir": "Tehri Hydro Development Corporation (THDC) Dam Reservoir",
+  "river": "Bhagirathi and Bhilangna Confluence",
+  "capacity_table": [
+    {
+      "elevation_m": 600.0,
+      "area_sqkm": 2.1,
+      "gross_capacity_mcm": 150.0
+    },
+    {
+      "elevation_m": 650.0,
+      "area_sqkm": 8.4,
+      "gross_capacity_mcm": 420.0
+    },
+    {
+      "elevation_m": 700.0,
+      "area_sqkm": 18.2,
+      "gross_capacity_mcm": 1100.0
+    },
+    {
+      "elevation_m": 740.0,
+      "area_sqkm": 28.5,
+      "gross_capacity_mcm": 1850.0,
+      "level_note": "MDDL - Minimum Drawdown Level"
+    },
+    {
+      "elevation_m": 800.0,
+      "area_sqkm": 38.0,
+      "gross_capacity_mcm": 2900.0
+    },
+    {
+      "elevation_m": 830.0,
+      "area_sqkm": 42.0,
+      "gross_capacity_mcm": 3540.0,
+      "level_note": "FRL - Full Reservoir Level"
+    },
+    {
+      "elevation_m": 835.0,
+      "area_sqkm": 44.5,
+      "gross_capacity_mcm": 3720.0,
+      "level_note": "MWL - Maximum Water Level"
+    }
+  ]
+}
