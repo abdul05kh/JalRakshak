@@ -1,0 +1,251 @@
+{
+  "audit_metadata": {
+    "spec": "RC2.2.1 Operational Truth & Scientific Evidence Stratification",
+    "scenario_id": "SCENARIO_CENTRAL",
+    "peak_discharge_m3s": 65000.0,
+    "solver": "USACE HEC-RAS 7.0.1 (RasUnsteady.exe)",
+    "hdf5_artifact_path": "artifacts/hecras/tehri_gate3b/tehri_15km_scenario_central.p01.hdf",
+    "hdf5_sha256": "c0b18e0416697757e4733bae120217e5222aed726841d4f8ab26bd093445fc78",
+    "total_hydraulic_cells": 6677,
+    "total_timesteps": 25,
+    "timestep_interval_min": 5.0,
+    "arrival_depth_threshold_m": 0.3
+  },
+  "deterministic_cell_depth_samples": [
+    {
+      "cell_id": 100,
+      "coord_utm44n": [
+        255800.0,
+        3351300.0
+      ],
+      "bed_elev_m": 1275.174,
+      "depth_T00_m": 0.0001,
+      "depth_T30_m": 0.0001,
+      "depth_T60_m": 0.0001,
+      "depth_T90_m": 0.0001,
+      "arrival_sec": null,
+      "arrival_formatted": "NO_ARRIVAL"
+    },
+    {
+      "cell_id": 500,
+      "coord_utm44n": [
+        256600.0,
+        3352100.0
+      ],
+      "bed_elev_m": 1184.198,
+      "depth_T00_m": 0.0001,
+      "depth_T30_m": 0.0001,
+      "depth_T60_m": 0.0001,
+      "depth_T90_m": 0.0001,
+      "arrival_sec": null,
+      "arrival_formatted": "NO_ARRIVAL"
+    },
+    {
+      "cell_id": 1000,
+      "coord_utm44n": [
+        257600.0,
+        3353100.0
+      ],
+      "bed_elev_m": 664.438,
+      "depth_T00_m": 0.0001,
+      "depth_T30_m": 0.0001,
+      "depth_T60_m": 0.0001,
+      "depth_T90_m": 0.0001,
+      "arrival_sec": null,
+      "arrival_formatted": "NO_ARRIVAL"
+    },
+    {
+      "cell_id": 1500,
+      "coord_utm44n": [
+        258600.0,
+        3354100.0
+      ],
+      "bed_elev_m": 720.691,
+      "depth_T00_m": 0.0001,
+      "depth_T30_m": 0.0001,
+      "depth_T60_m": 0.0001,
+      "depth_T90_m": 0.0001,
+      "arrival_sec": null,
+      "arrival_formatted": "NO_ARRIVAL"
+    },
+    {
+      "cell_id": 2000,
+      "coord_utm44n": [
+        259600.0,
+        3355100.0
+      ],
+      "bed_elev_m": 1071.916,
+      "depth_T00_m": 0.0001,
+      "depth_T30_m": 0.0001,
+      "depth_T60_m": 0.0001,
+      "depth_T90_m": 0.0001,
+      "arrival_sec": null,
+      "arrival_formatted": "NO_ARRIVAL"
+    },
+    {
+      "cell_id": 2300,
+      "coord_utm44n": [
+        260200.0,
+        3355700.0
+      ],
+      "bed_elev_m": 1240.544,
+      "depth_T00_m": 0.0001,
+      "depth_T30_m": 0.0001,
+      "depth_T60_m": 0.0001,
+      "depth_T90_m": 0.0001,
+      "arrival_sec": null,
+      "arrival_formatted": "NO_ARRIVAL"
+    },
+    {
+      "cell_id": 2400,
+      "coord_utm44n": [
+        260400.0,
+        3355900.0
+      ],
+      "bed_elev_m": 1266.234,
+      "depth_T00_m": 0.0,
+      "depth_T30_m": 0.0,
+      "depth_T60_m": 0.0,
+      "depth_T90_m": 0.0,
+      "arrival_sec": null,
+      "arrival_formatted": "NO_ARRIVAL"
+    },
+    {
+      "cell_id": 3000,
+      "coord_utm44n": [
+        256700.0,
+        3357200.0
+      ],
+      "bed_elev_m": 1183.543,
+      "depth_T00_m": 0.0,
+      "depth_T30_m": 0.0,
+      "depth_T60_m": 0.0,
+      "depth_T90_m": 0.0,
+      "arrival_sec": null,
+      "arrival_formatted": "NO_ARRIVAL"
+    },
+    {
+      "cell_id": 4000,
+      "coord_utm44n": [
+        258700.0,
+        3359200.0
+      ],
+      "bed_elev_m": 687.321,
+      "depth_T00_m": 0.0,
+      "depth_T30_m": 0.0,
+      "depth_T60_m": 0.0,
+      "depth_T90_m": 0.0,
+      "arrival_sec": null,
+      "arrival_formatted": "NO_ARRIVAL"
+    },
+    {
+      "cell_id": 5000,
+      "coord_utm44n": [
+        255800.0,
+        3361300.0
+      ],
+      "bed_elev_m": 1477.256,
+      "depth_T00_m": 0.0001,
+      "depth_T30_m": 0.0001,
+      "depth_T60_m": 0.0001,
+      "depth_T90_m": 0.0001,
+      "arrival_sec": null,
+      "arrival_formatted": "NO_ARRIVAL"
+    }
+  ],
+  "ewe_route_r02_evaluation": {
+    "route_id": "R02",
+    "origin": "Malidewal (VILL-02)",
+    "destination": "Chamba / Koteshwar Shelter (SHELTER-01 / VILL-01)",
+    "configured_buffer_sec": 180,
+    "calculated_limiting_edge": "R02-E07",
+    "calculated_latest_departure_sec": 2661,
+    "calculated_latest_departure_formatted": "T+44:21",
+    "segments": [
+      {
+        "edge_id": "R02-E01",
+        "name": "Malidewal Village Exit",
+        "cumulative_travel_sec": 72,
+        "cumulative_travel_formatted": "01:12",
+        "hydraulic_arrival_sec": 5400,
+        "hydraulic_arrival_formatted": "T+90:00",
+        "safety_buffer_sec": 180,
+        "departure_deadline_sec": 5148,
+        "departure_deadline_formatted": "T+85:48",
+        "is_limiting_argmin": false
+      },
+      {
+        "edge_id": "R02-E02",
+        "name": "Bhagirathi Valley Upper Link",
+        "cumulative_travel_sec": 172,
+        "cumulative_travel_formatted": "02:52",
+        "hydraulic_arrival_sec": 4800,
+        "hydraulic_arrival_formatted": "T+80:00",
+        "safety_buffer_sec": 180,
+        "departure_deadline_sec": 4448,
+        "departure_deadline_formatted": "T+74:08",
+        "is_limiting_argmin": false
+      },
+      {
+        "edge_id": "R02-E03",
+        "name": "Jakhnidhar Junction",
+        "cumulative_travel_sec": 308,
+        "cumulative_travel_formatted": "05:08",
+        "hydraulic_arrival_sec": 4500,
+        "hydraulic_arrival_formatted": "T+75:00",
+        "safety_buffer_sec": 180,
+        "departure_deadline_sec": 4012,
+        "departure_deadline_formatted": "T+66:52",
+        "is_limiting_argmin": false
+      },
+      {
+        "edge_id": "R02-E04",
+        "name": "Tipri Lowland Bypass",
+        "cumulative_travel_sec": 404,
+        "cumulative_travel_formatted": "06:44",
+        "hydraulic_arrival_sec": 4200,
+        "hydraulic_arrival_formatted": "T+70:00",
+        "safety_buffer_sec": 180,
+        "departure_deadline_sec": 3616,
+        "departure_deadline_formatted": "T+60:16",
+        "is_limiting_argmin": false
+      },
+      {
+        "edge_id": "R02-E05",
+        "name": "Koteshwar North Terrace",
+        "cumulative_travel_sec": 519,
+        "cumulative_travel_formatted": "08:39",
+        "hydraulic_arrival_sec": 4080,
+        "hydraulic_arrival_formatted": "T+68:00",
+        "safety_buffer_sec": 180,
+        "departure_deadline_sec": 3381,
+        "departure_deadline_formatted": "T+56:21",
+        "is_limiting_argmin": false
+      },
+      {
+        "edge_id": "R02-E06",
+        "name": "Lower Canyon Bridge Approach",
+        "cumulative_travel_sec": 639,
+        "cumulative_travel_formatted": "10:39",
+        "hydraulic_arrival_sec": 3840,
+        "hydraulic_arrival_formatted": "T+64:00",
+        "safety_buffer_sec": 180,
+        "departure_deadline_sec": 3021,
+        "departure_deadline_formatted": "T+50:21",
+        "is_limiting_argmin": false
+      },
+      {
+        "edge_id": "R02-E07",
+        "name": "Koteshwar Riverbank Limiting Segment",
+        "cumulative_travel_sec": 759,
+        "cumulative_travel_formatted": "12:39",
+        "hydraulic_arrival_sec": 3600,
+        "hydraulic_arrival_formatted": "T+60:00",
+        "safety_buffer_sec": 180,
+        "departure_deadline_sec": 2661,
+        "departure_deadline_formatted": "T+44:21",
+        "is_limiting_argmin": true
+      }
+    ]
+  }
+}
