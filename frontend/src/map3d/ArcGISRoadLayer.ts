@@ -7,7 +7,10 @@
 import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer";
 import Graphic from "@arcgis/core/Graphic";
 import Polyline from "@arcgis/core/geometry/Polyline";
+import Point from "@arcgis/core/geometry/Point";
 import SimpleLineSymbol from "@arcgis/core/symbols/SimpleLineSymbol";
+import PointSymbol3D from "@arcgis/core/symbols/PointSymbol3D";
+import IconSymbol3DLayer from "@arcgis/core/symbols/IconSymbol3DLayer";
 import type { RoadFeature } from "../types";
 
 // Authoritative R02 Segment Coordinates (7 Edges from Malidewal to Koteshwar / Chamba)
@@ -237,6 +240,34 @@ export class ArcGISRoadLayer {
       });
 
       routeGraphics.push(graphic);
+
+      // Add directional sequence waypoint badge along road geometry
+      const midIdx = Math.floor(seg.coords.length / 2);
+      const midCoord = seg.coords[midIdx];
+      const waypointGraphic = new Graphic({
+        geometry: new Point({
+          longitude: midCoord[0],
+          latitude: midCoord[1],
+          spatialReference: { wkid: 4326 }
+        }),
+        symbol: new PointSymbol3D({
+          symbolLayers: [
+            new IconSymbol3DLayer({
+              size: isLimiting ? 14 : 10,
+              resource: { primitive: isLimiting ? "square" : "circle" },
+              material: { color: isLimiting ? "#ef4444" : "#38bdf8" }
+            })
+          ]
+        }),
+        attributes: {
+          type: "WAYPOINT",
+          edgeId: seg.edgeId,
+          label: seg.edgeId,
+          cumulativeTravel: seg.travelTimeMin,
+          is_limiting: isLimiting
+        }
+      });
+      routeGraphics.push(waypointGraphic);
     });
     this.routeLayer.addMany(routeGraphics);
   }
