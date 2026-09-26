@@ -1,0 +1,25 @@
+{
+  "reference": "HR Wallingford & USBR Criteria for Flood Hazard to People and Vehicles",
+  "vehicle_thresholds": {
+    "passenger_car": {
+      "max_static_depth_m": 0.3,
+      "max_velocity_ms": 1.5,
+      "critical_dv_m2s": 0.3
+    },
+    "emergency_4wd_ambulance": {
+      "max_static_depth_m": 0.5,
+      "max_velocity_ms": 2.2,
+      "critical_dv_m2s": 0.6
+    },
+    "heavy_transport_bus": {
+      "max_static_depth_m": 0.8,
+      "max_velocity_ms": 3.0,
+      "critical_dv_m2s": 1.2
+    },
+    "pedestrian_adult": {
+      "max_static_depth_m": 0.5,
+      "max_velocity_ms": 1.2,
+      "critical_dv_m2s": 0.4
+    }
+  }
+}
