@@ -1,0 +1,10 @@
+{
+  "region": "Garhwal Himalayas",
+  "bhagirathi_geology": "Quartzite and Schist crystalline formations",
+  "bulking_factor_min": 1.08,
+  "bulking_factor_max": 1.25,
+  "nominal_bulking_factor": 1.15,
+  "specific_gravity_sediment": 2.65,
+  "d50_grain_size_mm": 12.5,
+  "reference": "Wadia Institute of Himalayan Geology Geomorphology Report"
+}
