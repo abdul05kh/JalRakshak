@@ -33,11 +33,14 @@ interface MapViewProps {
   onSelectEdgeId?: (edgeId: string) => void;
   showTerrain?: boolean;
   showRoads?: boolean;
+  showInfrastructure?: boolean;
+  basemapKey?: "hybrid" | "satellite" | "topo-vector" | "dark-gray-vector";
   layerVisibility?: {
     inundation: boolean;
     roads: boolean;
     origins: boolean;
     destinations: boolean;
+    infrastructure?: boolean;
   };
   onMapClick?: (lat: number, lon: number) => void;
   pointQueryData?: PointQueryResponse | null;
@@ -56,6 +59,8 @@ export const MapView: React.FC<MapViewProps> = ({
   onSelectEdgeId,
   showTerrain = true,
   showRoads = true,
+  showInfrastructure = true,
+  basemapKey = "hybrid",
   layerVisibility
 }) => {
   // Translate camera preset key
@@ -68,6 +73,7 @@ export const MapView: React.FC<MapViewProps> = ({
   else if (cameraPreset === "ROUTE" || cameraPreset === "R02") mappedPreset = "R02_ROUTE";
 
   const effectiveShowRoads = layerVisibility?.roads !== undefined ? layerVisibility.roads : showRoads;
+  const effectiveShowInfra = layerVisibility?.infrastructure !== undefined ? layerVisibility.infrastructure : showInfrastructure;
 
   return (
     <div style={{ width: "100%", height: "100%", position: "relative", overflow: "hidden" }}>
@@ -83,6 +89,8 @@ export const MapView: React.FC<MapViewProps> = ({
         onSelectEdgeId={onSelectEdgeId}
         showTerrain={showTerrain}
         showRoads={effectiveShowRoads}
+        showInfrastructure={effectiveShowInfra}
+        basemapKey={basemapKey}
       />
     </div>
   );

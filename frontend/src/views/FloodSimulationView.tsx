@@ -155,6 +155,19 @@ export const FloodSimulationView: React.FC<FloodSimulationViewProps> = ({
           <span style={{ fontSize: "12px", color: currentPhase.color, fontWeight: 600 }}>
             {currentPhase.label}
           </span>
+          <span style={{ fontSize: "12px", color: "#64748b" }}>•</span>
+          <span style={{ 
+            fontSize: "12px", 
+            fontFamily: "monospace", 
+            color: "#fbbf24", 
+            fontWeight: 700,
+            backgroundColor: "rgba(251, 191, 36, 0.12)",
+            padding: "2px 6px",
+            borderRadius: "4px",
+            border: "1px solid rgba(251, 191, 36, 0.3)"
+          }}>
+            {formatModelTime(currentModelMinutes)}
+          </span>
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
@@ -212,11 +225,11 @@ export const FloodSimulationView: React.FC<FloodSimulationViewProps> = ({
       }}>
         <video
           ref={videoRef}
-          src="/simulation/jalrakshak_cinematic.mp4"
           autoPlay
           loop
           muted={isMuted}
           playsInline
+          preload="auto"
           onTimeUpdate={handleTimeUpdate}
           onLoadedMetadata={handleLoadedMetadata}
           onClick={handleTogglePlay}
@@ -226,57 +239,13 @@ export const FloodSimulationView: React.FC<FloodSimulationViewProps> = ({
             objectFit: "contain",
             cursor: "pointer"
           }}
-        />
+        >
+          <source src="/simulation/jalrakshak_cinematic_h264.mp4" type="video/mp4" />
+          <source src="/simulation/jalrakshak_cinematic.webm" type="video/webm" />
+          Your browser does not support HTML5 video.
+        </video>
 
-        {/* Tactical HUD Overlay Floating Badges */}
-        <div style={{
-          position: "absolute",
-          top: "16px",
-          left: "20px",
-          backgroundColor: "rgba(10, 16, 28, 0.85)",
-          border: "1px solid rgba(56, 189, 248, 0.3)",
-          borderRadius: "6px",
-          padding: "10px 16px",
-          backdropFilter: "blur(6px)",
-          pointerEvents: "none"
-        }}>
-          <div style={{ fontSize: "10px", color: "#94a3b8", fontWeight: 700, letterSpacing: "1px" }}>
-            HEC-RAS UNSTEADY 2D HYDRODYNAMICS
-          </div>
-          <div style={{ fontSize: "15px", fontWeight: 700, color: "#f8fafc", marginTop: "2px" }}>
-            Tehri Dam Gorge Reach (0–15 km)
-          </div>
-          <div style={{ fontSize: "11px", color: "#38bdf8", marginTop: "2px" }}>
-            Grid Cells: 6,677 | Peak Outflow: 65,000 m³/s
-          </div>
-        </div>
 
-        {/* Live Simulation Clock HUD */}
-        <div style={{
-          position: "absolute",
-          top: "16px",
-          right: "20px",
-          backgroundColor: "rgba(10, 16, 28, 0.85)",
-          border: "1px solid rgba(245, 158, 11, 0.4)",
-          borderRadius: "6px",
-          padding: "10px 18px",
-          backdropFilter: "blur(6px)",
-          textAlign: "right",
-          pointerEvents: "none"
-        }}>
-          <div style={{ fontSize: "10px", color: "#f59e0b", fontWeight: 700, letterSpacing: "1px" }}>
-            ELAPSED DISASTER TIMELINE
-          </div>
-          <div style={{
-            fontSize: "24px",
-            fontFamily: "monospace",
-            fontWeight: 700,
-            color: "#fbbf24",
-            marginTop: "1px"
-          }}>
-            {formatModelTime(currentModelMinutes)}
-          </div>
-        </div>
 
         {/* Climax Decision Overlay Trigger (when video is in final phase) */}
         {currentTime >= 95 && (

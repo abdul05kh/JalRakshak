@@ -49,17 +49,19 @@ export const OperationalMapView: React.FC<OperationalMapViewProps> = ({
   const [cameraPreset, setCameraPreset] = useState<string>("OVERVIEW");
   const [showAllRoads, setShowAllRoads] = useState<boolean>(true);
   const [showTerrain, setShowTerrain] = useState<boolean>(true);
+  const [showInfrastructure, setShowInfrastructure] = useState<boolean>(true);
+  const [basemapKey, setBasemapKey] = useState<"hybrid" | "satellite" | "topo-vector" | "dark-gray-vector">("hybrid");
 
   const activeSc = scenarios.find((s) => s.id === activeScenarioId);
 
   const cameraButtons: { id: string; label: string }[] = [
     { id: "OVERVIEW", label: "OVERVIEW" },
-    { id: "DAM", label: "DAM" },
+    { id: "DAM", label: "TEHRI DAM" },
     { id: "BREACH", label: "BREACH" },
-    { id: "DOWNSTREAM", label: "DOWNSTREAM" },
-    { id: "ROUTE", label: "ROUTE" },
-    { id: "LIMITING", label: "LIMITING EDGE" },
-    { id: "SHELTER", label: "SHELTER" }
+    { id: "DOWNSTREAM", label: "CANYON GORGE" },
+    { id: "ROUTE", label: "ROUTE R02" },
+    { id: "LIMITING", label: "R02-E07 (T+60)" },
+    { id: "SHELTER", label: "SAFE SHELTER" }
   ];
 
   return (
@@ -77,7 +79,15 @@ export const OperationalMapView: React.FC<OperationalMapViewProps> = ({
         cameraPreset={cameraPreset}
         showTerrain={showTerrain}
         showRoads={showAllRoads}
-        layerVisibility={{ inundation: true, roads: showAllRoads, origins: true, destinations: true }}
+        showInfrastructure={showInfrastructure}
+        basemapKey={basemapKey}
+        layerVisibility={{ 
+          inundation: true, 
+          roads: showAllRoads, 
+          origins: showInfrastructure, 
+          destinations: showInfrastructure,
+          infrastructure: showInfrastructure
+        }}
         onMapClick={() => {}}
         pointQueryData={null}
         showValidationControls={false}
@@ -150,12 +160,12 @@ export const OperationalMapView: React.FC<OperationalMapViewProps> = ({
           top: "14px",
           right: "14px",
           zIndex: 800,
-          backgroundColor: "rgba(15, 23, 42, 0.90)",
+          backgroundColor: "rgba(15, 23, 42, 0.92)",
           backdropFilter: "blur(12px)",
-          border: "1px solid rgba(255, 255, 255, 0.12)",
+          border: "1px solid rgba(255, 255, 255, 0.14)",
           borderRadius: "8px",
           padding: "10px 12px",
-          width: "180px",
+          width: "195px",
           color: "#f8fafc",
           fontSize: "10.5px",
           display: "flex",
@@ -166,19 +176,54 @@ export const OperationalMapView: React.FC<OperationalMapViewProps> = ({
       >
         <div style={{ display: "flex", alignItems: "center", gap: "5px", fontWeight: 800, borderBottom: "1px solid rgba(255,255,255,0.1)", paddingBottom: "5px" }}>
           <Layers size={13} color="#38bdf8" />
-          <span>LAYER CONTROL</span>
+          <span>3D LAYER CONTROL</span>
+        </div>
+
+        {/* Basemap Selection */}
+        <div>
+          <div style={{ fontSize: "9px", fontWeight: 800, color: "#94a3b8", textTransform: "uppercase", marginBottom: "3px" }}>
+            Basemap
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "3px" }}>
+            {[
+              { id: "hybrid", label: "🛰️ SATELLITE" },
+              { id: "topo-vector", label: "🏔️ 3D TOPO" },
+              { id: "dark-gray-vector", label: "🌑 TACTICAL" }
+            ].map((bm) => {
+              const isActive = basemapKey === bm.id;
+              return (
+                <button
+                  key={bm.id}
+                  onClick={() => setBasemapKey(bm.id as any)}
+                  style={{
+                    padding: "4px 6px",
+                    borderRadius: "4px",
+                    border: isActive ? "1px solid #38bdf8" : "1px solid rgba(255,255,255,0.06)",
+                    backgroundColor: isActive ? "rgba(56, 189, 248, 0.25)" : "rgba(30, 41, 59, 0.4)",
+                    color: isActive ? "#ffffff" : "#94a3b8",
+                    fontSize: "9px",
+                    fontWeight: isActive ? 800 : 600,
+                    textAlign: "center",
+                    cursor: "pointer"
+                  }}
+                >
+                  {bm.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* Hydraulic Display Mode */}
-        <div>
+        <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: "4px" }}>
           <div style={{ fontSize: "9px", fontWeight: 800, color: "#94a3b8", textTransform: "uppercase", marginBottom: "3px" }}>
-            Hydraulics
+            HEC-RAS Hydraulics
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
             {[
-              { id: "EXTENT", label: "● EXTENT" },
-              { id: "DEPTH", label: "● DEPTH" },
-              { id: "ARRIVAL", label: "● ARRIVAL" }
+              { id: "EXTENT", label: "● EXTENT ONLY" },
+              { id: "DEPTH", label: "● 3D WATER DEPTH" },
+              { id: "ARRIVAL", label: "● ARRIVAL TIME CONTOURS" }
             ].map((m) => {
               const isActive = thematicMode === m.id;
               return (
@@ -191,7 +236,7 @@ export const OperationalMapView: React.FC<OperationalMapViewProps> = ({
                     border: isActive ? "1px solid #38bdf8" : "1px solid transparent",
                     backgroundColor: isActive ? "rgba(56, 189, 248, 0.25)" : "transparent",
                     color: isActive ? "#ffffff" : "#94a3b8",
-                    fontSize: "10px",
+                    fontSize: "9.5px",
                     fontWeight: isActive ? 800 : 500,
                     textAlign: "left",
                     cursor: "pointer"
@@ -204,10 +249,37 @@ export const OperationalMapView: React.FC<OperationalMapViewProps> = ({
           </div>
         </div>
 
+        {/* Critical Infrastructure Toggle (Hospitals, Shelters, Settlements) */}
+        <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: "4px" }}>
+          <div style={{ fontSize: "9px", fontWeight: 800, color: "#94a3b8", textTransform: "uppercase", marginBottom: "3px" }}>
+            Facilities & Shelters
+          </div>
+          <button
+            onClick={() => setShowInfrastructure(!showInfrastructure)}
+            style={{
+              width: "100%",
+              padding: "3px 6px",
+              borderRadius: "4px",
+              border: "1px solid transparent",
+              backgroundColor: showInfrastructure ? "rgba(236, 72, 153, 0.18)" : "transparent",
+              color: showInfrastructure ? "#f472b6" : "#94a3b8",
+              fontSize: "10px",
+              fontWeight: 700,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              cursor: "pointer"
+            }}
+          >
+            <span>HOSPITALS & SHELTERS</span>
+            {showInfrastructure ? <Eye size={12} /> : <EyeOff size={12} />}
+          </button>
+        </div>
+
         {/* Roads Layer Toggle */}
         <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: "4px" }}>
           <div style={{ fontSize: "9px", fontWeight: 800, color: "#94a3b8", textTransform: "uppercase", marginBottom: "3px" }}>
-            Roads
+            Road Corridors
           </div>
           <button
             onClick={() => setShowAllRoads(!showAllRoads)}
@@ -226,7 +298,7 @@ export const OperationalMapView: React.FC<OperationalMapViewProps> = ({
               cursor: "pointer"
             }}
           >
-            <span>ALL ROADS</span>
+            <span>EVACUATION ROADS</span>
             {showAllRoads ? <Eye size={12} /> : <EyeOff size={12} />}
           </button>
         </div>
@@ -234,7 +306,7 @@ export const OperationalMapView: React.FC<OperationalMapViewProps> = ({
         {/* Terrain Layer Toggle */}
         <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: "4px" }}>
           <div style={{ fontSize: "9px", fontWeight: 800, color: "#94a3b8", textTransform: "uppercase", marginBottom: "3px" }}>
-            Terrain
+            3D Terrain Relief
           </div>
           <button
             onClick={() => setShowTerrain(!showTerrain)}
@@ -253,7 +325,7 @@ export const OperationalMapView: React.FC<OperationalMapViewProps> = ({
               cursor: "pointer"
             }}
           >
-            <span>3D GLO-30 DSM</span>
+            <span>GLO-30 ELEVATION</span>
             {showTerrain ? <Eye size={12} /> : <EyeOff size={12} />}
           </button>
         </div>

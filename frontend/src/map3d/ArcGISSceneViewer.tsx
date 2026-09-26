@@ -25,6 +25,8 @@ interface ArcGISSceneViewerProps {
   onSelectEdgeId?: (edgeId: string) => void;
   showTerrain?: boolean;
   showRoads?: boolean;
+  showInfrastructure?: boolean;
+  basemapKey?: "hybrid" | "satellite" | "topo-vector" | "dark-gray-vector";
   onSwitchTo2D?: () => void;
 }
 
@@ -45,6 +47,8 @@ export const ArcGISSceneViewer: React.FC<ArcGISSceneViewerProps> = ({
   onSelectEdgeId,
   showTerrain = true,
   showRoads = true,
+  showInfrastructure = true,
+  basemapKey = "hybrid",
   onSwitchTo2D: _onSwitchTo2D
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -134,7 +138,7 @@ export const ArcGISSceneViewer: React.FC<ArcGISSceneViewerProps> = ({
     }
   }, [roads, evacPoints, inundationGeoJSON, selectedEdgeId, thematicMode, selectedTimelineStep]);
 
-  // Handle Layer Toggles (Terrain & Roads)
+  // Handle Layer Toggles (Terrain, Roads, Infrastructure, Basemap)
   useEffect(() => {
     if (engineRef.current) {
       engineRef.current.setTerrainVisibility(showTerrain);
@@ -146,6 +150,18 @@ export const ArcGISSceneViewer: React.FC<ArcGISSceneViewerProps> = ({
       engineRef.current.setRoadVisibility(showRoads);
     }
   }, [showRoads]);
+
+  useEffect(() => {
+    if (engineRef.current) {
+      engineRef.current.setInfrastructureVisibility(showInfrastructure);
+    }
+  }, [showInfrastructure]);
+
+  useEffect(() => {
+    if (engineRef.current) {
+      engineRef.current.setBasemap(basemapKey);
+    }
+  }, [basemapKey]);
 
   // Handle Camera Preset changes deterministically
   useEffect(() => {
@@ -314,17 +330,69 @@ export const ArcGISSceneViewer: React.FC<ArcGISSceneViewerProps> = ({
             </button>
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "3px", fontFamily: "monospace", fontSize: "10.5px" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "4px", fontFamily: "monospace", fontSize: "10.5px" }}>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <span style={{ color: "#94a3b8" }}>Feature Type:</span>
+              <span style={{ color: "#94a3b8" }}>Facility Type:</span>
               <strong style={{ color: "#38bdf8" }}>{pickedEntity.type}</strong>
             </div>
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
+
+            {pickedEntity.properties.beds && (
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <span style={{ color: "#94a3b8" }}>Bed Capacity:</span>
+                <strong style={{ color: "#ec4899" }}>{pickedEntity.properties.beds} Beds ({pickedEntity.properties.tier})</strong>
+              </div>
+            )}
+
+            {pickedEntity.properties.capacity && (
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <span style={{ color: "#94a3b8" }}>Shelter Capacity:</span>
+                <strong style={{ color: "#4ade80" }}>{pickedEntity.properties.capacity.toLocaleString()} Persons</strong>
+              </div>
+            )}
+
+            {pickedEntity.properties.population && (
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <span style={{ color: "#94a3b8" }}>Population:</span>
+                <strong style={{ color: "#fbbf24" }}>{pickedEntity.properties.population.toLocaleString()} Residents</strong>
+              </div>
+            )}
+
+            {pickedEntity.properties.flood_arrival && (
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <span style={{ color: "#94a3b8" }}>Flood Arrival:</span>
+                <strong style={{ color: "#ef4444" }}>{pickedEntity.properties.flood_arrival}</strong>
+              </div>
+            )}
+
+            {pickedEntity.properties.status && (
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <span style={{ color: "#94a3b8" }}>Safety Status:</span>
+                <strong style={{ color: pickedEntity.properties.status.includes("WARNING") || pickedEntity.properties.status.includes("INUNDATION") ? "#ef4444" : "#22c55e" }}>
+                  {pickedEntity.properties.status}
+                </strong>
+              </div>
+            )}
+
+            {pickedEntity.properties.heli && (
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <span style={{ color: "#94a3b8" }}>Aviation / Heli:</span>
+                <span style={{ color: "#38bdf8" }}>{pickedEntity.properties.heli}</span>
+              </div>
+            )}
+
+            {pickedEntity.properties.features && (
+              <div style={{ display: "flex", flexDirection: "column", gap: "2px", marginTop: "2px", borderTop: "1px dashed rgba(255,255,255,0.1)", paddingTop: "4px" }}>
+                <span style={{ color: "#94a3b8" }}>Provisions & Facilities:</span>
+                <span style={{ color: "#cbd5e1" }}>{pickedEntity.properties.features}</span>
+              </div>
+            )}
+
+            <div style={{ display: "flex", justifyContent: "space-between", borderTop: "1px solid rgba(255,255,255,0.1)", paddingTop: "4px", marginTop: "2px" }}>
               <span style={{ color: "#94a3b8" }}>Elevation:</span>
-              <strong style={{ color: "#fbbf24" }}>{pickedEntity.coordinate.elev_m.toFixed(2)} m MSL</strong>
+              <strong style={{ color: "#fbbf24" }}>{pickedEntity.coordinate.elev_m.toFixed(1)} m MSL</strong>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <span style={{ color: "#94a3b8" }}>Location:</span>
+              <span style={{ color: "#94a3b8" }}>Coordinates:</span>
               <span style={{ color: "#cbd5e1" }}>{pickedEntity.coordinate.lat.toFixed(4)}°N, {pickedEntity.coordinate.lon.toFixed(4)}°E</span>
             </div>
           </div>
