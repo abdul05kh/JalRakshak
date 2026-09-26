@@ -1,0 +1,64 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Evacuation Route GeoJSON LineString Schema",
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": [
+        "FeatureCollection"
+      ]
+    },
+    "features": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "Feature"
+            ]
+          },
+          "geometry": {
+            "type": "object"
+          },
+          "properties": {
+            "route_id": {
+              "type": "string"
+            },
+            "segment_id": {
+              "type": "string"
+            },
+            "origin_settlement": {
+              "type": "string"
+            },
+            "destination_shelter": {
+              "type": "string"
+            },
+            "length_meters": {
+              "type": "number",
+              "minimum": 0
+            },
+            "nominal_speed_kmh": {
+              "type": "number",
+              "minimum": 1
+            },
+            "elevation_gain_m": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "route_id",
+            "segment_id",
+            "length_meters"
+          ]
+        }
+      }
+    }
+  },
+  "required": [
+    "type",
+    "features"
+  ]
+}
