@@ -1,0 +1,24 @@
+{
+  "dam_name": "Tehri Dam",
+  "dam_type": "Earth and Rockfill",
+  "height_above_streambed_m": 260.5,
+  "storage_volume_m3": 3540000000.0,
+  "empirical_models": {
+    "froehlich_2008": {
+      "formula_avg_width": "0.27 * (V_out^0.32) * (h_w^0.04)",
+      "predicted_avg_width_m": 182.4,
+      "predicted_failure_time_hrs": 1.45,
+      "side_slopes": "1H:1V"
+    },
+    "macdonald_langridge_1984": {
+      "formula_eroded_volume": "0.0261 * (V_out * h_w)^0.77",
+      "predicted_eroded_vol_m3": 4120000.0,
+      "predicted_failure_time_hrs": 1.8
+    },
+    "von_thun_gillette_1990": {
+      "formula_avg_width": "2.5 * h_w + 18.0",
+      "predicted_avg_width_m": 210.0,
+      "predicted_failure_time_hrs": 1.2
+    }
+  }
+}
