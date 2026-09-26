@@ -1,0 +1,25 @@
+{
+  "standard": "IRC:67-2022 Code of Practice for Road Signs",
+  "signage_classes": {
+    "evacuation_route_marker": {
+      "dimensions_mm": [
+        900,
+        600
+      ],
+      "background_color": "#009933",
+      "legend_color": "#FFFFFF",
+      "retroreflectivity_class": "Class C Micro-Prismatic Grade",
+      "symbol": "Running figure towards high shelter arrow"
+    },
+    "hazard_inundation_marker": {
+      "dimensions_mm": [
+        600,
+        600
+      ],
+      "background_color": "#FFFF00",
+      "legend_color": "#000000",
+      "retroreflectivity_class": "Class C",
+      "symbol": "Wave crest above vehicle silhouette"
+    }
+  }
+}
