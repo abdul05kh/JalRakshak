@@ -1,0 +1,30 @@
+{
+  "regulatory_body": "Central Water Commission, Ministry of Jal Shakti",
+  "standard": "Guidelines for Preparation of Emergency Action Plans for Dams",
+  "hazard_categories": {
+    "H1_LOW": {
+      "max_depth_m": 0.5,
+      "max_velocity_ms": 1.0,
+      "max_dv_product_m2s": 0.5,
+      "impact": "Wading possible for adults; passenger vehicles can navigate with caution"
+    },
+    "H2_MEDIUM": {
+      "max_depth_m": 1.2,
+      "max_velocity_ms": 2.0,
+      "max_dv_product_m2s": 1.5,
+      "impact": "Vehicles swept away; pedestrian evacuation hazardous; unreinforced masonry stable"
+    },
+    "H3_HIGH": {
+      "max_depth_m": 2.5,
+      "max_velocity_ms": 4.0,
+      "max_dv_product_m2s": 4.0,
+      "impact": "Severe structural damage to masonry; complete road washout; immediate evacuation imperative"
+    },
+    "H4_EXTREME": {
+      "min_depth_m": 2.5,
+      "min_velocity_ms": 4.0,
+      "min_dv_product_m2s": 4.0,
+      "impact": "Total structural destruction; catastrophic erosion; complete zone quarantine"
+    }
+  }
+}
