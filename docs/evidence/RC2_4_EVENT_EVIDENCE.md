@@ -41,12 +41,12 @@ T+90s: 48,500 px| Area: 10.91 km2  | Extent: 32.1 km
 ---
 
 ## 4. HEC-RAS Source Traceability
-- **HEC-RAS T+00 min** $\to$ Reservoir Equilibrium $\to$ Video `00:00 - 00:14`
-- **HEC-RAS T+15 min** $\to$ Peak Discharge Hydrograph ($65,000\text{ m}^3/\text{s}$) $\to$ Video `00:15 - 00:30`
-- **HEC-RAS T+30 min** $\to$ Canyon Wave Front ($11.5\text{ m/s}$) $\to$ Video `00:30 - 00:45`
-- **HEC-RAS T+45 min** $\to$ Malidewal / Tipri Inundation ($h=8.2\text{m}$) $\to$ Video `00:45 - 01:00`
-- **HEC-RAS T+60 min** $\to$ Segment R02-E07 Submergence ($A=3,600\text{s}$) $\to$ Video `01:00 - 01:15`
-- **HEC-RAS T+80 - T+120 min** $\to$ Valley Storage & Attenuation $\to$ Video `01:15 - 01:30`
+- **HEC-RAS T+00 min** $	o$ Reservoir Equilibrium $	o$ Video 00:00 - 00:14
+- **HEC-RAS T+15 min** $	o$ Peak Discharge Hydrograph ($65,000	ext{ m}^3/	ext{s}$) $	o$ Video 00:15 - 00:30
+- **HEC-RAS T+30 min** $	o$ Canyon Wave Front ($11.5	ext{ m/s}$) $	o$ Video 00:30 - 00:45
+- **HEC-RAS T+45 min** $	o$ Malidewal / Tipri Inundation ($h=8.2	ext{m}$) $	o$ Video 00:45 - 01:00
+- **HEC-RAS T+60 min** $	o$ Segment R02-E07 Submergence ($A=3,600	ext{s}$) $	o$ Video 01:00 - 01:15
+- **HEC-RAS T+80 - T+120 min** $	o$ Valley Storage & Attenuation $	o$ Video 01:15 - 01:30
 
 ---
 
