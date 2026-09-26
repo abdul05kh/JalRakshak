@@ -1,0 +1,66 @@
+{
+  "camera_path_name": "Bhagirathi Valley Master Overflight",
+  "interpolation_type": "Catmull-Rom Spline",
+  "keyframes": [
+    {
+      "timestamp_sec": 0.0,
+      "position": {
+        "x": 78.4806,
+        "y": 30.3781,
+        "z": 1450.0
+      },
+      "heading": 185.0,
+      "tilt": 55.0
+    },
+    {
+      "timestamp_sec": 15.0,
+      "position": {
+        "x": 78.476,
+        "y": 30.36,
+        "z": 1280.0
+      },
+      "heading": 195.0,
+      "tilt": 62.0
+    },
+    {
+      "timestamp_sec": 30.0,
+      "position": {
+        "x": 78.471,
+        "y": 30.34,
+        "z": 1150.0
+      },
+      "heading": 180.0,
+      "tilt": 65.0
+    },
+    {
+      "timestamp_sec": 45.0,
+      "position": {
+        "x": 78.468,
+        "y": 30.32,
+        "z": 1050.0
+      },
+      "heading": 175.0,
+      "tilt": 60.0
+    },
+    {
+      "timestamp_sec": 60.0,
+      "position": {
+        "x": 78.475,
+        "y": 30.3,
+        "z": 950.0
+      },
+      "heading": 160.0,
+      "tilt": 58.0
+    },
+    {
+      "timestamp_sec": 90.0,
+      "position": {
+        "x": 78.485,
+        "y": 30.28,
+        "z": 900.0
+      },
+      "heading": 150.0,
+      "tilt": 50.0
+    }
+  ]
+}
