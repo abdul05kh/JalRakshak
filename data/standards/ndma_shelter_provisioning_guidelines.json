@@ -1,0 +1,16 @@
+{
+  "standard_name": "NDMA Guidelines for Temporary Shelter Management",
+  "per_capita_daily_requirements": {
+    "potable_drinking_water_liters": 3.0,
+    "sanitation_water_liters": 15.0,
+    "caloric_food_ration_kcal": 2100,
+    "shelter_covered_area_sqm": 3.5,
+    "ors_electrolyte_packets": 2,
+    "emergency_blankets": 1
+  },
+  "vulnerable_population_buffers": {
+    "infants_percentage": 5.0,
+    "geriatric_percentage": 12.0,
+    "special_needs_mobility_percentage": 3.5
+  }
+}
