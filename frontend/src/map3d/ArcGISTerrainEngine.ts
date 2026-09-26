@@ -119,6 +119,12 @@ export class ArcGISTerrainEngine {
           map: this.map,
           qualityProfile: "high",
           environment: {
+            background: {
+              type: "color",
+              color: [15, 23, 42, 1]
+            },
+            starsEnabled: false,
+            atmosphereEnabled: true,
             lighting: {
               directShadowsEnabled: true,
               date: new Date("2026-06-21T12:00:00Z")
@@ -376,7 +382,7 @@ export class ArcGISTerrainEngine {
         type: "BREACH",
         name: "Breach Invert (635m MSL)",
         invert_elev_m: 635.0,
-        model: "Froehlich (2008) Piping"
+        model: "Deterministic Parametric Piping (Qp = 65,000 m³/s)"
       }
     });
 

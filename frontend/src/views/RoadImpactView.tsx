@@ -235,7 +235,7 @@ export const RoadImpactView: React.FC<RoadImpactViewProps> = ({
 
               <div style={{ fontSize: "10.5px", color: "#cbd5e1", lineHeight: "1.4", fontFamily: "monospace" }}>
                 Flood Arrival: <strong style={{ color: "#38bdf8" }}>{decision.arrivalFormatted}</strong><br />
-                Travel to Edge: <strong style={{ color: "#fbbf24" }}>{decision.travelFormatted}</strong><br />
+                Cumulative Travel to Edge: <strong style={{ color: "#fbbf24" }}>{decision.travelFormatted}</strong><br />
                 Buffer: <strong style={{ color: "#f87171" }}>{decision.bufferFormatted}</strong><br />
                 Deadline: <strong style={{ color: "#4ade80" }}>{decision.deadlineFormatted}</strong>
               </div>
@@ -262,7 +262,7 @@ export const RoadImpactView: React.FC<RoadImpactViewProps> = ({
                   <thead>
                     <tr style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.10)", color: "#94a3b8", backgroundColor: "rgba(11, 17, 32, 0.8)" }}>
                       <th style={{ padding: "6px 8px" }}>EDGE</th>
-                      <th style={{ padding: "6px 8px" }}>TRAVEL</th>
+                      <th style={{ padding: "6px 8px" }}>CUMULATIVE TRAVEL</th>
                       <th style={{ padding: "6px 8px" }}>ARRIVAL</th>
                       <th style={{ padding: "6px 8px" }}>MARGIN</th>
                       <th style={{ padding: "6px 8px" }}>STATUS</th>
@@ -323,7 +323,7 @@ export const RoadImpactView: React.FC<RoadImpactViewProps> = ({
               <br />
               • OpenStreetMap LineString densified at &le;50m.
               <br />
-              • 150m spatial corridor checks HEC-RAS depth d(x,y,t).
+              • 150m perpendicular corridor checks HEC-RAS depth h &ge; 0.30m.
               <br />
               • D_deadline = min_i(A_i - T_i - B) = T+44:21.
             </div>
