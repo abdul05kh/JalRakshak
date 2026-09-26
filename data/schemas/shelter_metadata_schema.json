@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Emergency Evacuation Shelter Resource Schema",
+  "type": "object",
+  "properties": {
+    "shelter_id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "elevation_msl_m": {
+      "type": "number",
+      "minimum": 300
+    },
+    "max_capacity_persons": {
+      "type": "integer",
+      "minimum": 10
+    },
+    "medical_triage_available": {
+      "type": "boolean"
+    },
+    "helipad_present": {
+      "type": "boolean"
+    },
+    "backup_dg_power_hours": {
+      "type": "number",
+      "minimum": 0
+    },
+    "potable_water_liters_per_day": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "shelter_id",
+    "name",
+    "elevation_msl_m",
+    "max_capacity_persons"
+  ]
+}
