@@ -1,0 +1,27 @@
+{
+  "description": "Manning roughness coefficients (n) calibrated against Bhagirathi riverbed and floodplains",
+  "reference": "Chow (1959) & CWC Guidelines for Dam Break Studies",
+  "zones": {
+    "riverbed_deep_canyon": {
+      "n_val": 0.045,
+      "description": "Gravelly cobble bed with steep rocky walls"
+    },
+    "floodplain_sparse_vegetation": {
+      "n_val": 0.055,
+      "description": "Terraced agricultural fields and shrubbery"
+    },
+    "settlement_urban_cluster": {
+      "n_val": 0.08,
+      "description": "High-density concrete masonry and road infrastructure"
+    },
+    "coniferous_forest_slopes": {
+      "n_val": 0.07,
+      "description": "Steep hillside pine forests"
+    },
+    "reservoir_body": {
+      "n_val": 0.025,
+      "description": "Open calm water body of Tehri reservoir"
+    }
+  },
+  "uncertainty_range_pct": 15.0
+}
