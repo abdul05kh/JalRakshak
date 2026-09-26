@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Header, type ViewType } from "./components/Header";
 import { OperationalMapView } from "./views/OperationalMapView";
-import { FloodSimulationView } from "./views/FloodSimulationView";
+import { CinematicSimulationView } from "./simulation/CinematicSimulationView";
 import { EvacuationDecisionView } from "./views/EvacuationDecisionView";
 import { RoadImpactView } from "./views/RoadImpactView";
 import { ArchitectureView } from "./views/ArchitectureView";
@@ -193,14 +193,13 @@ export const App: React.FC = () => {
         )}
 
         {activeView === "FLOOD_SIMULATION" && (
-          <FloodSimulationView
+          <CinematicSimulationView
             scenarios={scenarios}
             activeScenarioId={activeScenarioId}
             analysisResult={analysisResult}
             roads={roads}
             evacPoints={evacPoints}
             inundationGeoJSON={inundationGeoJSON}
-            onSelectTimestep={(min) => setActiveTimestepMin(min)}
             onNavigateToView={(view) => setActiveView(view as ViewType)}
           />
         )}
