@@ -1,0 +1,48 @@
+{
+  "dem_source": "Copernicus GLO-30 Digital Elevation Model",
+  "vertical_datum": "EGM2008 geoid",
+  "horizontal_datum": "WGS84 (EPSG:4326)",
+  "control_points": [
+    {
+      "name": "Tehri Dam Crest",
+      "lat": 30.3781,
+      "lon": 78.4806,
+      "survey_elevation_m": 839.5,
+      "dem_elevation_m": 838.8,
+      "delta_m": -0.7
+    },
+    {
+      "name": "Malidewal Village Centre",
+      "lat": 30.3421,
+      "lon": 78.4722,
+      "survey_elevation_m": 680.0,
+      "dem_elevation_m": 679.2,
+      "delta_m": -0.8
+    },
+    {
+      "name": "Tipri Market Junction",
+      "lat": 30.3215,
+      "lon": 78.465,
+      "survey_elevation_m": 662.0,
+      "dem_elevation_m": 661.5,
+      "delta_m": -0.5
+    },
+    {
+      "name": "Koteshwar Dam Spillway",
+      "lat": 30.2825,
+      "lon": 78.4988,
+      "survey_elevation_m": 612.0,
+      "dem_elevation_m": 611.1,
+      "delta_m": -0.9
+    },
+    {
+      "name": "Devprayag Confluence",
+      "lat": 30.1458,
+      "lon": 78.5982,
+      "survey_elevation_m": 472.0,
+      "dem_elevation_m": 471.4,
+      "delta_m": -0.6
+    }
+  ],
+  "rmse_vertical_error_m": 0.72
+}
