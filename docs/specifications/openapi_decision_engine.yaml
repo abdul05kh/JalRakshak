@@ -1,0 +1,29 @@
+openapi: 3.1.0
+info:
+  title: JalRakshak Dam-Break Evacuation Decision API
+  version: 2.4.0
+  description: Real-time decision support and hydraulic inundation querying for Tehri Dam emergency management.
+paths:
+  /api/scenarios:
+    get:
+      summary: Retrieve all calibrated hydraulic breach scenarios
+      responses:
+        '200':
+          description: List of scenario metadata
+  /api/evaluate-routes:
+    post:
+      summary: Compute evacuation departure deadline and identify limiting road segments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                scenario_id:
+                  type: string
+                safety_buffer_sec:
+                  type: number
+      responses:
+        '200':
+          description: Evacuation decision recommendations
