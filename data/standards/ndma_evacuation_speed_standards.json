@@ -1,0 +1,31 @@
+{
+  "authority": "National Disaster Management Authority (NDMA)",
+  "guideline": "Standard Operating Procedure for Evacuation in Mountainous Terrain",
+  "terrain_speeds_kmh": {
+    "nh_two_lane_paved": {
+      "day_dry": 45.0,
+      "night_wet": 30.0,
+      "emergency_convoy": 35.0
+    },
+    "sh_single_lane_paved": {
+      "day_dry": 35.0,
+      "night_wet": 22.0,
+      "emergency_convoy": 25.0
+    },
+    "rural_unpaved_gravel": {
+      "day_dry": 20.0,
+      "night_wet": 12.0,
+      "emergency_convoy": 15.0
+    },
+    "mountain_hairpin_bends": {
+      "day_dry": 15.0,
+      "night_wet": 10.0,
+      "emergency_convoy": 10.0
+    }
+  },
+  "pedestrian_speeds_kmh": {
+    "adult_able_bodied": 4.5,
+    "mixed_family_group": 2.5,
+    "steep_uphill_trail": 1.2
+  }
+}
