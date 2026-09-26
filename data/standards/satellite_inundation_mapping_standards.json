@@ -1,0 +1,24 @@
+{
+  "agency": "National Remote Sensing Centre (NRSC / ISRO)",
+  "sensors": [
+    {
+      "name": "RISAT-1A (EOS-04) C-Band SAR",
+      "resolution_m": 3.0,
+      "swath_km": 50,
+      "all_weather_capability": true
+    },
+    {
+      "name": "Sentinel-1 C-SAR",
+      "resolution_m": 10.0,
+      "swath_km": 250,
+      "all_weather_capability": true
+    },
+    {
+      "name": "Cartosat-3 Optical",
+      "resolution_m": 0.28,
+      "swath_km": 16,
+      "all_weather_capability": false
+    }
+  ],
+  "water_detection_backscatter_threshold_db": -16.5
+}
