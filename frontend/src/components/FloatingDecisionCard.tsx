@@ -226,7 +226,7 @@ export const FloatingDecisionCard: React.FC<FloatingDecisionCardProps> = ({
               <strong style={{ color: "#60a5fa" }}>{decision.arrivalFormatted}</strong>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", color: "#cbd5e1" }}>
-              <span>minus Travel Time:</span>
+              <span>minus Cumulative Travel (Origin → Edge):</span>
               <strong style={{ color: "#fbbf24" }}>- {decision.travelFormatted}</strong>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", color: "#cbd5e1" }}>

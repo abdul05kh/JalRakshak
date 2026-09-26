@@ -39,7 +39,7 @@
     },
     {
       "id": "SCENARIO_CENTRAL",
-      "label": "Reference Froehlich Piping Breach Scenario",
+      "label": "CENTRAL (Qp = 65,000 m³/s)",
       "peak_discharge_m3s": 65000.0,
       "baseflow_m3s": 180.0,
       "peak_time_hours": 1.0,

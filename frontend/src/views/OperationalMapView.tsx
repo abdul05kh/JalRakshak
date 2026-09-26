@@ -266,7 +266,7 @@ export const OperationalMapView: React.FC<OperationalMapViewProps> = ({
         left: "50%",
         transform: "translateX(-50%)",
         zIndex: 800,
-        width: "min(960px, 94vw)"
+        width: "min(900px, 92vw)"
       }}>
         <TemporalSlider
           timesteps={timelineSteps}
@@ -276,6 +276,48 @@ export const OperationalMapView: React.FC<OperationalMapViewProps> = ({
           limitingRoadId={selectedRouteId}
           activeLayerName={thematicMode === "EXTENT" ? "FLOOD EXTENT" : (thematicMode === "ARRIVAL" ? "ARRIVAL ISOCHRONES" : "WATER DEPTH")}
         />
+      </div>
+
+      {/* 6. Compact Symbology Legend */}
+      <div style={{
+        position: "absolute",
+        bottom: "16px",
+        left: "14px",
+        zIndex: 800,
+        backgroundColor: "rgba(15, 23, 42, 0.90)",
+        backdropFilter: "blur(10px)",
+        border: "1px solid rgba(255, 255, 255, 0.12)",
+        borderRadius: "8px",
+        padding: "8px 10px",
+        fontSize: "10px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "4px",
+        color: "#cbd5e1"
+      }}>
+        <div style={{ fontWeight: 800, fontSize: "9px", color: "#94a3b8", textTransform: "uppercase", marginBottom: "1px" }}>
+          MAP LEGEND
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          <span style={{ width: "12px", height: "3px", backgroundColor: "#ef4444", borderRadius: "1px" }} />
+          <span>Limiting Segment (R02-E07)</span>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          <span style={{ width: "12px", height: "3px", backgroundColor: "#0284c7", borderRadius: "1px" }} />
+          <span>Evacuation Route (R02)</span>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          <span style={{ width: "10px", height: "8px", backgroundColor: "rgba(14, 165, 233, 0.7)", border: "1px solid #38bdf8", borderRadius: "2px" }} />
+          <span>Flood Hazard (h &ge; 0.30m)</span>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          <span style={{ width: "7px", height: "7px", backgroundColor: "#4ade80", transform: "rotate(45deg)", display: "inline-block" }} />
+          <span>Designated Safe Shelter</span>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          <span style={{ width: "7px", height: "7px", backgroundColor: "#fbbf24", borderRadius: "50%", display: "inline-block" }} />
+          <span>Settlement Origin</span>
+        </div>
       </div>
     </div>
   );

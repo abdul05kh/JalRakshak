@@ -193,7 +193,7 @@ export const EvacuationDecisionView: React.FC<EvacuationDecisionViewProps> = ({
               LEAVE BY {decision.deadlineFormatted}
             </div>
             <div style={{ fontSize: "12px", color: "#cbd5e1" }}>
-              Evacuation vehicle departing Malidewal by <strong style={{ color: "#38bdf8" }}>{decision.deadlineFormatted}</strong> clears limiting segment <strong style={{ color: "#ef4444" }}>{decision.limitingEdgeId}</strong> before hydraulic closure.
+              A departure at <strong style={{ color: "#38bdf8" }}>{decision.deadlineFormatted}</strong> reaches limiting edge <strong style={{ color: "#ef4444" }}>{decision.limitingEdgeId}</strong> before its modeled flood-arrival threshold (<strong style={{ color: "#60a5fa" }}>{decision.arrivalFormatted}</strong>), including the configured {decision.bufferFormatted} safety buffer.
             </div>
           </div>
 
@@ -213,7 +213,7 @@ export const EvacuationDecisionView: React.FC<EvacuationDecisionViewProps> = ({
             </div>
 
             <div style={{ backgroundColor: "#0f172a", padding: "12px", borderRadius: "5px", border: "1px solid rgba(255,255,255,0.06)" }}>
-              <div style={{ fontSize: "10px", color: "#94a3b8", fontWeight: 700 }}>minus TRAVEL TIME (T_i)</div>
+              <div style={{ fontSize: "10px", color: "#94a3b8", fontWeight: 700 }}>minus CUMULATIVE TRAVEL (T_i)</div>
               <div style={{ fontSize: "18px", fontWeight: 900, fontFamily: "monospace", color: "#fbbf24", marginTop: "2px" }}>
                 - {decision.travelFormatted}
               </div>
@@ -250,7 +250,7 @@ export const EvacuationDecisionView: React.FC<EvacuationDecisionViewProps> = ({
               Route R02 Limiting Edge Analysis
             </span>
             <span style={{ fontSize: "10px", color: "#94a3b8" }}>
-              7 Edges Coupled via 150m Hydraulic Envelope
+              7 Edges Coupled via 150m Perpendicular Envelope
             </span>
           </div>
 
@@ -260,7 +260,7 @@ export const EvacuationDecisionView: React.FC<EvacuationDecisionViewProps> = ({
                 <th style={{ padding: "8px 12px" }}>EDGE</th>
                 <th style={{ padding: "8px 12px" }}>NAME</th>
                 <th style={{ padding: "8px 12px" }}>LENGTH</th>
-                <th style={{ padding: "8px 12px" }}>TRAVEL TIME</th>
+                <th style={{ padding: "8px 12px" }}>CUMULATIVE TRAVEL</th>
                 <th style={{ padding: "8px 12px" }}>FLOOD ARRIVAL</th>
                 <th style={{ padding: "8px 12px" }}>MARGIN</th>
                 <th style={{ padding: "8px 12px" }}>STATUS</th>

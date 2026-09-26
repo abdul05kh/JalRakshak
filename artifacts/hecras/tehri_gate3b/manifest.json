@@ -6,7 +6,7 @@
   "scenarios": {
     "SCENARIO_CENTRAL": {
       "id": "SCENARIO_CENTRAL",
-      "description": "Reference Froehlich piping scenario (Qp = 65,000 m3/s, S0 = 0.004, dx = 100m, 2h duration)",
+      "description": "CENTRAL (Qp = 65,000 m³/s)",
       "parameters": {
         "q_peak_m3s": 65000.0,
         "friction_slope": 0.004,
@@ -172,7 +172,7 @@
     },
     "SCENARIO_MINIMUM": {
       "id": "SCENARIO_MINIMUM",
-      "description": "Partial breach / overtopping scenario (Qp = 28,500 m3/s, S0 = 0.004, dx = 100m, 2h duration)",
+      "description": "MINIMUM (Qp = 28,500 m³/s)",
       "parameters": {
         "q_peak_m3s": 28500.0,
         "friction_slope": 0.004,
@@ -338,7 +338,7 @@
     },
     "SCENARIO_MAXIMUM": {
       "id": "SCENARIO_MAXIMUM",
-      "description": "Worst-case rapid breach scenario (Qp = 115,000 m3/s, S0 = 0.004, dx = 100m, 2h duration)",
+      "description": "MAXIMUM (Qp = 115,000 m³/s)",
       "parameters": {
         "q_peak_m3s": 115000.0,
         "friction_slope": 0.004,
