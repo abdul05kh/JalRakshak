@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "HEC-RAS 2D Mesh Geometry Specification",
+  "type": "object",
+  "properties": {
+    "mesh_name": {
+      "type": "string"
+    },
+    "cell_count": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "face_count": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "coordinate_system": {
+      "type": "string",
+      "enum": [
+        "EPSG:32644",
+        "EPSG:4326"
+      ]
+    },
+    "min_cell_area_m2": {
+      "type": "number",
+      "minimum": 0
+    },
+    "max_cell_area_m2": {
+      "type": "number"
+    },
+    "subgrid_elevation_resolution_m": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "mesh_name",
+    "cell_count",
+    "coordinate_system"
+  ]
+}
