@@ -1,0 +1,16 @@
+{
+  "release_tag": "RC2_4_CINEMATIC_VIDEO_SIMULATION_BASELINE",
+  "project": "JalRakshak Dam-Break Evacuation Decision Support",
+  "dam_site": "Tehri Dam, Uttarakhand, India",
+  "total_contributions_verified": 95,
+  "automated_test_count": 166,
+  "scientific_truth_gates": [
+    "Gate 1: Hydraulic Source Provenance - PASS",
+    "Gate 2: Mesh Elevation Integrity - PASS",
+    "Gate 3: Wave Arrival Monotonicity - PASS",
+    "Gate 4: EWE Mathematical Invariants - PASS",
+    "Gate 5: Incident Commander Decision Alignment - PASS",
+    "Gate 6: Presentation Video Decoupling - PASS"
+  ],
+  "governance_signoff": "Approved for Global Open Source Release"
+}
