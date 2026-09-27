@@ -47,7 +47,7 @@ export class ArcGISHydraulicLayer {
       const arrivalMin = props.arrival_min || (props.arrival_s ? props.arrival_s / 60 : 15.0);
 
       // Time filtering: only show inundated cells that flood at or before currentTimeMin
-      if (arrivalMin > currentTimeMin && currentTimeMin > 0) {
+      if (arrivalMin > currentTimeMin) {
         return;
       }
 

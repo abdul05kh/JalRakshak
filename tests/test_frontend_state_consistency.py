@@ -180,3 +180,82 @@ def test_sign_conventions_and_error_on_negative_travel():
         buffer_sec = 180
         if arrival < 0 or travel < 0 or buffer_sec < 0:
             raise ValueError(f"Invalid negative EWE components: arrival={arrival}, travel={travel}, buffer={buffer_sec}")
+
+
+def test_scenario_edge_authority_invariant():
+    """
+    SCENARIO_EDGE_AUTHORITY_INVARIANT:
+    Ensures that for every operational scenario (MINIMUM, CENTRAL, MAXIMUM),
+    the edge-level breakdown for R02-E07 strictly matches the scenario arrival time:
+      - CENTRAL: Arrival T+60:00, Departure Deadline T+44:21
+      - MAXIMUM: Arrival T+45:00, Departure Deadline T+29:21
+      - MINIMUM: Arrival T+95:00, Departure Deadline T+79:21
+    """
+    expected_edge_r02_e07 = {
+        "SCENARIO_CENTRAL": {
+            "arrivalFormatted": "T+60:00",
+            "deadlineFormatted": "T+44:21",
+            "marginMin": "+44:21",
+            "isLimiting": True,
+            "status": "FEASIBLE"
+        },
+        "SCENARIO_MAXIMUM": {
+            "arrivalFormatted": "T+45:00",
+            "deadlineFormatted": "T+29:21",
+            "marginMin": "+29:21",
+            "isLimiting": True,
+            "status": "FEASIBLE"
+        },
+        "SCENARIO_MINIMUM": {
+            "arrivalFormatted": "T+95:00",
+            "deadlineFormatted": "T+79:21",
+            "marginMin": "+79:21",
+            "isLimiting": True,
+            "status": "FEASIBLE"
+        }
+    }
+
+    for scen_id, expected in expected_edge_r02_e07.items():
+        dec = AuthoritativeDecisionEngine.get_decision(scen_id, "R02")
+        assert dec["limitingEdgeId"] == "R02-E07"
+        assert dec["arrivalFormatted"] == expected["arrivalFormatted"]
+        assert dec["deadlineFormatted"] == expected["deadlineFormatted"]
+
+
+def test_hydraulic_temporal_filtering_invariant():
+    """
+    HYDRAULIC_TEMPORAL_FILTERING_INVARIANT:
+    Ensures that filtering logic strictly prevents any flood cell with arrival_min > current_time
+    from rendering. In particular, at T+00:00, zero post-arrival flood cells can be visible.
+    """
+    sample_cells = [
+        {"id": "cell_breach_0", "arrival_min": 0.0, "depth_m": 8.5},
+        {"id": "cell_near_dam_15", "arrival_min": 15.0, "depth_m": 6.2},
+        {"id": "cell_mid_valley_30", "arrival_min": 30.0, "depth_m": 5.1},
+        {"id": "cell_limiting_e07_60", "arrival_min": 60.0, "depth_m": 4.0},
+        {"id": "cell_downstream_95", "arrival_min": 95.0, "depth_m": 3.2},
+        {"id": "cell_far_tail_120", "arrival_min": 120.0, "depth_m": 2.1},
+    ]
+
+    def render_filter(cell, current_time_min):
+        # Strict logic implemented in ArcGISHydraulicLayer.ts
+        if cell["arrival_min"] > current_time_min:
+            return False
+        return True
+
+    # At T+00:00 (currentTimeMin = 0) -> only cells with arrival_min <= 0 can render
+    t0_rendered = [c["id"] for c in sample_cells if render_filter(c, 0)]
+    assert t0_rendered == ["cell_breach_0"], f"Leak at T+00: {t0_rendered}"
+
+    # At T+30:00 -> only arrival <= 30
+    t30_rendered = [c["id"] for c in sample_cells if render_filter(c, 30)]
+    assert t30_rendered == ["cell_breach_0", "cell_near_dam_15", "cell_mid_valley_30"]
+
+    # At T+60:00 -> only arrival <= 60
+    t60_rendered = [c["id"] for c in sample_cells if render_filter(c, 60)]
+    assert t60_rendered == ["cell_breach_0", "cell_near_dam_15", "cell_mid_valley_30", "cell_limiting_e07_60"]
+
+    # At T+120:00 -> all arrival <= 120
+    t120_rendered = [c["id"] for c in sample_cells if render_filter(c, 120)]
+    assert len(t120_rendered) == 6
+

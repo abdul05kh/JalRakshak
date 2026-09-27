@@ -2,6 +2,7 @@
  * ArcGISRoadLayer.ts
  * Manages 3D terrain-clamped road networks, segmented route edges (R02-E01 to R02-E07),
  * and limiting edge telemetry on ArcGIS Maps SDK 5.1 3D SceneView.
+ * Authoritative single-source derivation via getAuthoritativeEdgeBreakdown(scenarioId).
  */
 
 import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer";
@@ -12,123 +13,60 @@ import SimpleLineSymbol from "@arcgis/core/symbols/SimpleLineSymbol";
 import PointSymbol3D from "@arcgis/core/symbols/PointSymbol3D";
 import IconSymbol3DLayer from "@arcgis/core/symbols/IconSymbol3DLayer";
 import type { RoadFeature } from "../types";
+import { getAuthoritativeEdgeBreakdown } from "../services/decisionStore";
 
-// Authoritative R02 Segment Coordinates (7 Edges from Malidewal to Koteshwar / Chamba)
-const R02_SEGMENTS: {
-  edgeId: string;
-  name: string;
-  coords: [number, number][];
-  lengthKm: number;
-  travelTimeMin: string;
-  travelSec: number;
-  speedKmh: number;
-  floodArrivalMin: string;
-  arrivalSec: number;
-  marginMin: string;
-  isLimiting: boolean;
-}[] = [
+// Base geometry definitions for R02 7 segments from Malidewal to Koteshwar / Chamba
+const R02_BASE_GEOMETRIES: { edgeId: string; coords: [number, number][] }[] = [
   {
     edgeId: "R02-E01",
-    name: "Malidewal Village Exit",
-    coords: [[78.4735, 30.3650], [78.4780, 30.3540], [78.4820, 30.3450]],
-    lengthKm: 0.8,
-    travelTimeMin: "01:12",
-    travelSec: 72,
-    speedKmh: 40,
-    floodArrivalMin: "T+90:00",
-    arrivalSec: 5400,
-    marginMin: "+85:48",
-    isLimiting: false
+    coords: [[78.4735, 30.3650], [78.4780, 30.3540], [78.4820, 30.3450]]
   },
   {
     edgeId: "R02-E02",
-    name: "Bhagirathi Valley Upper Link",
-    coords: [[78.4820, 30.3450], [78.4865, 30.3340], [78.4900, 30.3220]],
-    lengthKm: 1.4,
-    travelTimeMin: "02:52",
-    travelSec: 172,
-    speedKmh: 50,
-    floodArrivalMin: "T+80:00",
-    arrivalSec: 4800,
-    marginMin: "+74:08",
-    isLimiting: false
+    coords: [[78.4820, 30.3450], [78.4865, 30.3340], [78.4900, 30.3220]]
   },
   {
     edgeId: "R02-E03",
-    name: "Jakhnidhar Junction",
-    coords: [[78.4900, 30.3220], [78.4930, 30.3120], [78.4955, 30.3040]],
-    lengthKm: 1.9,
-    travelTimeMin: "05:08",
-    travelSec: 308,
-    speedKmh: 50,
-    floodArrivalMin: "T+75:00",
-    arrivalSec: 4500,
-    marginMin: "+66:52",
-    isLimiting: false
+    coords: [[78.4900, 30.3220], [78.4930, 30.3120], [78.4955, 30.3040]]
   },
   {
     edgeId: "R02-E04",
-    name: "Tipri Lowland Bypass",
-    coords: [[78.4955, 30.3040], [78.4968, 30.2980], [78.4975, 30.2920]],
-    lengthKm: 1.2,
-    travelTimeMin: "06:44",
-    travelSec: 404,
-    speedKmh: 45,
-    floodArrivalMin: "T+70:00",
-    arrivalSec: 4200,
-    marginMin: "+60:16",
-    isLimiting: false
+    coords: [[78.4955, 30.3040], [78.4968, 30.2980], [78.4975, 30.2920]]
   },
   {
     edgeId: "R02-E05",
-    name: "Koteshwar North Terrace",
-    coords: [[78.4975, 30.2920], [78.4980, 30.2890], [78.4985, 30.2860]],
-    lengthKm: 1.6,
-    travelTimeMin: "08:39",
-    travelSec: 519,
-    speedKmh: 50,
-    floodArrivalMin: "T+68:00",
-    arrivalSec: 4080,
-    marginMin: "+56:21",
-    isLimiting: false
+    coords: [[78.4975, 30.2920], [78.4980, 30.2890], [78.4985, 30.2860]]
   },
   {
     edgeId: "R02-E06",
-    name: "Lower Canyon Bridge Approach",
-    coords: [[78.4985, 30.2860], [78.4998, 30.2848], [78.5005, 30.2840]],
-    lengthKm: 1.5,
-    travelTimeMin: "10:39",
-    travelSec: 639,
-    speedKmh: 45,
-    floodArrivalMin: "T+64:00",
-    arrivalSec: 3840,
-    marginMin: "+50:21",
-    isLimiting: false
+    coords: [[78.4985, 30.2860], [78.4998, 30.2848], [78.5005, 30.2840]]
   },
   {
     edgeId: "R02-E07",
-    name: "Koteshwar Riverbank Limiting Segment",
     coords: [
       [78.4985, 30.2860],
       [78.5005, 30.2840],
       [78.5020, 30.2825],
       [78.5035, 30.2805]
-    ],
-    lengthKm: 2.1,
-    travelTimeMin: "12:39",
-    travelSec: 759,
-    speedKmh: 50,
-    floodArrivalMin: "T+60:00",
-    arrivalSec: 3600,
-    marginMin: "+44:21",
-    isLimiting: true
+    ]
   }
 ];
+
+function parseTimeToSeconds(timeStr: string): number {
+  if (!timeStr) return 0;
+  const clean = timeStr.replace(/^[T+]/, "").replace(/^\+/, "").trim();
+  const parts = clean.split(":");
+  if (parts.length === 2) {
+    return parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
+  }
+  return 0;
+}
 
 export class ArcGISRoadLayer {
   private networkLayer: GraphicsLayer;
   private routeLayer: GraphicsLayer;
   private selectedEdgeId: string | null = null;
+  private currentScenarioId: string = "SCENARIO_CENTRAL";
 
   constructor() {
     this.networkLayer = new GraphicsLayer({
@@ -148,10 +86,15 @@ export class ArcGISRoadLayer {
     return [this.networkLayer, this.routeLayer];
   }
 
-  public setRoads(roads: RoadFeature[], selectedEdgeId?: string | null): void {
+  public setRoads(
+    roads: RoadFeature[],
+    selectedEdgeId?: string | null,
+    scenarioId: string = "SCENARIO_CENTRAL"
+  ): void {
     this.networkLayer.removeAll();
     this.routeLayer.removeAll();
     this.selectedEdgeId = selectedEdgeId || null;
+    this.currentScenarioId = scenarioId || "SCENARIO_CENTRAL";
 
     // 1. Add background network roads (R01, R03, etc.)
     const networkGraphics: Graphic[] = [];
@@ -190,16 +133,30 @@ export class ArcGISRoadLayer {
     });
     this.networkLayer.addMany(networkGraphics);
 
-    // 2. Add Authoritative R02 Segments with Directional Flow & Edge Telemetry
+    // 2. Add Authoritative R02 Segments derived dynamically from backend decision store
+    const edgeBreakdowns = getAuthoritativeEdgeBreakdown(this.currentScenarioId);
     const routeGraphics: Graphic[] = [];
-    R02_SEGMENTS.forEach((seg) => {
+
+    R02_BASE_GEOMETRIES.forEach((base) => {
+      const edge = edgeBreakdowns.find((e) => e.edgeId === base.edgeId) || {
+        edgeId: base.edgeId,
+        segmentName: "Segment " + base.edgeId,
+        lengthKm: 1.5,
+        speedKmh: 50,
+        travelToEdgeMin: "10:00",
+        floodArrivalMin: "T+60:00",
+        marginMin: "+50:00",
+        status: "FEASIBLE",
+        isLimiting: base.edgeId === "R02-E07"
+      };
+
       const polyline = new Polyline({
-        paths: [seg.coords],
+        paths: [base.coords],
         spatialReference: { wkid: 4326 }
       });
 
-      const isLimiting = seg.isLimiting;
-      const isSelected = this.selectedEdgeId === seg.edgeId;
+      const isLimiting = edge.isLimiting;
+      const isSelected = this.selectedEdgeId === edge.edgeId;
 
       let lineColor: number[] = [2, 132, 199, 0.95]; // Steel blue
       let lineWidth = 4.0;
@@ -217,33 +174,37 @@ export class ArcGISRoadLayer {
         width: lineWidth
       });
 
+      const travelSec = parseTimeToSeconds(edge.travelToEdgeMin);
+      const arrivalSec = parseTimeToSeconds(edge.floodArrivalMin);
+
       const graphic = new Graphic({
         geometry: polyline,
         symbol,
         attributes: {
           type: "ROAD",
           roadId: "R02",
-          edgeId: seg.edgeId,
-          name: seg.name,
-          length_km: seg.lengthKm,
-          travel_time: seg.travelTimeMin,
-          travel_sec: seg.travelSec,
-          speed_kmh: seg.speedKmh,
-          flood_arrival: seg.floodArrivalMin,
-          arrival_sec: seg.arrivalSec,
-          margin: seg.marginMin,
-          status: isLimiting ? "LIMITING" : "FEASIBLE",
+          edgeId: edge.edgeId,
+          name: edge.segmentName,
+          length_km: edge.lengthKm,
+          travel_time: edge.travelToEdgeMin,
+          travel_sec: travelSec,
+          speed_kmh: edge.speedKmh,
+          flood_arrival: edge.floodArrivalMin,
+          arrival_sec: arrivalSec,
+          margin: edge.marginMin,
+          status: isLimiting ? "LIMITING" : edge.status,
           is_limiting: isLimiting,
           hydraulic_threshold: "h >= 0.30 m",
-          direction: "Malidewal (Origin) → Koteshwar (Shelter / Destination)"
+          direction: "Malidewal (Origin) → Koteshwar (Shelter / Destination)",
+          scenarioId: this.currentScenarioId
         }
       });
 
       routeGraphics.push(graphic);
 
       // Add directional sequence waypoint badge along road geometry
-      const midIdx = Math.floor(seg.coords.length / 2);
-      const midCoord = seg.coords[midIdx];
+      const midIdx = Math.floor(base.coords.length / 2);
+      const midCoord = base.coords[midIdx];
       const waypointGraphic = new Graphic({
         geometry: new Point({
           longitude: midCoord[0],
@@ -261,10 +222,13 @@ export class ArcGISRoadLayer {
         }),
         attributes: {
           type: "WAYPOINT",
-          edgeId: seg.edgeId,
-          label: seg.edgeId,
-          cumulativeTravel: seg.travelTimeMin,
-          is_limiting: isLimiting
+          edgeId: edge.edgeId,
+          label: edge.edgeId,
+          cumulativeTravel: edge.travelToEdgeMin,
+          flood_arrival: edge.floodArrivalMin,
+          margin: edge.marginMin,
+          is_limiting: isLimiting,
+          scenarioId: this.currentScenarioId
         }
       });
       routeGraphics.push(waypointGraphic);

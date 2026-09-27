@@ -53,6 +53,7 @@ export const OperationalMapView: React.FC<OperationalMapViewProps> = ({
   const [basemapKey, setBasemapKey] = useState<"hybrid" | "satellite" | "topo-vector" | "dark-gray-vector">("hybrid");
 
   const activeSc = scenarios.find((s) => s.id === activeScenarioId);
+  const limitingArrival = activeScenarioId.includes("MIN") ? "T+95" : activeScenarioId.includes("MAX") ? "T+45" : "T+60";
 
   const cameraButtons: { id: string; label: string }[] = [
     { id: "OVERVIEW", label: "OVERVIEW" },
@@ -60,7 +61,7 @@ export const OperationalMapView: React.FC<OperationalMapViewProps> = ({
     { id: "BREACH", label: "BREACH" },
     { id: "DOWNSTREAM", label: "CANYON GORGE" },
     { id: "ROUTE", label: "ROUTE R02" },
-    { id: "LIMITING", label: "R02-E07 (T+60)" },
+    { id: "LIMITING", label: `R02-E07 (${limitingArrival})` },
     { id: "SHELTER", label: "SAFE SHELTER" }
   ];
 
@@ -81,6 +82,7 @@ export const OperationalMapView: React.FC<OperationalMapViewProps> = ({
         showRoads={showAllRoads}
         showInfrastructure={showInfrastructure}
         basemapKey={basemapKey}
+        scenarioId={activeScenarioId}
         layerVisibility={{ 
           inundation: true, 
           roads: showAllRoads, 

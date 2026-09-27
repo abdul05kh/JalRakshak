@@ -156,6 +156,7 @@ export const RoadImpactView: React.FC<RoadImpactViewProps> = ({
             selectedEdgeId={selectedEdgeId}
             onSelectEdgeId={(id) => setSelectedEdgeId(id)}
             cameraPreset={selectedEdgeId === "R02-E07" ? "LIMITING" : undefined}
+            scenarioId={activeScenarioId}
             layerVisibility={{ inundation: true, roads: true, origins: true, destinations: true }}
             onMapClick={() => {}}
             pointQueryData={null}

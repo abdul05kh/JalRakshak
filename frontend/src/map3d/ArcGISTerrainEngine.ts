@@ -293,12 +293,13 @@ export class ArcGISTerrainEngine {
     inundationGeoJSON: any,
     selectedEdgeId?: string,
     thematicMode: HydraulicThematicMode = "EXTENT",
-    selectedTimelineStep: string = "T+60"
+    selectedTimelineStep: string = "T+60",
+    scenarioId: string = "SCENARIO_CENTRAL"
   ): void {
     if (this.isDestroyed) return;
 
     if (this.roadLayer) {
-      this.roadLayer.setRoads(roads, selectedEdgeId);
+      this.roadLayer.setRoads(roads, selectedEdgeId, scenarioId);
       updateDiagnostics((d) => {
         d.roads.sourceLoaded = true;
         d.roads.featureCount = roads.length;

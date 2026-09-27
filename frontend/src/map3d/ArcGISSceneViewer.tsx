@@ -28,6 +28,7 @@ interface ArcGISSceneViewerProps {
   showInfrastructure?: boolean;
   basemapKey?: "hybrid" | "satellite" | "topo-vector" | "dark-gray-vector";
   onSwitchTo2D?: () => void;
+  scenarioId?: string;
 }
 
 // Global Instrumentation for Map Lifecycle Stability
@@ -49,7 +50,8 @@ export const ArcGISSceneViewer: React.FC<ArcGISSceneViewerProps> = ({
   showRoads = true,
   showInfrastructure = true,
   basemapKey = "hybrid",
-  onSwitchTo2D: _onSwitchTo2D
+  onSwitchTo2D: _onSwitchTo2D,
+  scenarioId = "SCENARIO_CENTRAL"
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const engineRef = useRef<ArcGISTerrainEngine | null>(null);
@@ -105,7 +107,8 @@ export const ArcGISSceneViewer: React.FC<ArcGISSceneViewerProps> = ({
         inundationGeoJSON,
         selectedEdgeId,
         thematicMode,
-        selectedTimelineStep
+        selectedTimelineStep,
+        scenarioId
       );
       engine.setTerrainVisibility(showTerrain);
       engine.setRoadVisibility(showRoads);
@@ -124,7 +127,7 @@ export const ArcGISSceneViewer: React.FC<ArcGISSceneViewerProps> = ({
     };
   }, []);
 
-  // Dynamically update data, timestep, and thematic mode without recreating SceneView
+  // Dynamically update data, timestep, thematic mode, and scenario without recreating SceneView
   useEffect(() => {
     if (engineRef.current) {
       engineRef.current.updateData(
@@ -133,10 +136,11 @@ export const ArcGISSceneViewer: React.FC<ArcGISSceneViewerProps> = ({
         inundationGeoJSON,
         selectedEdgeId,
         thematicMode,
-        selectedTimelineStep
+        selectedTimelineStep,
+        scenarioId
       );
     }
-  }, [roads, evacPoints, inundationGeoJSON, selectedEdgeId, thematicMode, selectedTimelineStep]);
+  }, [roads, evacPoints, inundationGeoJSON, selectedEdgeId, thematicMode, selectedTimelineStep, scenarioId]);
 
   // Handle Layer Toggles (Terrain, Roads, Infrastructure, Basemap)
   useEffect(() => {

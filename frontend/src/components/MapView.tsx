@@ -45,6 +45,7 @@ interface MapViewProps {
   onMapClick?: (lat: number, lon: number) => void;
   pointQueryData?: PointQueryResponse | null;
   showValidationControls?: boolean;
+  scenarioId?: string;
 }
 
 export const MapView: React.FC<MapViewProps> = ({
@@ -61,7 +62,8 @@ export const MapView: React.FC<MapViewProps> = ({
   showRoads = true,
   showInfrastructure = true,
   basemapKey = "hybrid",
-  layerVisibility
+  layerVisibility,
+  scenarioId = "SCENARIO_CENTRAL"
 }) => {
   // Translate camera preset key
   let mappedPreset = "VALLEY_OVERVIEW";
@@ -91,6 +93,7 @@ export const MapView: React.FC<MapViewProps> = ({
         showRoads={effectiveShowRoads}
         showInfrastructure={effectiveShowInfra}
         basemapKey={basemapKey}
+        scenarioId={scenarioId}
       />
     </div>
   );
