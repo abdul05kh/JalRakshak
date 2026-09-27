@@ -1,4 +1,4 @@
-﻿import os
+import os
 import cv2
 import numpy as np
 import pytest
@@ -57,3 +57,39 @@ def test_video_frames_visibly_change():
         f"Temporal pixel std {temporal_std:.2f} is too low — video appears static. "
         "Expected at least 2.0 (H.264 cinematic with flood animation)."
     )
+
+
+@pytest.mark.skipif(not _VIDEO_PRESENT, reason="H.264 cinematic asset not found")
+def test_video_storyline_checkpoints():
+    """
+    Verifies the 6 key narrative checkpoints across the 120s cinematic run:
+    0% (T+00): Initial Dam/Reservoir equilibrium
+    20% (T+24): Breach initiation & initial water release
+    40% (T+48): Downstream canyon flood propagation
+    60% (T+72): Valley inundation & settlement reach
+    80% (T+96): Route R02 inundation & limiting edge R02-E07 approach
+    100% (T+120): Final safe shelter departure deadline & decision reveal
+    """
+    norm_path = os.path.normpath(VIDEO_PATH)
+    cap = cv2.VideoCapture(norm_path)
+    if not cap.isOpened():
+        cap = cv2.VideoCapture(norm_path, cv2.CAP_MSMF)
+    assert cap.isOpened(), f"Cannot open video at {norm_path}"
+
+    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    fps = cap.get(cv2.CAP_PROP_FPS)
+
+    percentages = [0.0, 0.20, 0.40, 0.60, 0.80, 0.98]
+    checkpoint_frames = []
+
+    for pct in percentages:
+        frame_idx = min(int(pct * total_frames), total_frames - 1)
+        cap.set(cv2.CAP_PROP_POS_FRAMES, frame_idx)
+        ret, frame = cap.read()
+        assert ret is True, f"Failed reading checkpoint at {int(pct*100)}%"
+        assert frame is not None and frame.size > 0
+        checkpoint_frames.append(frame)
+
+    cap.release()
+    assert len(checkpoint_frames) == 6, "All 6 storyline checkpoints must be successfully decoded"
+

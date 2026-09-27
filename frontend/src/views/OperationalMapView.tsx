@@ -97,6 +97,7 @@ export const OperationalMapView: React.FC<OperationalMapViewProps> = ({
 
       {/* 2. Top-Center Camera Presets Toolbar */}
       <div
+        className="mobile-scroll-x"
         style={{
           position: "absolute",
           top: "14px",
@@ -114,7 +115,7 @@ export const OperationalMapView: React.FC<OperationalMapViewProps> = ({
           boxShadow: "0 8px 24px rgba(0,0,0,0.4)"
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "4px", padding: "0 6px", borderRight: "1px solid rgba(255,255,255,0.15)", color: "#94a3b8", fontSize: "10px", fontWeight: 800 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "4px", padding: "0 6px", borderRight: "1px solid rgba(255,255,255,0.15)", color: "#94a3b8", fontSize: "10px", fontWeight: 800, flexShrink: 0 }}>
           <Video size={12} color="#38bdf8" />
           <span>CAMERA:</span>
         </div>
@@ -133,7 +134,8 @@ export const OperationalMapView: React.FC<OperationalMapViewProps> = ({
                 fontSize: "10px",
                 fontWeight: isActive ? 800 : 600,
                 cursor: "pointer",
-                transition: "all 0.15s ease"
+                transition: "all 0.15s ease",
+                flexShrink: 0
               }}
             >
               {btn.label}
@@ -176,9 +178,11 @@ export const OperationalMapView: React.FC<OperationalMapViewProps> = ({
           boxShadow: "0 10px 25px rgba(0,0,0,0.4)"
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "5px", fontWeight: 800, borderBottom: "1px solid rgba(255,255,255,0.1)", paddingBottom: "5px" }}>
-          <Layers size={13} color="#38bdf8" />
-          <span>3D LAYER CONTROL</span>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontWeight: 800, borderBottom: "1px solid rgba(255,255,255,0.1)", paddingBottom: "5px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+            <Layers size={13} color="#38bdf8" />
+            <span>3D LAYERS</span>
+          </div>
         </div>
 
         {/* Basemap Selection */}

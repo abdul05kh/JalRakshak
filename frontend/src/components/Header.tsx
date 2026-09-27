@@ -72,7 +72,7 @@ export const Header: React.FC<HeaderProps> = ({
       color: "#ffffff"
     }}>
       {/* Left: Brand & Context */}
-      <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "12px", flexShrink: 0 }}>
         <div 
           onClick={() => onNavigateToView("OPERATIONAL_MAP")}
           style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}
@@ -96,7 +96,7 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {dam && (
-          <span style={{
+          <span className="mobile-hide" style={{
             fontSize: "10.5px",
             color: "#94a3b8",
             fontWeight: 600,
@@ -109,7 +109,7 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       {/* Middle: Scenario & Route Selectors */}
-      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
         {/* Scenario Selector */}
         <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
           <label style={{ fontSize: "10px", fontWeight: 800, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.5px" }}>

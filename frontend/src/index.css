@@ -100,3 +100,24 @@ body {
 .pulsing-segment {
   animation: pulse-red 1.6s infinite ease-in-out;
 }
+
+/* Mobile Responsiveness (<= 768px and 390x844 Mobile Viewports) */
+@media (max-width: 768px) {
+  header {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  header::-webkit-scrollbar {
+    display: none;
+  }
+  .mobile-hide {
+    display: none !important;
+  }
+  .mobile-scroll-x {
+    overflow-x: auto;
+    max-width: 94vw;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+  }
+}
