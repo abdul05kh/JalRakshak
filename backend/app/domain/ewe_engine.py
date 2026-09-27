@@ -13,12 +13,20 @@ class EvacuationWindowEngine:
         self._build_graph()
 
     def _build_graph(self):
+        self.node_coords: Dict[str, Tuple[float, float]] = {}
         for road_id, feat in self.roads.items():
             props = feat["properties"]
             u = props["u"]
             v = props["v"]
             length_m = props["length_m"]
             travel_time_min = props["travel_time_min"]
+            coords = feat["geometry"]["coordinates"]
+            
+            # Store node geographic coordinates (lon, lat)
+            if coords and len(coords) >= 2:
+                self.node_coords[u] = (float(coords[0][0]), float(coords[0][1]))
+                self.node_coords[v] = (float(coords[-1][0]), float(coords[-1][1]))
+            
             self.graph.add_edge(
                 u, v,
                 id=road_id,
@@ -26,36 +34,31 @@ class EvacuationWindowEngine:
                 travel_time_min=travel_time_min,
                 road_class=props["road_class"],
                 speed_kmh=props["speed_kmh"],
-                coords=feat["geometry"]["coordinates"]
+                coords=coords
             )
 
-    def snap_to_node(self, lat: float, lon: float) -> Tuple[str, float]:
-        """Snap arbitrary coordinate to nearest road graph node. Return (node_id, snap_distance_m)."""
-        best_node = None
-        min_dist = float("inf")
-        # Check all point features in evac_points or road endpoints
+        # Also register any evacuation point coordinates
         for pt_id, pt in self.evac_points.items():
             c = pt["geometry"]["coordinates"]
-            dist = self._haversine_m(lon, lat, c[0], c[1])
+            node_key = pt["properties"].get("node_id") or pt["properties"].get("id") or pt_id
+            if node_key not in self.node_coords:
+                self.node_coords[node_key] = (float(c[0]), float(c[1]))
+
+    def snap_to_node(self, lat: float, lon: float, max_search_radius_m: float = 25000.0) -> Tuple[str, float]:
+        """Snap arbitrary coordinate to nearest road graph node by geometric distance. Return (node_id, snap_distance_m)."""
+        best_node = None
+        min_dist = float("inf")
+
+        # 1. Search across all graph node coordinates
+        for node_id, (n_lon, n_lat) in self.node_coords.items():
+            dist = self._haversine_m(lon, lat, n_lon, n_lat)
             if dist < min_dist:
                 min_dist = dist
-                # Map to graph node representation
-                name = pt["properties"]["name"].upper()
-                if "MALIDEWAL" in name: best_node = "N-MALIDEWAL"
-                elif "KOTESHWAR" in name: best_node = "N-KOTESHWAR"
-                elif "DEVPRAYAG" in name: best_node = "N-DEVPRAYAG"
-                elif "SHIVPURI" in name: best_node = "N-SHIVPURI"
-                elif "TAPOVAN" in name: best_node = "N-TAPOVAN"
-                elif "MUNI KI RETI" in name: best_node = "N-MUNIKIRETI"
-                elif "CHAMBA" in name: best_node = "N-CHAMBA"
-                elif "NARENDRA" in name: best_node = "N-NARENDRANAGAR"
-                elif "KUNJAPURI" in name: best_node = "N-KUNJAPURI"
-                elif "RANI POKHARI" in name: best_node = "N-RANIPOKHARI"
-                elif "RISHIKESH" in name: best_node = "N-RISHIKESH"
+                best_node = node_id
 
-        if not best_node:
-            best_node = "N-MALIDEWAL"
-            min_dist = 120.0
+        if best_node is None or min_dist > max_search_radius_m:
+            return "UNRESOLVED_LOCATION", float("inf")
+
         return best_node, round(min_dist, 1)
 
     def _haversine_m(self, lon1, lat1, lon2, lat2):
@@ -117,18 +120,19 @@ class EvacuationWindowEngine:
             hyd = edge_hydraulics.get(edge_id)
             if not hyd:
                 has_data_gap = True
-                arrival_s = 99999
+                arrival_s = None
                 max_depth = 0.0
                 max_vel = 0.0
                 inundated = False
             else:
-                arrival_s = hyd["arrival_s"]
-                max_depth = hyd["max_depth_m"]
-                max_vel = hyd["max_vel_mps"]
+                arr_val = hyd.get("arrival_s")
+                arrival_s = arr_val if (arr_val is not None and arr_val < 99999) else None
+                max_depth = hyd.get("max_depth_m", 0.0)
+                max_vel = hyd.get("max_vel_mps", 0.0)
                 inundated = hyd.get("inundated", False)
 
             # Edge-level deadline calculation in simulation seconds: D_i = A_i - T_i - B
-            if arrival_s >= 99999:
+            if arrival_s is None:
                 edge_deadline_s = float("inf")
                 edge_deadline_utc = None
                 edge_feasible = True
@@ -168,7 +172,7 @@ class EvacuationWindowEngine:
                         "failure_reason": failure_reason or "Earliest time-constrained road segment on route."
                     }
 
-            arrival_utc = (scenario_start_dt + timedelta(seconds=arrival_s)).strftime("%Y-%m-%dT%H:%M:%SZ") if arrival_s < 99999 else None
+            arrival_utc = (scenario_start_dt + timedelta(seconds=arrival_s)).strftime("%Y-%m-%dT%H:%M:%SZ") if arrival_s is not None else None
 
             edges_detail.append({
                 "edge_id": edge_id,
@@ -179,7 +183,7 @@ class EvacuationWindowEngine:
                 "length_m": round(length_m, 1),
                 "travel_time_min": round(travel_min, 2),
                 "cumulative_travel_min": round(cumulative_travel_s / 60.0, 2),
-                "flood_arrival_s": arrival_s if arrival_s < 99999 else None,
+                "flood_arrival_s": arrival_s,
                 "flood_arrival_utc": arrival_utc,
                 "max_depth_m": max_depth,
                 "max_velocity_mps": max_vel,
@@ -199,10 +203,8 @@ class EvacuationWindowEngine:
             explanation = "Cannot determine route feasibility: flood arrival data is unavailable on one or more route segments."
         elif min_deadline_s == float("inf"):
             status = "FEASIBLE"
-            # Unaffected high ground route
-            deadline_dt = departure_dt + timedelta(hours=6)
-            deadline_utc = deadline_dt.strftime("%Y-%m-%dT%H:%M:%SZ")
-            margin_min = 360.0
+            deadline_utc = None
+            margin_min = float("inf")
             explanation = (
                 f"Route is fully FEASIBLE. All segments traverse high ground above modelled flood elevations. "
                 f"Total route travel time: {total_travel_min} min."

@@ -354,7 +354,7 @@ export class ArcGISTerrainEngine {
 
     const graphicsToAdd: Graphic[] = [];
 
-    // 1. Tehri Dam Structure Pin
+    // 1. Dam Structure Pin
     graphicsToAdd.push(new Graphic({
       geometry: new Point({
         longitude: 78.4808,
@@ -398,250 +398,95 @@ export class ArcGISTerrainEngine {
       }),
       attributes: {
         type: "BREACH",
-        name: "Breach Invert (635.0m MSL)",
+        name: "Breach Invert Location",
         invert_elev_m: 635.0,
-        top_width_m: 182.4,
-        peak_discharge: "65,000 m³/s (HEC-RAS 2D Solver)",
-        model: "Deterministic Parametric Piping"
+        model: "Deterministic 2D Dam-Break Model"
       }
     }));
 
-    // 3. Hospitals & Emergency Healthcare Facilities
-    const HOSPITALS = [
-      {
-        id: "HOSP-01",
-        name: "District Combined Hospital Tehri",
-        coords: [78.4720, 30.3840],
-        beds: 150,
-        type: "HOSPITAL",
-        tier: "Level-2 Trauma Center",
-        elev_m: 855.0,
-        status: "SAFE (Above High Flood Level)",
-        heli: "Active Helipad Deck"
-      },
-      {
-        id: "HOSP-02",
-        name: "Chamba Community Health Center",
-        coords: [78.3965, 30.3475],
-        beds: 60,
-        type: "HOSPITAL",
-        tier: "Emergency Medical Triage Hub",
-        elev_m: 1120.0,
-        status: "SAFE (Ridge Zone)",
-        heli: "Ambulance Staging Hub"
-      },
-      {
-        id: "HOSP-03",
-        name: "Koteshwar Primary Health Center",
-        coords: [78.5020, 30.2825],
-        beds: 25,
-        type: "HOSPITAL",
-        tier: "Sub-District Clinic",
-        elev_m: 615.0,
-        status: "WARNING: Flood Arrival at T+60:00",
-        heli: "Evacuation Priority"
-      },
-      {
-        id: "HOSP-04",
-        name: "Devprayag Base Emergency Post",
-        coords: [78.5986, 30.1459],
-        beds: 40,
-        type: "HOSPITAL",
-        tier: "Confluence First Responder Post",
-        elev_m: 490.0,
-        status: "SAFE (Upper Terrace)",
-        heli: "River Rescue Base"
-      }
-    ];
-
-    HOSPITALS.forEach((h) => {
-      const isWarning = h.status.includes("WARNING");
-      graphicsToAdd.push(new Graphic({
-        geometry: new Point({
-          longitude: h.coords[0],
-          latitude: h.coords[1],
-          spatialReference: { wkid: 4326 }
-        }),
-        symbol: new PointSymbol3D({
-          symbolLayers: [
-            new IconSymbol3DLayer({
-              size: 16,
-              resource: { primitive: "cross" },
-              material: { color: isWarning ? "#f59e0b" : "#ec4899" }
-            })
-          ]
-        }),
-        attributes: {
-          type: "HOSPITAL",
-          name: h.name,
-          beds: h.beds,
-          tier: h.tier,
-          elevation_m: h.elev_m,
-          status: h.status,
-          heli: h.heli
-        }
-      }));
-    });
-
-    // 4. Safe Shelters & Relief Camps
-    const SHELTERS = [
-      {
-        id: "SHELTER-01",
-        name: "Chamba Safe High-Ground Relief Complex",
-        coords: [78.3965, 30.3475],
-        capacity: 5000,
-        elev_m: 1120.0,
-        features: "Solar Power, Water Depot, 3-Day Rations"
-      },
-      {
-        id: "SHELTER-02",
-        name: "Bageshwar Ridge Safe Haven S01",
-        coords: [78.5200, 30.3200],
-        capacity: 5000,
-        elev_m: 1150.0,
-        features: "Emergency Airfield, Medical HQ"
-      },
-      {
-        id: "SHELTER-03",
-        name: "Kunjapuri Ridge Emergency Base Camp",
-        coords: [78.3450, 30.1870],
-        capacity: 3500,
-        elev_m: 1640.0,
-        features: "Helipad, Communication Tower"
-      },
-      {
-        id: "SHELTER-04",
-        name: "Rani Pokhari District Evacuation Ground",
-        coords: [78.2420, 30.1980],
-        capacity: 10000,
-        elev_m: 450.0,
-        features: "Inter-State Transit Station"
-      }
-    ];
-
-    SHELTERS.forEach((s) => {
-      graphicsToAdd.push(new Graphic({
-        geometry: new Point({
-          longitude: s.coords[0],
-          latitude: s.coords[1],
-          spatialReference: { wkid: 4326 }
-        }),
-        symbol: new PointSymbol3D({
-          symbolLayers: [
-            new IconSymbol3DLayer({
-              size: 18,
-              resource: { primitive: "kite" },
-              material: { color: "#22c55e" }
-            })
-          ]
-        }),
-        attributes: {
-          type: "SHELTER",
-          name: s.name,
-          capacity: s.capacity,
-          elevation_m: s.elev_m,
-          features: s.features,
-          status: "SAFE (Designated Safe Ground)"
-        }
-      }));
-    });
-
-    // 5. Settlements & Population Clusters
-    const SETTLEMENT_LIST = [
-      {
-        id: "VILL-01",
-        name: "Koteshwar Settlement",
-        coords: [78.5020, 30.2825],
-        pop: 980,
-        elev_m: 612.0,
-        arrival: "T+60:00 (3,600s)",
-        status: "INUNDATION AT T+60:00",
-        limiting_edge: "R02-E07 Bridge"
-      },
-      {
-        id: "VILL-02",
-        name: "Malidewal Lowland Village",
-        coords: [78.4680, 30.3420],
-        pop: 1420,
-        elev_m: 680.0,
-        arrival: "T+35:00 (2,100s)",
-        status: "INUNDATION AT T+35:00",
-        evac_route: "Route R02 (High Ridge)"
-      },
-      {
-        id: "VILL-03",
-        name: "Tipri Market Cluster",
-        coords: [78.4850, 30.3150],
-        pop: 2850,
-        elev_m: 662.0,
-        arrival: "T+48:00 (2,880s)",
-        status: "INUNDATION AT T+48:00",
-        evac_route: "Route R02 (High Ridge)"
-      },
-      {
-        id: "VILL-04",
-        name: "Devprayag Confluence Settlement",
-        coords: [78.5986, 30.1459],
-        pop: 4500,
-        elev_m: 435.0,
-        arrival: "T+110:00 (6,600s)",
-        status: "INUNDATION AT T+110:00",
-        evac_route: "Upper Terrace Bypass"
-      }
-    ];
-
-    SETTLEMENT_LIST.forEach((st) => {
-      graphicsToAdd.push(new Graphic({
-        geometry: new Point({
-          longitude: st.coords[0],
-          latitude: st.coords[1],
-          spatialReference: { wkid: 4326 }
-        }),
-        symbol: new PointSymbol3D({
-          symbolLayers: [
-            new IconSymbol3DLayer({
-              size: 14,
-              resource: { primitive: "circle" },
-              material: { color: "#fbbf24" }
-            })
-          ]
-        }),
-        attributes: {
-          type: "SETTLEMENT",
-          name: st.name,
-          population: st.pop,
-          elevation_m: st.elev_m,
-          flood_arrival: st.arrival,
-          status: st.status
-        }
-      }));
-    });
-
-    // Also include dynamic evacPoints passed from API
+    // 3. Dynamic Features from Authoritative Evacuation Points / Infrastructure Layer
     evacPoints.forEach((ep) => {
-      const isAlreadyAdded = graphicsToAdd.some((g) => g.attributes.name === ep.properties.name);
-      if (!isAlreadyAdded) {
-        const isShelter = ep.properties.type === "SHELTER";
+      const props = ep.properties || {};
+      const coords = ep.geometry?.coordinates;
+      if (!coords || coords.length < 2) return;
+
+      const pType = (props.type || props.category || "ORIGIN").toUpperCase();
+      const isHospital = pType === "HOSPITAL" || props.beds !== undefined;
+      const isShelter = pType === "SHELTER" || pType === "EMERGENCY_CENTER" || props.category === "DESTINATION";
+
+      if (isHospital) {
         graphicsToAdd.push(new Graphic({
           geometry: new Point({
-            longitude: ep.geometry.coordinates[0],
-            latitude: ep.geometry.coordinates[1],
+            longitude: coords[0],
+            latitude: coords[1],
             spatialReference: { wkid: 4326 }
           }),
           symbol: new PointSymbol3D({
             symbolLayers: [
               new IconSymbol3DLayer({
-                size: isShelter ? 16 : 12,
-                resource: { primitive: isShelter ? "kite" : "circle" },
-                material: { color: isShelter ? "#22c55e" : "#fbbf24" }
+                size: 16,
+                resource: { primitive: "cross" },
+                material: { color: "#ec4899" }
               })
             ]
           }),
           attributes: {
-            type: isShelter ? "SHELTER" : "ORIGIN",
-            name: ep.properties.name,
-            capacity: ep.properties.capacity || 0,
-            id: ep.properties.id
+            type: "HOSPITAL",
+            name: props.name || "Medical Facility",
+            beds: props.beds || 30,
+            tier: props.tier || "Emergency Healthcare Facility",
+            elevation_m: props.elevation_m || 800.0,
+            status: "OPERATIONAL",
+            heli: props.heli || "Helipad Active"
+          }
+        }));
+      } else if (isShelter) {
+        graphicsToAdd.push(new Graphic({
+          geometry: new Point({
+            longitude: coords[0],
+            latitude: coords[1],
+            spatialReference: { wkid: 4326 }
+          }),
+          symbol: new PointSymbol3D({
+            symbolLayers: [
+              new IconSymbol3DLayer({
+                size: 18,
+                resource: { primitive: "kite" },
+                material: { color: "#22c55e" }
+              })
+            ]
+          }),
+          attributes: {
+            type: "SHELTER",
+            name: props.name || "Designated Safe Shelter",
+            capacity: props.capacity || 2500,
+            elevation_m: props.elevation_m || 1200.0,
+            features: props.features || "Solar Power, Water Depot, Emergency Supplies",
+            status: "SAFE (Designated Safe Ground)"
+          }
+        }));
+      } else {
+        graphicsToAdd.push(new Graphic({
+          geometry: new Point({
+            longitude: coords[0],
+            latitude: coords[1],
+            spatialReference: { wkid: 4326 }
+          }),
+          symbol: new PointSymbol3D({
+            symbolLayers: [
+              new IconSymbol3DLayer({
+                size: 14,
+                resource: { primitive: "circle" },
+                material: { color: "#fbbf24" }
+              })
+            ]
+          }),
+          attributes: {
+            type: "SETTLEMENT",
+            name: props.name || "Settlement Area",
+            population: props.population || 1000,
+            elevation_m: props.elevation_m || 650.0,
+            status: "POPULATION ZONE"
           }
         }));
       }

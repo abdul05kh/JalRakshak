@@ -1,0 +1,37 @@
+{
+  "central": {
+    "scenario": "SCENARIO_CENTRAL",
+    "hasT60Arrival": true,
+    "hasT44Deadline": false,
+    "has1239Travel": false,
+    "has0300Buffer": false,
+    "hasLimitingE07": true
+  },
+  "maximum": {
+    "scenario": "SCENARIO_MAXIMUM",
+    "hasT45Arrival": true,
+    "hasT29Deadline": false,
+    "has1239Travel": false,
+    "has0300Buffer": false,
+    "hasLimitingE07": true,
+    "noStaleCentralArrival": false
+  },
+  "minimum": {
+    "scenario": "SCENARIO_MINIMUM",
+    "hasT95Arrival": false,
+    "hasT79Deadline": false,
+    "has1239Travel": false,
+    "has0300Buffer": false,
+    "hasLimitingE07": true
+  },
+  "rapid_switch": {
+    "finalTarget": "SCENARIO_MAXIMUM",
+    "settledCorrectlyOnMax": false,
+    "zeroErrors": true
+  },
+  "t00_hydraulic": {},
+  "mobile_390x844": {},
+  "simulation_view": {},
+  "errors": [],
+  "pageErrors": []
+}

@@ -196,8 +196,9 @@ def build_terrain_from_dem() -> np.ndarray:
     return terrain
 
 def main():
+    scenario_id = sys.argv[1] if len(sys.argv) > 1 else "SCENARIO_CENTRAL"
     print(
-        f"Rendering Cinematic Visualization ({WIDTH}x{HEIGHT} @ {FPS}fps, 120 s)\n"
+        f"Rendering Cinematic Visualization ({WIDTH}x{HEIGHT} @ {FPS}fps, 120 s) for Scenario: {scenario_id}\n"
         "NOTE: This is a presentation-layer render, not a direct HEC-RAS output render.\n"
         "      See module docstring for full scientific provenance notice."
     )
@@ -461,23 +462,36 @@ def main():
             card_alpha = np.clip((sim_sec - 96.0) / 4.0, 0.0, 0.96)
             card_layer = frame.copy()
             
+            # Dynamic EWE decision parameters based on scenario
+            is_min = "MIN" in scenario_id.upper()
+            is_max = "MAX" in scenario_id.upper()
+            scen_display = "MINIMUM INFLOW" if is_min else "MAXIMUM COLLAPSE" if is_max else "CENTRAL PIPING"
+            arr_s = 5700 if is_min else 2700 if is_max else 3600
+            trav_s = 759
+            buf_s = 180
+            dead_s = arr_s - trav_s - buf_s
+            dead_str = f"T+{dead_s//60:02d}:{dead_s%60:02d}"
+            arr_str = f"T+{arr_s//60:02d}:{arr_s%60:02d}"
+            trav_str = f"{trav_s//60:02d}:{trav_s%60:02d}"
+            buf_str = f"{buf_s//60:02d}:{buf_s%60:02d}"
+
             cx1, cy1, cx2, cy2 = WIDTH // 2 - 460, HEIGHT // 2 - 215, WIDTH // 2 + 460, HEIGHT // 2 + 215
             cv2.rectangle(card_layer, (cx1, cy1), (cx2, cy2), (6, 10, 16), -1)
             cv2.rectangle(card_layer, (cx1, cy1), (cx2, cy2), (50, 215, 100), 2)
             
             cv2.putText(card_layer, "JALRAKSHAK OPERATIONAL EVACUATION DECISION", (cx1 + 40, cy1 + 48), cv2.FONT_HERSHEY_SIMPLEX, 0.72, (70, 230, 120), 2)
-            cv2.putText(card_layer, "SCENARIO: CENTRAL DAM-BREAK  |  PRIMARY EVACUATION: ROUTE R02", (cx1 + 40, cy1 + 84), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (140, 155, 170), 1)
+            cv2.putText(card_layer, f"SCENARIO: {scen_display}  |  PRIMARY EVACUATION: ROUTE R02", (cx1 + 40, cy1 + 84), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (140, 155, 170), 1)
             
             cv2.rectangle(card_layer, (cx1 + 40, cy1 + 112), (cx2 - 40, cy1 + 258), (16, 22, 34), -1)
             cv2.putText(card_layer, "LATEST FEASIBLE DEPARTURE DEADLINE:", (cx1 + 60, cy1 + 148), cv2.FONT_HERSHEY_SIMPLEX, 0.54, (245, 248, 252), 1)
-            cv2.putText(card_layer, "T+44:21", (cx1 + 60, cy1 + 224), cv2.FONT_HERSHEY_SIMPLEX, 2.0, (50, 245, 110), 3)
+            cv2.putText(card_layer, dead_str, (cx1 + 60, cy1 + 224), cv2.FONT_HERSHEY_SIMPLEX, 2.0, (50, 245, 110), 3)
             
             cv2.putText(card_layer, "Limiting Segment: R02-E07", (cx1 + 440, cy1 + 154), cv2.FONT_HERSHEY_SIMPLEX, 0.50, (45, 65, 240), 1)
-            cv2.putText(card_layer, "Inundation Arrival (A): T+60:00 (3,600s)", (cx1 + 440, cy1 + 180), cv2.FONT_HERSHEY_SIMPLEX, 0.42, (140, 155, 170), 1)
-            cv2.putText(card_layer, "Travel Duration (T): 12:39 (759s)", (cx1 + 440, cy1 + 205), cv2.FONT_HERSHEY_SIMPLEX, 0.42, (140, 155, 170), 1)
-            cv2.putText(card_layer, "Safety Contingency Buffer (B): 03:00 (180s)", (cx1 + 440, cy1 + 230), cv2.FONT_HERSHEY_SIMPLEX, 0.42, (140, 155, 170), 1)
+            cv2.putText(card_layer, f"Inundation Arrival (A): {arr_str} ({arr_s:,}s)", (cx1 + 440, cy1 + 180), cv2.FONT_HERSHEY_SIMPLEX, 0.42, (140, 155, 170), 1)
+            cv2.putText(card_layer, f"Travel Duration (T): {trav_str} ({trav_s:,}s)", (cx1 + 440, cy1 + 205), cv2.FONT_HERSHEY_SIMPLEX, 0.42, (140, 155, 170), 1)
+            cv2.putText(card_layer, f"Safety Contingency Buffer (B): {buf_str} ({buf_s:,}s)", (cx1 + 440, cy1 + 230), cv2.FONT_HERSHEY_SIMPLEX, 0.42, (140, 155, 170), 1)
             
-            cv2.putText(card_layer, "EWE Invariant: D = min (Ai - Ti - B) = 3600s - 759s - 180s = 2661s (T+44:21)", (cx1 + 40, cy1 + 298), cv2.FONT_HERSHEY_SIMPLEX, 0.48, (245, 195, 45), 1)
+            cv2.putText(card_layer, f"EWE Invariant: D = min (Ai - Ti - B) = {arr_s}s - {trav_s}s - {buf_s}s = {dead_s}s ({dead_str})", (cx1 + 40, cy1 + 298), cv2.FONT_HERSHEY_SIMPLEX, 0.48, (245, 195, 45), 1)
             cv2.putText(card_layer, "STATUS: FEASIBLE  |  PROVENANCE: HEC-RAS 2D FLEXIBLE UNSTEADY SOLVER", (cx1 + 40, cy1 + 338), cv2.FONT_HERSHEY_SIMPLEX, 0.42, (140, 155, 170), 1)
             
             cv2.addWeighted(card_layer, card_alpha, frame, 1.0 - card_alpha, 0, frame)

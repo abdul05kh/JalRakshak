@@ -33,6 +33,15 @@ export interface ScenarioSummary {
   terrain: string;
   crs: string;
   created_at: string;
+  breach_parameters?: {
+    initial_pool_level_m?: number;
+    final_breach_bottom_elevation_m?: number;
+    breach_bottom_width_m?: number;
+    side_slopes_ratio?: number;
+    formation_time_hr?: number;
+    peak_outflow_m3s?: number;
+    failure_mode?: string;
+  };
 }
 
 export interface EvacuationPointFeature {
@@ -47,6 +56,12 @@ export interface EvacuationPointFeature {
     elevation_m: number;
     river_distance_km?: number;
     category: "ORIGIN" | "DESTINATION";
+    node_id?: string;
+    beds?: number;
+    tier?: string;
+    heli?: string;
+    features?: string;
+    status?: string;
   };
   geometry: {
     type: string;

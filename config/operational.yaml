@@ -1,0 +1,101 @@
+# operational.yaml — JalRakshak Central Operational Configuration
+# Single authoritative configuration file for all scientific, coupling, and evacuation assumptions.
+# Every parameter is explicitly typed with value, unit, provenance, and assumption status.
+
+version: "1.0.0"
+created_at: "2026-09-28T00:00:00Z"
+crs: "EPSG:32644 (UTM Zone 44N)"
+
+hydraulic:
+  arrival_depth_threshold_m:
+    value: 0.30
+    unit: "meters"
+    source: "Operational Safety Guideline (Vehicle Forcible Displacement Threshold)"
+    status: "CONFIGURED ASSUMPTION"
+    description: "Water depth at which roadway is classified as impassable to standard evacuation vehicles."
+  
+  velocity_threshold_mps:
+    value: 1.00
+    unit: "meters_per_second"
+    source: "Hydraulic Stability Guideline"
+    status: "CONFIGURED ASSUMPTION"
+    description: "Flow velocity at which vehicular stability is compromised."
+
+road_coupling:
+  corridor_m:
+    value: 150.0
+    unit: "meters"
+    source: "Spatial Coupling Methodology (Valley-Bottom Search Envelope)"
+    status: "CONFIGURED ASSUMPTION"
+    description: "Maximum perpendicular search distance from road centerline to HEC-RAS 2D cells."
+  
+  densification_m:
+    value: 50.0
+    unit: "meters"
+    source: "Geometric Discretization Standard"
+    status: "CONFIGURED ASSUMPTION"
+    description: "Maximum vertex spacing for road Linestring axis before spatial buffering."
+  
+  aggregation_method:
+    value: "MIN_ARRIVAL_MAX_DEPTH"
+    unit: "enumeration"
+    source: "Conservative Risk Policy"
+    status: "CONFIGURED ASSUMPTION"
+    description: "Assigns earliest cell arrival and maximum cell depth among coupled cells to the road segment."
+
+evacuation:
+  default_safety_buffer_min:
+    value: 3.0
+    unit: "minutes"
+    source: "Operational Emergency Response Buffer"
+    status: "CONFIGURED ASSUMPTION"
+    description: "Mandatory buffer subtracted from departure deadline: D = min_i(A_i - T_i - B)."
+  
+  max_allowable_buffer_min:
+    value: 60.0
+    unit: "minutes"
+    source: "Operational Upper Bound"
+    status: "CONFIGURED ASSUMPTION"
+    description: "Upper bound for user-adjustable safety buffer in scenario analysis."
+
+travel_time:
+  model:
+    value: "STATIC_ENGINEERING_ASSUMPTION"
+    unit: "string"
+    source: "Engineering Baseline"
+    status: "CONFIGURED ASSUMPTION"
+    description: "Constant baseline travel speeds by road hierarchy without dynamic congestion modeling."
+  
+  speed_policy_kmh:
+    PRIMARY:
+      value: 45.0
+      unit: "km/h"
+      status: "CONFIGURED ASSUMPTION"
+    SECONDARY:
+      value: 35.0
+      unit: "km/h"
+      status: "CONFIGURED ASSUMPTION"
+    MOUNTAIN_TRACK:
+      value: 20.0
+      unit: "km/h"
+      status: "CONFIGURED ASSUMPTION"
+
+terrain:
+  source:
+    value: "Copernicus GLO-30 DSM (30m Grid)"
+    unit: "dataset"
+    status: "AUTHORITATIVE OBSERVATIONAL DATA"
+    description: "Digital Surface Model utilized for 3D terrain elevation mesh."
+  
+  vertical_datum_status:
+    value: "UNVALIDATED_RAW_ELLIPSOIDAL_OR_EGM96"
+    unit: "datum"
+    status: "DISCLOSED UNCERTAINTY"
+    description: "Satellite DSM elevations have not been hydrologically conditioned with ground-surveyed bathymetry."
+
+visualization:
+  temporal_interpolation_allowed:
+    value: true
+    unit: "boolean"
+    status: "PRESENTATION LAYER"
+    description: "Allows linear temporal visual interpolation in frontend animation while preserving discrete model timesteps as decision truth."

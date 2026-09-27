@@ -11,14 +11,12 @@
         "population": 1850,
         "elevation_m": 612.0,
         "river_distance_km": 14.2,
-        "category": "ORIGIN"
+        "category": "ORIGIN",
+        "node_id": "N-KOTESHWAR"
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [
-          78.502,
-          30.2825
-        ]
+        "coordinates": [78.502, 30.2825]
       }
     },
     {
@@ -31,14 +29,12 @@
         "population": 940,
         "elevation_m": 645.0,
         "river_distance_km": 6.8,
-        "category": "ORIGIN"
+        "category": "ORIGIN",
+        "node_id": "N-MALIDEWAL"
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [
-          78.468,
-          30.342
-        ]
+        "coordinates": [78.468, 30.342]
       }
     },
     {
@@ -51,14 +47,12 @@
         "population": 4200,
         "elevation_m": 472.0,
         "river_distance_km": 42.0,
-        "category": "ORIGIN"
+        "category": "ORIGIN",
+        "node_id": "N-DEVPRAYAG"
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [
-          78.5986,
-          30.1459
-        ]
+        "coordinates": [78.5986, 30.1459]
       }
     },
     {
@@ -71,14 +65,12 @@
         "population": 1120,
         "elevation_m": 395.0,
         "river_distance_km": 68.5,
-        "category": "ORIGIN"
+        "category": "ORIGIN",
+        "node_id": "N-SHIVPURI"
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [
-          78.388,
-          30.134
-        ]
+        "coordinates": [78.388, 30.134]
       }
     },
     {
@@ -91,14 +83,12 @@
         "population": 6800,
         "elevation_m": 356.0,
         "river_distance_km": 81.0,
-        "category": "ORIGIN"
+        "category": "ORIGIN",
+        "node_id": "N-TAPOVAN"
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [
-          78.3245,
-          30.1285
-        ]
+        "coordinates": [78.3245, 30.1285]
       }
     },
     {
@@ -111,14 +101,30 @@
         "population": 8900,
         "elevation_m": 348.0,
         "river_distance_km": 84.5,
-        "category": "ORIGIN"
+        "category": "ORIGIN",
+        "node_id": "N-MUNIKIRETI"
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [
-          78.311,
-          30.115
-        ]
+        "coordinates": [78.311, 30.115]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "VILL-07",
+      "properties": {
+        "id": "VILL-07",
+        "name": "Tipri Market Cluster",
+        "type": "SETTLEMENT",
+        "population": 2850,
+        "elevation_m": 662.0,
+        "river_distance_km": 10.5,
+        "category": "ORIGIN",
+        "node_id": "N-MALIDEWAL"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4850, 30.3150]
       }
     },
     {
@@ -130,15 +136,14 @@
         "type": "SHELTER",
         "capacity": 3500,
         "elevation_m": 1600.0,
+        "features": "Solar Power, Water Depot, 3-Day Rations",
         "verified_at": "2026-09-18T10:00:00Z",
-        "category": "DESTINATION"
+        "category": "DESTINATION",
+        "node_id": "N-CHAMBA"
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [
-          78.3965,
-          30.3475
-        ]
+        "coordinates": [78.3965, 30.3475]
       }
     },
     {
@@ -150,15 +155,14 @@
         "type": "EMERGENCY_CENTER",
         "capacity": 5000,
         "elevation_m": 1120.0,
+        "features": "Emergency Airfield, Medical HQ",
         "verified_at": "2026-09-18T10:00:00Z",
-        "category": "DESTINATION"
+        "category": "DESTINATION",
+        "node_id": "N-NARENDRANAGAR"
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [
-          78.293,
-          30.165
-        ]
+        "coordinates": [78.293, 30.165]
       }
     },
     {
@@ -170,15 +174,14 @@
         "type": "SHELTER",
         "capacity": 2000,
         "elevation_m": 1650.0,
+        "features": "Helipad, Communication Tower",
         "verified_at": "2026-09-18T10:00:00Z",
-        "category": "DESTINATION"
+        "category": "DESTINATION",
+        "node_id": "N-KUNJAPURI"
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [
-          78.345,
-          30.187
-        ]
+        "coordinates": [78.345, 30.187]
       }
     },
     {
@@ -190,15 +193,86 @@
         "type": "SHELTER",
         "capacity": 6000,
         "elevation_m": 480.0,
+        "features": "Inter-State Transit Station",
         "verified_at": "2026-09-18T10:00:00Z",
-        "category": "DESTINATION"
+        "category": "DESTINATION",
+        "node_id": "N-RANIPOKHARI"
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [
-          78.242,
-          30.198
-        ]
+        "coordinates": [78.242, 30.198]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "HOSP-01",
+      "properties": {
+        "id": "HOSP-01",
+        "name": "District Emergency Hospital Chamba",
+        "type": "HOSPITAL",
+        "beds": 120,
+        "tier": "Level-2 Trauma Center",
+        "elevation_m": 1600.0,
+        "heli": "Helipad Active",
+        "category": "INFRASTRUCTURE"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.3965, 30.3475]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "HOSP-02",
+      "properties": {
+        "id": "HOSP-02",
+        "name": "New Tehri District Combined Hospital",
+        "type": "HOSPITAL",
+        "beds": 200,
+        "tier": "Level-1 District HQ Hospital",
+        "elevation_m": 1750.0,
+        "heli": "Helipad Active (High Ground)",
+        "category": "INFRASTRUCTURE"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4320, 30.3800]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "HOSP-03",
+      "properties": {
+        "id": "HOSP-03",
+        "name": "Koteshwar Community Health Post",
+        "type": "HOSPITAL",
+        "beds": 25,
+        "tier": "Primary Care Post",
+        "elevation_m": 615.0,
+        "heli": "Evacuation Priority",
+        "category": "INFRASTRUCTURE"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.5020, 30.2825]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "HOSP-04",
+      "properties": {
+        "id": "HOSP-04",
+        "name": "Devprayag Base Emergency Post",
+        "type": "HOSPITAL",
+        "beds": 40,
+        "tier": "Confluence First Responder Post",
+        "elevation_m": 490.0,
+        "heli": "River Rescue Base",
+        "category": "INFRASTRUCTURE"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.5986, 30.1459]
       }
     }
   ]

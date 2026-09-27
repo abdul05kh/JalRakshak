@@ -18,6 +18,8 @@ import type {
   EvacuationPointFeature 
 } from "../types";
 
+import { getAuthoritativeDecision } from "../services/decisionStore";
+
 interface FloodSimulationViewProps {
   scenarios: ScenarioSummary[];
   activeScenarioId: string;
@@ -28,14 +30,6 @@ interface FloodSimulationViewProps {
   onSelectTimestep?: (min: number) => void;
   onNavigateToView: (view: string) => void;
 }
-
-const PHASES = [
-  { startSec: 0, endSec: 18, label: "Phase 1: Reservoir Baseline (830.0m FRL)", color: "#38bdf8", time: "T+00:00" },
-  { startSec: 18, endSec: 38, label: "Phase 2: Dam Breach Onset & Surge (65,000 m³/s)", color: "#f59e0b", time: "T+18:00" },
-  { startSec: 38, endSec: 70, label: "Phase 3: Canyon Surge Wave Propagation", color: "#f97316", time: "T+38:00" },
-  { startSec: 70, endSec: 95, label: "Phase 4: Settlements Exposed & Route R02 Convoy", color: "#ec4899", time: "T+50:00" },
-  { startSec: 95, endSec: 120, label: "Phase 5: Limiting Segment Cutoff & Evacuation Decision", color: "#10b981", time: "T+60:00" },
-];
 
 export const FloodSimulationView: React.FC<FloodSimulationViewProps> = ({
   scenarios,
@@ -51,6 +45,15 @@ export const FloodSimulationView: React.FC<FloodSimulationViewProps> = ({
   const [showProvenanceModal, setShowProvenanceModal] = useState<boolean>(false);
 
   const activeSc = scenarios.find((s) => s.id === activeScenarioId);
+  const decision = getAuthoritativeDecision(activeScenarioId);
+
+  const PHASES = [
+    { startSec: 0, endSec: 18, label: `Phase 1: Reservoir Baseline (${activeSc?.breach_parameters?.initial_pool_level_m || 830.0}m FRL)`, color: "#38bdf8", time: "T+00:00" },
+    { startSec: 18, endSec: 38, label: `Phase 2: Dam Breach Onset & Surge (${(decision.peakDischargeM3s || 65000).toLocaleString()} m³/s)`, color: "#f59e0b", time: "T+18:00" },
+    { startSec: 38, endSec: 70, label: "Phase 3: Canyon Surge Wave Propagation", color: "#f97316", time: "T+38:00" },
+    { startSec: 70, endSec: 95, label: `Phase 4: Settlements Exposed & Evacuation Convoy`, color: "#ec4899", time: "T+50:00" },
+    { startSec: 95, endSec: 120, label: `Phase 5: Limiting Segment (${decision.limitingEdgeId}) Cutoff & Evacuation Decision`, color: "#10b981", time: decision.arrivalFormatted },
+  ];
 
   // Model elapsed disaster time (0 to 120 minutes)
   const currentModelMinutes = (currentTime / (duration || 120)) * 120;
@@ -272,10 +275,10 @@ export const FloodSimulationView: React.FC<FloodSimulationViewProps> = ({
                   JALRAKSHAK EVACUATION WINDOW RESULT
                 </div>
                 <div style={{ fontSize: "20px", fontWeight: 800, color: "#f8fafc" }}>
-                  Latest Departure Deadline: <span style={{ color: "#22c55e" }}>T+44:21</span>
+                  Latest Departure Deadline: <span style={{ color: "#22c55e" }}>{decision.deadlineFormatted}</span>
                 </div>
                 <div style={{ fontSize: "12px", color: "#94a3b8" }}>
-                  Limiting Edge: <strong style={{ color: "#ef4444" }}>R02-E07</strong> (Inundation at T+60:00) | Buffer: 03:00 min
+                  Limiting Edge: <strong style={{ color: "#ef4444" }}>{decision.limitingEdgeId}</strong> (Inundation at {decision.arrivalFormatted}) | Buffer: {decision.bufferFormatted} min
                 </div>
               </div>
             </div>
@@ -441,7 +444,7 @@ export const FloodSimulationView: React.FC<FloodSimulationViewProps> = ({
                 borderRadius: "4px",
                 border: "1px solid rgba(239, 68, 68, 0.3)"
               }}>
-                R02-E07 (T+60:00)
+                {decision.limitingEdgeId} ({decision.arrivalFormatted})
               </span>
             </div>
           </div>

@@ -10,11 +10,20 @@ import type {
 // Local dev (.env.local):  VITE_API_BASE_URL=http://localhost:8000/api/v1
 // Production (Cloud Run):  VITE_API_BASE_URL=https://<service>.run.app/api/v1
 const rawApiBase = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.trim();
+
+if (import.meta.env.PROD && !rawApiBase) {
+  console.error(
+    "[FATAL] VITE_API_BASE_URL environment variable is required in production builds. Silent fallback to localhost is forbidden."
+  );
+}
+
 const API_BASE = rawApiBase
   ? (rawApiBase.replace(/\/+$/, "").endsWith("/api/v1")
       ? rawApiBase.replace(/\/+$/, "")
       : `${rawApiBase.replace(/\/+$/, "")}/api/v1`)
-  : "http://localhost:8000/api/v1";
+  : (import.meta.env.PROD 
+      ? "/api/v1" 
+      : "http://localhost:8000/api/v1");
 
 
 export async function fetchScenarios(): Promise<ScenarioSummary[]> {

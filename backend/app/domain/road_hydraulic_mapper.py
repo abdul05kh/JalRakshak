@@ -4,17 +4,22 @@ from scipy.spatial import KDTree
 from shapely.geometry import LineString, Point
 from backend.app.domain.hecras_adapter import HydraulicScenarioData
 from backend.app.domain.geo_transform import geo_transformer
+from backend.app.core.operational_config import operational_config
 
 class RoadHydraulicMapper:
     """
     Scientifically defensible spatial mapper connecting vector road geometries to 2D hydraulic cells.
-    Uses geometry densification and strict corridor buffering (default 150m = 1.5 * dx).
+    Uses geometry densification and strict corridor buffering configured via operational.yaml.
     """
-    def __init__(self, target_crs: str = "EPSG:32644", search_radius_m: float = 150.0, sample_spacing_m: float = 50.0):
+    def __init__(
+        self,
+        target_crs: str = "EPSG:32644",
+        search_radius_m: Optional[float] = None,
+        sample_spacing_m: Optional[float] = None
+    ):
         self.target_crs = target_crs
-        self.search_radius_m = search_radius_m
-        self.sample_spacing_m = sample_spacing_m
-
+        self.search_radius_m = search_radius_m if search_radius_m is not None else operational_config.coupling_corridor_m
+        self.sample_spacing_m = sample_spacing_m if sample_spacing_m is not None else operational_config.coupling_densification_m
 
     def map_roads_to_hydraulics(
         self,
@@ -23,11 +28,11 @@ class RoadHydraulicMapper:
     ) -> Dict[str, Dict[str, Any]]:
         """
         For each road segment in roads_dict:
-        1. Project road coordinates to EPSG:32644.
+        1. Project road coordinates to target CRS.
         2. Densify LineString at <= sample_spacing_m.
         3. Query KDTree for candidate hydraulic cell centers within search_radius_m.
         4. Verify exact geometric distance to LineString.
-        5. Assign conservative arrival time A_i = min_{c} A(c), max depth h_i, and velocity.
+        5. Assign conservative arrival time A_i = min_{c} A(c), max depth h_i, and velocity from HEC-RAS.
         """
         tree = KDTree(hydraulic_data.cell_coords)
         edge_hydraulics = {}
@@ -79,7 +84,15 @@ class RoadHydraulicMapper:
                 if len(finite_arrivals) > 0:
                     min_arrival_s = int(np.min(finite_arrivals))
                     max_depth_val = float(np.max(hydraulic_data.depth_series[:, cell_idxs]))
-                    max_vel_val = 2.4
+                    
+                    # Derive velocity from native face/cell velocity if available, else derive from shallow water celerity
+                    if hydraulic_data.face_velocity_native is not None and len(hydraulic_data.face_velocity_native) > 0:
+                        vel_sample = hydraulic_data.face_velocity_native
+                        max_vel_val = float(np.max(vel_sample[:, cell_idxs])) if vel_sample.ndim > 1 else float(np.max(vel_sample[cell_idxs]))
+                    else:
+                        # Shallow water approximation v_front = sqrt(g * h) for positive depths
+                        g = 9.80665
+                        max_vel_val = float(np.sqrt(g * max(0.0, max_depth_val)))
                     inundated = True
                 else:
                     min_arrival_s = 99999
@@ -103,3 +116,4 @@ class RoadHydraulicMapper:
                 }
 
         return edge_hydraulics
+

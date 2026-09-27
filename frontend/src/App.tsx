@@ -27,6 +27,8 @@ import {
   fetchTimelineData
 } from "./services/api";
 
+import { setBackendAnalysisResult } from "./services/decisionStore";
+
 export const App: React.FC = () => {
   // Navigation View State: Dedicated Full-Screen Pages
   const [activeView, setActiveView] = useState<ViewType>(() => {
@@ -136,6 +138,7 @@ export const App: React.FC = () => {
         }
       });
       setAnalysisResult(res);
+      setBackendAnalysisResult(res);
     } catch (err) {
       console.error("Route analysis failed:", err);
     } finally {
