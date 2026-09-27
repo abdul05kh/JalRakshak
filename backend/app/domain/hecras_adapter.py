@@ -6,10 +6,13 @@ from datetime import datetime, timezone
 import numpy as np
 import h5py
 
-DEFAULT_REAL_HECRAS_HDF_PATH = os.environ.get(
-    "REAL_HECRAS_HDF_PATH",
-    r"C:\HEC_Work\BaldEagleCrkMulti2D\BaldEagleDamBrk.p05.hdf"
-)
+# REAL_HECRAS_HDF_PATH must be set via environment variable in all non-local environments.
+# Local dev (Windows):   set REAL_HECRAS_HDF_PATH=C:\HEC_Work\BaldEagleCrkMulti2D\BaldEagleDamBrk.p05.hdf
+# Production container:  REAL_HECRAS_HDF_PATH=/app/artifacts/hecras/BaldEagleDamBrk.p05.hdf
+# If the variable is not set the optional BaldEagle scenario is simply not loaded;
+# the primary Tehri Gate 3B HDF artifacts (loaded via artifacts/hecras/tehri_gate3b/) remain available.
+DEFAULT_REAL_HECRAS_HDF_PATH = os.environ.get("REAL_HECRAS_HDF_PATH")  # None → optional scenario skipped
+
 
 class HydraulicScenarioData:
     def __init__(

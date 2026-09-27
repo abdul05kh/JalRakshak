@@ -157,9 +157,12 @@ class Database:
                         except Exception as e:
                             print(f"Warning: Failed to load Tehri Gate 3B scenario {sc_key}: {e}")
 
-        # 6. Load Genuine HEC-RAS 7.0.1 Result if artifact exists
+        # 6. Load optional HEC-RAS 7.0.1 BaldEagle result if REAL_HECRAS_HDF_PATH is set
         real_hecras_path = os.environ.get("REAL_HECRAS_HDF_PATH", DEFAULT_REAL_HECRAS_HDF_PATH)
-        if os.path.exists(real_hecras_path):
+        if not real_hecras_path:
+            print("Info: REAL_HECRAS_HDF_PATH not set — optional BaldEagle scenario skipped.")
+        elif os.path.exists(real_hecras_path):
+
             try:
                 hyd_data = self.hecras_adapter.load_scenario(real_hecras_path)
 

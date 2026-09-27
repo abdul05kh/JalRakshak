@@ -15,6 +15,12 @@ frontend/node_modules/
 frontend/dist/
 .npm
 
+# Frontend environment files (contain deployment-specific URLs and secrets)
+# For local dev: set values in frontend/.env.local (not committed)
+# For production: inject VITE_API_BASE_URL in CI/CD pipeline at build time
+frontend/.env.local
+frontend/.env.production
+
 # IDE & OS
 .vscode/
 .idea/

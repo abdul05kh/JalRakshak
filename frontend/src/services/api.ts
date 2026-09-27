@@ -6,7 +6,13 @@ import type {
   ScenarioComparisonResponse
 } from "../types";
 
-const API_BASE = "http://localhost:8000/api/v1";
+// API base URL is injected at build time via VITE_API_BASE_URL.
+// Local dev (.env.local):  VITE_API_BASE_URL=http://localhost:8000/api/v1
+// Production (Cloud Run):  VITE_API_BASE_URL=https://<service>.run.app/api/v1
+const API_BASE =
+  (import.meta.env.VITE_API_BASE_URL as string | undefined) ??
+  "http://localhost:8000/api/v1";
+
 
 export async function fetchScenarios(): Promise<ScenarioSummary[]> {
   const res = await fetch(`${API_BASE}/scenarios`);

@@ -1,12 +1,10 @@
 # JalRakshak
 
-JalRakshak is a flood decision-support prototype.
+JalRakshak is a dam-break flood decision-support prototype built for **Smart India Hackathon 2026**.
 
-It is being built for Smart India Hackathon 2026.
+It connects HEC-RAS 2D hydraulic simulation output to road networks and evacuation routes, turning thousands of flood depth/velocity numbers into a single, actionable question:
 
-It studies what may happen after a dam-break flood and tries to turn complex flood-model output into a simple question:
-
-**"Which route can be used, and how much time is available to leave?"**
+**"Which route can be used, and how much time is available before water cuts it off?"**
 
 ---
 
@@ -64,7 +62,7 @@ JalRakshak does not compute fluid dynamics on its own. It reads native hydraulic
 Here is how information moves through the system:
 
 1. **Flood Scenario**: A dam-break scenario is selected (for example, a breach at Tehri Dam).
-2. **Hydraulic Model Results**: Water depth, velocity, and arrival times are loaded from HEC-RAS 2D simulation output.
+2. **Hydraulic Model Results**: Water depth, velocity, and arrival times are loaded from HEC-RAS 2D HDF5 output **into the backend decision engine**. The operational 3D map visualizes these fields. The cinematic video provides a spatial illustration — see the Two-Layer Architecture section.
 3. **Terrain Draping**: The water surface and roads are placed on a 3D terrain map using Copernicus GLO-30 elevation data.
 4. **Road Coupling**: The system checks where the flood boundary meets the road network within a 150-meter corridor.
 5. **Route Segmentation**: Evacuation routes are split into road segments from origin to safety shelter.
@@ -106,6 +104,52 @@ To be scientifically honest, here is what JalRakshak does **not** do:
 - It does **not** check whether a bridge has collapsed structurally from water force (it only checks if water covers the road).
 - It does **not** use AI or machine learning to guess flood arrival times or evacuation deadlines. All deadlines are calculated with deterministic arithmetic from the hydraulic model.
 - It does **not** claim field certification or operational clearance. It is an engineering prototype.
+
+---
+
+## Two-Layer Architecture
+
+JalRakshak has two distinct, clearly separated layers with different data sources:
+
+```
+LAYER 1 — OPERATIONAL DECISION ENGINE  (scientifically authoritative)
+──────────────────────────────────────────────────────────────────────
+HEC-RAS 2D HDF5 output (WSE, depth, velocity, arrival times)
+        │
+        ▼ backend/app/domain/hecras_adapter.py
+Hydraulic inundation fields
+        │
+        ▼ 150 m road-corridor coupling (EPSG:32644)
+Road-segment flood arrival times
+        │
+        ▼ backend/app/algorithms/
+D = min_i(A_i − T_i − B)    ← deterministic EWE arithmetic
+        │
+        ▼ REST API  →  React frontend
+Evacuation deadline + limiting road segment on 3D ArcGIS map
+
+
+LAYER 2 — CINEMATIC VISUALIZATION  (presentation illustration)
+──────────────────────────────────────────────────────────────────────────
+Copernicus GLO-30 DEM  →  terrain shading canvas (real DEM, required)
+        +
+Hand-authored Bhagirathi corridor centreline
+        +
+EWE scenario-derived settlement inundation timings
+        │
+        ▼ scripts/render_cinematic_simulation.py  →  H.264 + WebM
+Cinematic flood animation
+        │
+        ▼ /simulation page
+Spatial illustration of the scenario; decision card shows EWE deadline
+```
+
+> **Key distinction:** All evacuation deadlines shown in the application come from the
+> Layer 1 engine reading real HEC-RAS HDF5 output. The cinematic video (Layer 2) is a
+> spatial illustration — it is **not** a frame-by-frame render of HEC-RAS hydraulic fields.
+> Flow particles in the video are cinematic tracers, not HEC-RAS velocity vectors.
+> HUD values (Q, h, Fr) are representative scenario parameters, not live cell reads.
+> See `scripts/render_cinematic_simulation.py` (module docstring) for the full provenance notice.
 
 ---
 
@@ -220,22 +264,68 @@ JalRakshak/
 │   ├── app/
 │   │   ├── api/              # REST API endpoints (/api/scenarios, /api/routes, etc.)
 │   │   └── domain/           # Core logic (HEC-RAS parser, EWE engine, database)
-│   └── tests/                # Backend unit and property tests (141 test cases)
+│   ├── tests/                # Backend unit and property tests (179 test cases)
+│   └── requirements.txt      # Python dependency manifest
 ├── frontend/                 # Web interface (React, TypeScript, Vite, ArcGIS Maps SDK 5.1)
 │   ├── public/terrain/       # Copernicus GLO-30 DSM elevation binary files
+│   ├── public/simulation/    # Pre-rendered cinematic visualization (H.264 + WebM)
 │   └── src/
 │       ├── components/       # UI components (Header, MapView, Telemetry drawer, etc.)
 │       ├── map3d/            # ArcGIS 3D engine, custom elevation layer, hydraulic layers
 │       ├── views/            # Full-screen operational views (3D Map, Simulation, Decision, etc.)
-│       └── services/         # API client connection to backend
+│       └── services/         # API client — reads VITE_API_BASE_URL from environment
 ├── artifacts/                # Authoritative HEC-RAS models and execution manifests
 │   └── hecras/               # Native HEC-RAS HDF files and run manifests
 ├── data/                     # Source GIS rasters and dataset conditioning scripts
 ├── docs/                     # Full technical documentation, mathematical specs, and audit reports
-├── tests/                    # Integration and 3D geospatial alignment tests (20 test cases)
+├── scripts/                  # Utility scripts, including render_cinematic_simulation.py
+├── tests/                    # Integration and geospatial alignment tests (22 test cases)
+├── Dockerfile                # Production container (Google Cloud Run target)
 ├── pytest.ini                # Test runner configuration
 └── README.md                 # This document
 ```
+
+---
+
+## Deployment Configuration
+
+JalRakshak targets a **Firebase Hosting + Google Cloud Run** production topology:
+
+```
+Firebase Hosting (React/Vite)  ─HTTPS►  Cloud Run (FastAPI backend)
+         │                                      │
+         └─ serves SPA + cinematic MP4/WebM      └─ reads HEC-RAS HDF artifacts
+```
+
+### Frontend — `VITE_API_BASE_URL`
+
+```bash
+# Local development: create frontend/.env.local  (gitignored)
+VITE_API_BASE_URL=http://localhost:8000/api/v1
+
+# Production CI/CD build step
+VITE_API_BASE_URL=https://your-cloudrun-service.run.app/api/v1 npm run build
+```
+
+### Backend — Dockerfile
+
+```bash
+# Build the image
+docker build -t jalrakshak-backend .
+
+# Run locally (Tehri scenarios load automatically; BaldEagle is optional)
+docker run -p 8000:8000 jalrakshak-backend
+
+# Run with optional BaldEagle HDF artifact
+docker run -p 8000:8000 \
+  -e REAL_HECRAS_HDF_PATH=/app/artifacts/hecras/BaldEagleDamBrk.p05.hdf \
+  -v /local/path/to/artifact:/app/artifacts/hecras \
+  jalrakshak-backend
+```
+
+> **Never** hardcode a Windows local path (`C:\HEC_Work\...`) in production.
+> `REAL_HECRAS_HDF_PATH` defaults to unset (optional scenario not loaded);
+> the primary Tehri Gate 3B HDF scenarios remain fully available without it.
 
 ---
 
@@ -287,10 +377,10 @@ We run automated tests to make sure software changes do not break calculations o
 To run the complete test suite:
 
 ```bash
-# Run geospatial alignment and frontend consistency tests (20 tests)
+# Run integration and geospatial alignment tests (22 tests)
 pytest tests/
 
-# Run backend unit and property tests (141 tests)
+# Run backend unit and property tests (179 tests)
 pytest backend/tests/
 
 # Build frontend to verify TypeScript compilation
@@ -298,10 +388,11 @@ cd frontend
 npm run build
 ```
 
-**Current Test Results**:
-- `tests/`: 20 passed / 20 tests (100% pass)
-- `backend/tests/`: 140 passed / 141 tests (1 assertion pending updated documentation fixture)
-- `frontend build`: Passed with zero TypeScript errors in 4.11 seconds
+**Current Test Results** (commit `881365a`):
+- `tests/`: 22 passed / 22 tests (100% pass)
+- `backend/tests/`: 179 passed / 179 tests (100% pass)
+- Total: **201 tests collected, 201 passed**
+- `frontend build`: Passes with zero TypeScript errors
 
 ---
 
@@ -314,6 +405,8 @@ We explicitly document our known limitations:
 3. **No Structural Assessment**: A road is flagged as unsafe based on water depth and flow velocity. The model does not compute bridge scouring or pavement erosion.
 4. **Uncalibrated Roughness**: Friction values are engineering estimates from standard literature rather than calibrated against physical gauge measurements during a real flood.
 5. **Not Field Certified**: This software is an engineering hackathon prototype developed for research and demonstration. It has not been certified for real-world emergency management.
+6. **Cinematic Video Provenance**: The `/simulation` video is a cinematic visualization derived from project scenario data and the GLO-30 DEM. It is **not** a direct frame-by-frame render of HEC-RAS hydraulic output. Flow particles are cinematic tracers; HUD values are representative scenario parameters. See `scripts/render_cinematic_simulation.py` (module docstring) for the full provenance statement.
+7. **Deployment Status**: Firebase Hosting and Cloud Run deployment configuration is included but not yet live. The `Dockerfile` and environment variable documentation provide the deployment path.
 
 ---
 

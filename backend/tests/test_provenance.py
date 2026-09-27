@@ -1,6 +1,7 @@
 import os
 import json
 import hashlib
+import pytest
 from fastapi.testclient import TestClient
 from backend.app.main import app
 from backend.app.domain.database import db
@@ -22,6 +23,13 @@ def test_provenance_integrity_hash():
 
     assert manifest["sha256"] == computed_sha256, "Manifest SHA-256 does not match physical HDF5 artifact"
 
+@pytest.mark.skipif(
+    not os.environ.get("REAL_HECRAS_HDF_PATH"),
+    reason=(
+        "BaldEagle scenario requires REAL_HECRAS_HDF_PATH to be set. "
+        "This is an optional scenario; skip when artifact is not present."
+    ),
+)
 def test_provenance_api_endpoint():
     resp = client.get("/api/v1/scenarios/scen-baldeagle-hecras-real-001/provenance")
     assert resp.status_code == 200

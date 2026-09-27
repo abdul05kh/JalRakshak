@@ -1,5 +1,37 @@
+"""render_cinematic_simulation.py — JalRakshak Cinematic Visualization Renderer
+
+SCIENTIFIC PROVENANCE NOTICE
+============================
+This script generates a CINEMATIC VISUALIZATION of a Tehri dam-break flood scenario.
+It is NOT a direct pixel-by-pixel rendering of HEC-RAS hydraulic output.
+
+What this renderer does:
+  - Reads the Copernicus GLO-30 DEM for terrain shading (real source data).
+  - Animates flood propagation along a hand-authored river centreline that
+    approximates the Bhagirathi corridor geometry.
+  - Settlement inundation timings (Malidewal T+35:00, Tipri T+48:00, Koteshwar T+60:00)
+    are derived from the JalRakshak backend EWE scenario data, not live HDF queries.
+  - Flow particles are cinematic tracers, not HEC-RAS velocity vectors.
+  - HUD values (Q, h, Fr, V) are representative scenario parameters, not live
+    HEC-RAS cell-by-cell read-outs.
+  - Route R02 geometry is a hand-authored approximation of the OSM road network.
+
+What the JalRakshak *backend* does (separate from this renderer):
+  - Directly parses native HEC-RAS 2D HDF5 output (WSE, depth, velocity, arrival times).
+  - Couples those hydraulic fields to the OSM road network within a 150 m corridor.
+  - Computes the deterministic D = min(A_i - T_i - B) evacuation deadline.
+
+This video illustrates *what the hydraulic scenario means spatially*, and then the
+decision card shows the deadline that JalRakshak's engine computes from the real data.
+Do not describe this renderer's output as a direct HEC-RAS output render.
+
+Dependencies: cv2, numpy, imageio (libx264), imageio_ffmpeg, rasterio (for DEM).
+REQUIRED: GLO-30 DEM at data/tehri/derived/tehri_pilot_utm44n_25m.tif
+          The render WILL FAIL if this file is missing (no silent fallback).
+"""
 import os
 import math
+import sys
 import cv2
 import numpy as np
 import imageio
@@ -60,32 +92,36 @@ ROUTE_R01_WAYPOINTS = [
     (0.64, 0.60),
 ]
 
-def build_hyper_realistic_terrain():
-    """Generates an ultra-realistic 3D shaded relief canvas with natural satellite orthotexture."""
-    print("Computing Multi-Scale 3D Shaded Relief from GLO-30 DEM...")
-    
-    # Load real DEM or high-resolution analytical elevation
-    dem_loaded = False
-    if os.path.exists(DEM_PATH):
-        try:
-            import rasterio
-            with rasterio.open(DEM_PATH) as src:
-                raw_dem = src.read(1).astype(np.float32)
-                dem = cv2.resize(raw_dem, (WIDTH, HEIGHT), interpolation=cv2.INTER_CUBIC)
-                dem_loaded = True
-        except Exception:
-            pass
+def build_terrain_from_dem() -> np.ndarray:
+    """Build shaded-relief terrain from the real Copernicus GLO-30 DEM.
 
-    if not dem_loaded:
-        y_coords, x_coords = np.mgrid[0:HEIGHT, 0:WIDTH]
-        nx = x_coords / WIDTH
-        ny = y_coords / HEIGHT
-        dem = np.zeros((HEIGHT, WIDTH), dtype=np.float32)
-        for rx, ry, _ in RIVER_CENTERLINE:
-            d = np.sqrt((nx - rx)**2 + (ny - ry)**2)
-            dem += np.exp(-d * 6.5)
-        dem = 500.0 + (1.0 - dem / dem.max()) * 1450.0
-        dem += 110.0 * np.sin(nx * 20.0 + ny * 14.0) + 55.0 * np.cos(nx * 36.0 - ny * 26.0)
+    Raises SystemExit if the required DEM file is missing or unreadable.
+    There is intentionally NO synthetic-terrain fallback: a missing DEM
+    would silently produce a scientifically misleading render.
+    """
+    print("Loading GLO-30 DEM for terrain shading...")
+
+    if not os.path.exists(DEM_PATH):
+        print(
+            f"RENDER FAILED — Required DEM artifact missing:\n"
+            f"  Expected: {DEM_PATH}\n"
+            "  Obtain the Copernicus GLO-30 tile and place it at the path above.\n"
+            "  See data/tehri/derived/ for conditioning instructions.",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
+    try:
+        import rasterio
+        with rasterio.open(DEM_PATH) as src:
+            raw_dem = src.read(1).astype(np.float32)
+            dem = cv2.resize(raw_dem, (WIDTH, HEIGHT), interpolation=cv2.INTER_CUBIC)
+    except Exception as exc:
+        print(
+            f"RENDER FAILED — Could not read DEM: {exc}",
+            file=sys.stderr,
+        )
+        sys.exit(1)
 
     # 1. Multi-Directional Gradient Shading (Sun 315 deg + Ambient Sky Illumination)
     dx = cv2.Sobel(dem, cv2.CV_32F, 1, 0, ksize=5) / 8.0
@@ -160,8 +196,12 @@ def build_hyper_realistic_terrain():
     return terrain
 
 def main():
-    print(f"Rendering Ultra-Cinematic Precision Simulation Movie ({WIDTH}x{HEIGHT} @ {FPS}fps, 120s)...")
-    base_terrain = build_hyper_realistic_terrain()
+    print(
+        f"Rendering Cinematic Visualization ({WIDTH}x{HEIGHT} @ {FPS}fps, 120 s)\n"
+        "NOTE: This is a presentation-layer render, not a direct HEC-RAS output render.\n"
+        "      See module docstring for full scientific provenance notice."
+    )
+    base_terrain = build_terrain_from_dem()
 
     writer = imageio.get_writer(
         OUTPUT_MP4,
@@ -171,7 +211,7 @@ def main():
         ffmpeg_params=['-profile:v', 'main', '-movflags', '+faststart', '-crf', '18', '-preset', 'fast']
     )
 
-    # 800 Hydrodynamic Streamline Particles
+    # 800 Cinematic Flow Tracer Particles (NOT HEC-RAS velocity vectors)
     np.random.seed(42)
     num_particles = 800
     p_reach = np.random.rand(num_particles)
@@ -303,7 +343,7 @@ def main():
                         sy = int(front_center[1] + np.random.uniform(-15, 25))
                         cv2.circle(frame, (sx, sy), np.random.randint(2, 5), (255, 255, 255), -1)
 
-                # 800 Velocity Vector Streamlines (Flow field dynamics)
+                # 800 cinematic tracers interpolated along hand-authored centreline
                 for p_idx in range(num_particles):
                     p_val = p_reach[p_idx]
                     if p_val <= flood_prog:
@@ -390,7 +430,7 @@ def main():
         cv2.putText(frame, f"{SHELTER_BAGESHWAR['name']} ({SHELTER_BAGESHWAR['cap']})", (sh_p[0] + 16, sh_p[1] + 5), cv2.FONT_HERSHEY_SIMPLEX, 0.48, (6, 12, 8), 3)
         cv2.putText(frame, f"{SHELTER_BAGESHWAR['name']} ({SHELTER_BAGESHWAR['cap']})", (sh_p[0] + 16, sh_p[1] + 5), cv2.FONT_HERSHEY_SIMPLEX, 0.48, (80, 255, 140), 1)
 
-        # 7. Mission Tactical HUD & Scientific Telemetry
+        # 7. Cinematic HUD (values are representative scenario parameters, not live HDF reads)
         cv2.rectangle(frame, (26, 26), (690, 170), (8, 12, 18), -1)
         cv2.rectangle(frame, (26, 26), (690, 170), (50, 95, 140), 1)
         
@@ -400,7 +440,7 @@ def main():
         if len(phase_detail) > 82:
             cv2.putText(frame, phase_detail[82:], (42, 142), cv2.FONT_HERSHEY_SIMPLEX, 0.40, (140, 155, 170), 1)
 
-        # 8. Top Right Disaster Timeline Clock & Hydraulic Sensor Telemetry
+        # 8. Disaster Timeline Clock & Scenario Parameter Display (cinematic, not live telemetry)
         cv2.rectangle(frame, (WIDTH - 490, 26), (WIDTH - 26, 170), (8, 12, 18), -1)
         cv2.rectangle(frame, (WIDTH - 490, 26), (WIDTH - 26, 170), (50, 95, 140), 1)
         
@@ -412,9 +452,9 @@ def main():
         cv2.putText(frame, "DISASTER TIMELINE CLOCK", (WIDTH - 465, 56), cv2.FONT_HERSHEY_SIMPLEX, 0.44, (140, 155, 170), 1)
         cv2.putText(frame, time_str, (WIDTH - 465, 104), cv2.FONT_HERSHEY_SIMPLEX, 1.25, (245, 180, 40), 2)
         
-        # Real-time scientific parameters
-        telemetry_line = f"Q: {q_outflow:,} m3/s  |  h: {h_depth:.1f}m  |  Fr: {fr_num:.2f}  |  V: {v_front_kmh:.1f} km/h"
-        cv2.putText(frame, telemetry_line, (WIDTH - 465, 142), cv2.FONT_HERSHEY_SIMPLEX, 0.38, (245, 248, 252), 1)
+        # Scenario parameters (representative values derived from scenario data, not live HEC-RAS cell reads)
+        param_line = f"Q: {q_outflow:,} m3/s  |  h: {h_depth:.1f}m  |  Fr: {fr_num:.2f}  |  V: {v_front_kmh:.1f} km/h"
+        cv2.putText(frame, param_line, (WIDTH - 465, 142), cv2.FONT_HERSHEY_SIMPLEX, 0.38, (245, 248, 252), 1)
 
         # 9. Climax JalRakshak Evacuation Decision Reveal Card (Phase 5)
         if sim_sec >= 96.0:
@@ -463,7 +503,7 @@ def main():
             print(f"Rendered {frame_idx + 1}/{TOTAL_FRAMES} frames ({int((frame_idx + 1)/TOTAL_FRAMES*100)}%)...")
 
     writer.close()
-    print(f"SUCCESS: Ultra-Cinematic 120s Full HD Video generated at: {OUTPUT_MP4}")
+    print(f"SUCCESS: Cinematic visualization (120 s, Full HD) generated at: {OUTPUT_MP4}")
 
     # Generate WebM VP9 format
     try:
