@@ -158,17 +158,27 @@ def get_scenario_provenance(scenario_id: str):
 
 @router.get("/scenarios/{scenario_id}/layers")
 def get_scenario_layers(scenario_id: str):
-    sc = db.get_scenario(scenario_id)
-    if not sc:
+    ctx = db.get_scenario_context(scenario_id)
+    if not ctx:
         raise HTTPException(status_code=404, detail="Scenario not found")
+    if not ctx.is_valid:
+        raise HTTPException(
+            status_code=422,
+            detail={"code": "SCENARIO_DATA_UNAVAILABLE", "message": ctx.validation_error or "Scenario data invalid or unavailable"}
+        )
     
+    dam_feat = db.get_dam(ctx.manifest.get("dam_id", "dam-tehri-001"))
+    if not dam_feat:
+        dam_feat = db.get_dam("dam-tehri-001")
+
     return {
         "scenario_id": scenario_id,
-        "source_type": sc.get("source_type", "SYNTHETIC_TEST_FIXTURE"),
-        "inundation_geojson": sc["inundation"],
-        "roads_geojson": {"type": "FeatureCollection", "features": list(db.roads.values())},
-        "evacuation_points_geojson": {"type": "FeatureCollection", "features": list(db.evacuation_points.values())},
-        "dam": db.get_dam("dam-tehri-001")
+        "source_type": ctx.source_type,
+        "geography_mode": ctx.geography_mode,
+        "inundation_geojson": ctx.inundation,
+        "roads_geojson": {"type": "FeatureCollection", "features": list(ctx.roads.values())},
+        "evacuation_points_geojson": {"type": "FeatureCollection", "features": list(ctx.evacuation_points.values())},
+        "dam": dam_feat
     }
 
 @router.get("/scenarios/{scenario_id}/point-query", response_model=PointQueryResponse)
@@ -177,19 +187,19 @@ def point_query(
     lat: float = Query(..., ge=-90, le=90),
     lon: float = Query(..., ge=-180, le=180)
 ):
-    sc = db.get_scenario(scenario_id)
-    if not sc:
-        raise HTTPException(status_code=404, detail="Scenario not found")
+    ctx = db.get_scenario_context(scenario_id)
+    if not ctx or not ctx.is_valid:
+        raise HTTPException(status_code=404, detail="Scenario not found or data unavailable")
 
-    # Find nearest feature or edge dynamically
-    ewe = EvacuationWindowEngine(db.roads, db.evacuation_points)
+    # Find nearest feature or edge dynamically from scenario context
+    ewe = EvacuationWindowEngine(ctx.roads, ctx.evacuation_points)
     node_id, dist_m = ewe.snap_to_node(lat, lon)
     
     feat_name = "Selected Coordinate"
-    if node_id in db.evacuation_points:
-        feat_name = db.evacuation_points[node_id]["properties"].get("name", node_id)
+    if node_id in ctx.evacuation_points:
+        feat_name = ctx.evacuation_points[node_id]["properties"].get("name", node_id)
     else:
-        for pt in db.evacuation_points.values():
+        for pt in ctx.evacuation_points.values():
             if pt["properties"].get("node_id") == node_id or pt["properties"].get("id") == node_id:
                 feat_name = pt["properties"].get("name", node_id)
                 break
@@ -203,14 +213,14 @@ def point_query(
         if adj_edges:
             edge_ref = adj_edges[0][2].get("id")
 
-    hyd = sc.get("edge_hydraulics", {}).get(edge_ref, {"arrival_s": None, "max_depth_m": 0.0, "max_vel_mps": 0.0, "inundated": False}) if edge_ref else {"arrival_s": None, "max_depth_m": 0.0, "max_vel_mps": 0.0, "inundated": False}
+    hyd = ctx.edge_hydraulics.get(edge_ref, {"arrival_s": None, "max_depth_m": 0.0, "max_vel_mps": 0.0, "inundated": False}) if edge_ref else {"arrival_s": None, "max_depth_m": 0.0, "max_vel_mps": 0.0, "inundated": False}
 
     raw_arrival = hyd.get("arrival_s")
     arrival_s = raw_arrival if (raw_arrival is not None and raw_arrival < 99999) else None
     now_utc = datetime.now(timezone.utc)
     arrival_utc = (now_utc + timedelta(seconds=arrival_s)).strftime("%Y-%m-%dT%H:%M:%SZ") if arrival_s is not None else None
 
-    source_type = sc.get("source_type", "SYNTHETIC_TEST_FIXTURE")
+    source_type = ctx.source_type
     conf_label = "HEC-RAS 2D Unsteady Hydraulic Simulation (EPSG:32644)" if source_type == "HECRAS_REAL_RESULT" else "Precomputed Scenario Demonstration Fixture (25m grid schema)"
 
     return PointQueryResponse(
@@ -224,7 +234,7 @@ def point_query(
         inundated=hyd.get("inundated", False),
         scenario_id=scenario_id,
         source_type=source_type,
-        source_artifacts=["tehri_dam_break.p01.hdf"] if source_type == "HECRAS_REAL_RESULT" else ["inundation.geojson", "edge_hydraulics.json"],
+        source_artifacts=list(ctx.artifacts_provenance.keys()) if ctx.artifacts_provenance else (["tehri_dam_break.p01.hdf"] if source_type == "HECRAS_REAL_RESULT" else ["inundation.geojson", "edge_hydraulics.json"]),
         confidence_label=conf_label
     )
 
@@ -250,22 +260,26 @@ def get_scenario_validation(scenario_id: str):
 
 @router.get("/scenarios/{scenario_id}/timeline")
 def get_scenario_timeline(scenario_id: str):
-    sc = db.get_scenario(scenario_id)
-    if not sc:
-        raise HTTPException(status_code=404, detail="Scenario not found")
+    ctx = db.get_scenario_context(scenario_id)
+    if not ctx or not ctx.is_valid:
+        raise HTTPException(status_code=404, detail="Scenario not found or data unavailable")
 
-    edge_hydraulics = sc.get("edge_hydraulics", {})
-    manifest = sc.get("manifest", {})
+    edge_hydraulics = ctx.edge_hydraulics
+    manifest = ctx.manifest
     duration_min = manifest.get("simulation", {}).get("duration_min", 120)
 
-    # Calculate arrival timestep for R02
+    # Use explicit custom timestamps if declared in simulation/manifest, else interval steps
+    custom_timesteps = manifest.get("simulation", {}).get("timesteps_min") or manifest.get("timesteps_min")
+    if custom_timesteps and isinstance(custom_timesteps, list):
+        timesteps = [int(t) for t in custom_timesteps]
+    else:
+        timesteps = list(range(0, duration_min + 1, 15))
+
+    # Calculate arrival timestep for R02 if present
     r02_arr = edge_hydraulics.get("R02", {}).get("arrival_s")
-    r02_arr_min = round(r02_arr / 60) if (r02_arr is not None and r02_arr < 99999) else 60
+    r02_arr_min = round(r02_arr / 60) if (r02_arr is not None and r02_arr < 99999) else None
 
-    # Generate timeline intervals based on duration
-    timesteps = list(range(0, duration_min + 1, 15))
     timeline_data = []
-
     for t_min in timesteps:
         t_sec = t_min * 60
         affected = [
@@ -277,11 +291,11 @@ def get_scenario_timeline(scenario_id: str):
             desc = "Dam breach initiation; zero downstream road inundation."
             frac = 0.05
         elif len(affected) == 0:
-            desc = f"Flood wave propagating through gorge; 0 road segments inundated (T+{t_min:02d}:00)."
-            frac = round(min(1.0, max(0.05, t_sec / (duration_min * 60))), 2)
+            desc = f"Flood wave propagating; 0 road segments inundated (T+{t_min:02d}:00)."
+            frac = round(min(1.0, max(0.05, t_sec / (duration_min * 60 if duration_min else 7200))), 2)
         else:
             desc = f"Flood wave propagating; {len(affected)} road segments inundated ({', '.join(affected[:3])}{'...' if len(affected) > 3 else ''})."
-            frac = round(min(1.0, max(0.05, t_sec / (duration_min * 60))), 2)
+            frac = round(min(1.0, max(0.05, t_sec / (duration_min * 60 if duration_min else 7200))), 2)
 
         timeline_data.append({
             "timestep_min": t_min,
@@ -291,29 +305,35 @@ def get_scenario_timeline(scenario_id: str):
             "wavefront_progress_fraction": frac,
             "affected_roads": affected,
             "inundated_edge_count": len(affected),
-            "is_arrival_point_for_r02": abs(t_min - r02_arr_min) < 8
+            "is_arrival_point_for_r02": (abs(t_min - r02_arr_min) < 8) if r02_arr_min is not None else False
         })
 
     return {
         "scenario_id": scenario_id,
-        "scenario_name": sc["manifest"]["name"],
+        "scenario_name": manifest.get("name", scenario_id),
         "duration_min": duration_min,
         "timesteps": timeline_data
     }
 
 @router.get("/scenarios/{scenario_id}/explainers")
 def get_scenario_explainers(scenario_id: str):
-    sc = db.get_scenario(scenario_id)
-    if not sc:
-        raise HTTPException(status_code=404, detail="Scenario not found")
+    ctx = db.get_scenario_context(scenario_id)
+    if not ctx or not ctx.is_valid:
+        raise HTTPException(status_code=404, detail="Scenario not found or data unavailable")
 
-    m = sc["manifest"]
+    m = ctx.manifest
     q_peak = m.get("breach_parameters", {}).get("peak_discharge_m3s", 65000)
 
     # Derive scenario-specific timing dynamically via EWE
-    ewe = EvacuationWindowEngine(db.roads, db.evacuation_points)
+    ewe = EvacuationWindowEngine(ctx.roads, ctx.evacuation_points)
     now_utc = datetime.now(timezone.utc)
-    candidate_routes = ewe.analyze_evacuation("N-MALIDEWAL", "N-CHAMBA", sc.get("edge_hydraulics", {}), now_utc, safety_buffer_min=3.0)
+    
+    # Select default origin and destination for scenario
+    orig_nodes = list(ewe.graph.nodes)
+    u_node = orig_nodes[0] if orig_nodes else "N-ORIGIN"
+    v_node = orig_nodes[-1] if orig_nodes else "N-DEST"
+    
+    candidate_routes = ewe.analyze_evacuation(u_node, v_node, ctx.edge_hydraulics, now_utc, safety_buffer_min=3.0)
     primary = candidate_routes[0] if candidate_routes else None
 
     if primary and primary.get("limiting_segment"):
@@ -338,9 +358,9 @@ def get_scenario_explainers(scenario_id: str):
             "title": "01 — Flood Simulation Pipeline",
             "subtitle": "How native HEC-RAS 2D unsteady hydraulics compute flood propagation",
             "steps": [
-                {"title": "1. Reservoir & Dam Geometry", "detail": f"Dam reservoir initialized at FRL with peak breach discharge Qp = {q_peak:,} m³/s."},
-                {"title": "2. 2D Shallow Water Equations", "detail": f"{m.get('simulation', {}).get('solver', 'HEC-RAS 7.0.1')} solves mass and momentum conservation over 2D mesh."},
-                {"title": "3. Temporal Hydrograph Output", "detail": "Outputs cell-by-cell water surface elevations (WSE), depths, and velocities at unsteady intervals."}
+                {"title": "1. Reservoir & Dam Geometry", "detail": f"Dam reservoir initialized with peak breach discharge Qp = {q_peak:,} m³/s."},
+                {"title": "2. 2D Shallow Water Equations", "detail": f"{m.get('simulation', {}).get('solver', 'HEC-RAS 7.0.1')} solves mass and momentum conservation."},
+                {"title": "3. Temporal Hydrograph Output", "detail": "Outputs water surface elevations, depths, and velocities at unsteady intervals."}
             ]
         },
         {
@@ -348,7 +368,7 @@ def get_scenario_explainers(scenario_id: str):
             "title": "02 — Spatial Road Coupling",
             "subtitle": "How continuous hydraulic cells map onto discrete road network geometry",
             "steps": [
-                {"title": "1. LineString Densification", "detail": "Road axes densified to <= 50m vertex intervals in projected Cartesian CRS EPSG:32644."},
+                {"title": "1. LineString Densification", "detail": "Road axes densified to <= 50m vertex intervals."},
                 {"title": "2. 150m Perpendicular Envelope", "detail": "Strict 150m search corridor identifies only physically relevant valley-bottom cells."},
                 {"title": "3. Hazard Thresholding", "detail": "Extracts exact timestamp when water depth exceeds 0.3m (or velocity exceeds 1.0 m/s)."}
             ]
@@ -389,7 +409,7 @@ def get_scenario_explainers(scenario_id: str):
             "title": "06 — Scientific & Human Validation Status",
             "subtitle": "Separation of computational proof from human empirical evidence",
             "steps": [
-                {"title": "Computational Validation: PASS", "detail": "Unit & integration tests pass; native HEC-RAS 2D HDF hashes verified."},
+                {"title": "Computational Validation: PASS", "detail": "Unit & integration tests pass; artifact hashes verified."},
                 {"title": "Human Decision Usefulness: PROTOCOL FROZEN", "detail": "Internal pilot dry run protocol established."},
                 {"title": "Operational Scope", "detail": "Static baseline speeds configured; dynamic congestion modeling is out of scope."}
             ]
@@ -397,7 +417,7 @@ def get_scenario_explainers(scenario_id: str):
         {
             "id": "EXP-07",
             "title": "07 — Provenance & Cryptographic Lineage",
-            "subtitle": "End-to-end traceability from native HEC-RAS HDF5 to decision",
+            "subtitle": "End-to-end traceability from hydraulic model to decision",
             "steps": [
                 {"title": "Simulation Engine", "detail": f"{m.get('simulation', {}).get('solver', 'HEC-RAS 7.0.1')} 2D Unsteady Flow Solver."},
                 {"title": "Terrain & Projection", "detail": f"{m.get('simulation', {}).get('terrain_source', 'Copernicus GLO-30 DSM')} in {m.get('simulation', {}).get('crs', 'EPSG:32644')}."},
@@ -408,25 +428,31 @@ def get_scenario_explainers(scenario_id: str):
 
     return {
         "scenario_id": scenario_id,
-        "scenario_name": m["name"],
+        "scenario_name": m.get("name", scenario_id),
         "explainers": explainers
     }
 
 @router.post("/routes/analyze", response_model=RouteAnalyzeResponse)
 def analyze_route(req: RouteAnalyzeRequest):
-    sc = db.get_scenario(req.scenario_id)
-    if not sc:
+    ctx = db.get_scenario_context(req.scenario_id)
+    if not ctx:
         raise HTTPException(
             status_code=404,
             detail={"code": "SCENARIO_NOT_FOUND", "message": f"Scenario {req.scenario_id} not found."}
         )
+    if not ctx.is_valid:
+        raise HTTPException(
+            status_code=422,
+            detail={"code": "SCENARIO_DATA_UNAVAILABLE", "message": ctx.validation_error or "Scenario data invalid or unavailable."}
+        )
 
-    ewe = EvacuationWindowEngine(db.roads, db.evacuation_points)
+    ewe = EvacuationWindowEngine(ctx.roads, ctx.evacuation_points)
 
-    # Determine origin node
+    # Determine origin node from scenario-scoped points
     origin_name = "Selected Origin"
-    if req.origin_id and req.origin_id in db.evacuation_points:
-        pt = db.evacuation_points[req.origin_id]
+    origin_node = None
+    if req.origin_id and req.origin_id in ctx.evacuation_points:
+        pt = ctx.evacuation_points[req.origin_id]
         origin_name = pt["properties"]["name"]
         c = pt["geometry"]["coordinates"]
         origin_node, _ = ewe.snap_to_node(c[1], c[0])
@@ -434,13 +460,24 @@ def analyze_route(req: RouteAnalyzeRequest):
         origin_node, snap_m = ewe.snap_to_node(req.origin_coord.lat, req.origin_coord.lon)
         origin_name = f"Custom Origin (Lat: {req.origin_coord.lat:.4f}, Lon: {req.origin_coord.lon:.4f})"
     else:
-        origin_node = "N-MALIDEWAL"
-        origin_name = "Malidewal Lowland Village"
+        # Pick first available origin feature in scenario context
+        origins = [pt for pt in ctx.evacuation_points.values() if pt.get("properties", {}).get("category") == "ORIGIN"]
+        if origins:
+            pt = origins[0]
+            origin_name = pt["properties"]["name"]
+            c = pt["geometry"]["coordinates"]
+            origin_node, _ = ewe.snap_to_node(c[1], c[0])
+        elif list(ewe.graph.nodes):
+            origin_node = list(ewe.graph.nodes)[0]
+            origin_name = f"Node {origin_node}"
+        else:
+            origin_node = "UNRESOLVED_LOCATION"
 
-    # Determine destination node
+    # Determine destination node from scenario-scoped points
     dest_name = "Selected Destination"
-    if req.destination_id and req.destination_id in db.evacuation_points:
-        pt = db.evacuation_points[req.destination_id]
+    dest_node = None
+    if req.destination_id and req.destination_id in ctx.evacuation_points:
+        pt = ctx.evacuation_points[req.destination_id]
         dest_name = pt["properties"]["name"]
         c = pt["geometry"]["coordinates"]
         dest_node, _ = ewe.snap_to_node(c[1], c[0])
@@ -448,8 +485,18 @@ def analyze_route(req: RouteAnalyzeRequest):
         dest_node, snap_m = ewe.snap_to_node(req.destination_coord.lat, req.destination_coord.lon)
         dest_name = f"Custom Shelter (Lat: {req.destination_coord.lat:.4f}, Lon: {req.destination_coord.lon:.4f})"
     else:
-        dest_node = "N-CHAMBA"
-        dest_name = "Chamba High-Ground Relief Shelter"
+        # Pick first available destination/shelter feature in scenario context
+        dests = [pt for pt in ctx.evacuation_points.values() if pt.get("properties", {}).get("category") in ["DESTINATION", "SHELTER"]]
+        if dests:
+            pt = dests[0]
+            dest_name = pt["properties"]["name"]
+            c = pt["geometry"]["coordinates"]
+            dest_node, _ = ewe.snap_to_node(c[1], c[0])
+        elif list(ewe.graph.nodes):
+            dest_node = list(ewe.graph.nodes)[-1]
+            dest_name = f"Node {dest_node}"
+        else:
+            dest_node = "UNRESOLVED_LOCATION"
 
     # Departure time
     if req.departure_time_utc:
@@ -467,7 +514,7 @@ def analyze_route(req: RouteAnalyzeRequest):
     alternatives = ewe.analyze_evacuation(
         origin_node=origin_node,
         dest_node=dest_node,
-        edge_hydraulics=sc["edge_hydraulics"],
+        edge_hydraulics=ctx.edge_hydraulics,
         departure_dt=departure_dt,
         safety_buffer_min=constraints.safety_buffer_min,
         depth_limit_m=constraints.depth_limit_m,
@@ -486,12 +533,12 @@ def analyze_route(req: RouteAnalyzeRequest):
             primary_route = feasible_alts[0]
         primary_status = primary_route["status"]
 
-    source_type = sc.get("source_type", "SYNTHETIC_TEST_FIXTURE")
-    artifacts = sc["manifest"].get("artifacts", {})
+    source_type = ctx.source_type
+    artifacts = ctx.artifacts_provenance or ctx.manifest.get("artifacts", {})
     inundation_art = artifacts.get("inundation_extent", {})
     hyd_artifact = inundation_art.get("file", "tehri_dam_break.p01.hdf")
     hyd_hash = inundation_art.get("sha256", "UNKNOWN")
-    solver_ver = sc["manifest"].get("simulation", {}).get("solver", "HEC-RAS 7.0.1 (2D Unsteady)")
+    solver_ver = ctx.manifest.get("simulation", {}).get("solver", "HEC-RAS 7.0.1 (2D Unsteady)")
 
     alt_summaries = []
     for alt in alternatives:
@@ -522,7 +569,7 @@ def analyze_route(req: RouteAnalyzeRequest):
     ]
 
     data_gaps_list = [
-        "Road network limited to 17 demonstration segments (DEMONSTRATION_DATASET)",
+        f"Road network scoped to scenario GIS features ({len(ctx.roads)} segments)",
         "Vertical datum and bathymetry conditioning based on satellite DSM and engineering assumptions",
         "Physical validation against historical dam-break event not established"
     ]
@@ -530,9 +577,9 @@ def analyze_route(req: RouteAnalyzeRequest):
     return RouteAnalyzeResponse(
         decision_id=dec_id,
         decision_timestamp=now_iso,
-        scenario_id=req.scenario_id,
-        scenario_name=sc["manifest"]["name"],
-        source_type=source_type,
+        scenario_id=ctx.scenario_id,
+        scenario_name=ctx.name,
+        source_type=ctx.source_type,
         hydraulic_artifact=hyd_artifact,
         hydraulic_artifact_sha256=hyd_hash,
         hec_ras_version=solver_ver,
@@ -541,7 +588,7 @@ def analyze_route(req: RouteAnalyzeRequest):
         destination=dest_name,
         destination_name=dest_name,
         requested_departure_utc=departure_dt.strftime("%Y-%m-%dT%H:%M:%SZ"),
-        route_id=primary_route["name"] if primary_route else None,
+        route_id=primary_route["name"] if primary_route else "NO_ROUTE",
         route_status=primary_status,
         latest_feasible_departure=primary_route["deadline_utc"] if primary_route else None,
         decision_margin=primary_route["margin_min"] if primary_route else None,
@@ -561,15 +608,18 @@ def analyze_route(req: RouteAnalyzeRequest):
         alternative_routes=alt_summaries,
         travel_time_model="STATIC_ENGINEERING_ASSUMPTION",
         dynamic_traffic_model="NOT_IMPLEMENTED",
-        road_network_scope="DEMONSTRATION_DATASET",
+        road_network_scope="SCENARIO_LOCAL" if ctx.geography_mode == "SCENARIO_LOCAL" else "DEMONSTRATION_DATASET",
         assumptions=assumptions_list,
         data_gaps=data_gaps_list,
         validation_status="VALIDATION_NOT_ESTABLISHED",
         provenance={
-            "source_type": source_type,
+            "scenario_id": ctx.scenario_id,
+            "geography_mode": ctx.geography_mode,
+            "source_type": ctx.source_type,
             "solver": solver_ver,
-            "breach_width_m": sc["manifest"]["breach_parameters"]["breach_width_m"],
-            "artifact_hashes": sc["manifest"]["artifacts"],
+            "breach_width_m": ctx.manifest.get("breach_parameters", {}).get("breach_width_m", 100.0),
+            "peak_discharge_m3s": ctx.manifest.get("breach_parameters", {}).get("peak_discharge_m3s", 65000.0),
+            "artifact_hashes": artifacts,
             "decision_rule": "Conservative edge-level: D_deadline = min_i(A_i - T_i - B)"
         }
     )

@@ -1,0 +1,69 @@
+{
+  "type": "FeatureCollection",
+  "name": "TEST_BETA_Roads",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "Y01",
+      "properties": {
+        "id": "Y01",
+        "u": "N-GAMMA",
+        "v": "N-GAMMA-MID1",
+        "road_class": "PRIMARY",
+        "speed_kmh": 40,
+        "length_m": 2000.0,
+        "travel_time_min": 3.0,
+        "source": "Synthetic Beta Transport Fixture"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [79.1000, 31.1000],
+          [79.1200, 31.1200]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "Y02",
+      "properties": {
+        "id": "Y02",
+        "u": "N-GAMMA-MID1",
+        "v": "N-GAMMA-MID2",
+        "road_class": "PRIMARY",
+        "speed_kmh": 40,
+        "length_m": 4000.0,
+        "travel_time_min": 6.0,
+        "source": "Synthetic Beta Transport Fixture"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [79.1200, 31.1200],
+          [79.1600, 31.1600]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "Y03",
+      "properties": {
+        "id": "Y03",
+        "u": "N-GAMMA-MID2",
+        "v": "N-DELTA",
+        "road_class": "SECONDARY",
+        "speed_kmh": 40,
+        "length_m": 2000.0,
+        "travel_time_min": 3.0,
+        "source": "Synthetic Beta Transport Fixture"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [79.1600, 31.1600],
+          [79.1800, 31.1800]
+        ]
+      }
+    }
+  ]
+}

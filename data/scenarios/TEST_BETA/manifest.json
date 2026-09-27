@@ -1,22 +1,26 @@
 {
-  "scenario_id": "TEST_ALPHA",
-  "name": "Alpha Synthetic Emergency Scenario",
-  "dam_id": "dam-alpha-001",
-  "dam_name": "Alpha Dam (Synthetic)",
+  "scenario_id": "TEST_BETA",
+  "name": "Beta Synthetic Emergency Scenario",
+  "dam_id": "dam-beta-001",
+  "dam_name": "Beta Dam (Synthetic)",
   "source_type": "SYNTHETIC_TEST_FIXTURE",
   "status_note": "NOT_FOR_OPERATIONAL_USE",
+  "geography": {
+    "mode": "SCENARIO_LOCAL"
+  },
   "breach_parameters": {
-    "breach_width_m": 45.0,
-    "breach_formation_min": 20.0,
-    "breach_elevation_m": 750.0,
-    "initial_pool_level_m": 780.0,
-    "peak_discharge_m3s": 52000.0,
+    "breach_width_m": 60.0,
+    "breach_formation_min": 30.0,
+    "breach_elevation_m": 900.0,
+    "initial_pool_level_m": 950.0,
+    "peak_discharge_m3s": 78000.0,
     "source_reference": "Synthetic black-box data-driven test fixture"
   },
   "simulation": {
-    "duration_min": 120,
-    "solver": "Synthetic Solver v1",
-    "terrain_source": "Synthetic DEM",
+    "duration_min": 180,
+    "timesteps_min": [0, 20, 45, 75, 110, 160],
+    "solver": "Synthetic Solver v2",
+    "terrain_source": "Synthetic Beta DTM 10m",
     "crs": "EPSG:4326",
     "status": "READY",
     "completed_at": "2026-09-28T00:00:00Z"
@@ -24,22 +28,22 @@
   "artifacts": {
     "inundation_extent": {
       "file": "inundation.geojson",
-      "sha256": "synthetic_test_alpha_hash_inundation",
+      "sha256": "synthetic_test_beta_hash_inundation",
       "type": "GeoJSON FeatureCollection"
     },
     "edge_hydraulics": {
       "file": "edge_hydraulics.json",
-      "sha256": "synthetic_test_alpha_hash_edge_hydraulics",
+      "sha256": "synthetic_test_beta_hash_edge_hydraulics",
       "type": "Spatial Segment Matrix"
     },
     "roads": {
       "file": "roads.json",
-      "sha256": "synthetic_test_alpha_hash_roads",
+      "sha256": "synthetic_test_beta_hash_roads",
       "type": "GeoJSON FeatureCollection"
     },
     "evacuation_points": {
       "file": "evacuation_points.json",
-      "sha256": "synthetic_test_alpha_hash_evacuation_points",
+      "sha256": "synthetic_test_beta_hash_evacuation_points",
       "type": "GeoJSON FeatureCollection"
     }
   },

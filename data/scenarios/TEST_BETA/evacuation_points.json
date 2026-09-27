@@ -1,0 +1,42 @@
+{
+  "type": "FeatureCollection",
+  "name": "TEST_BETA_EvacuationPoints",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "SETT-GAMMA",
+      "properties": {
+        "id": "SETT-GAMMA",
+        "name": "Settlement Gamma",
+        "type": "SETTLEMENT",
+        "population": 2400,
+        "elevation_m": 820.0,
+        "river_distance_km": 4.2,
+        "category": "ORIGIN",
+        "node_id": "N-GAMMA"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [79.1000, 31.1000]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SETT-DELTA",
+      "properties": {
+        "id": "SETT-DELTA",
+        "name": "Settlement Delta",
+        "type": "SHELTER",
+        "capacity": 5000,
+        "elevation_m": 950.0,
+        "river_distance_km": 22.0,
+        "category": "DESTINATION",
+        "node_id": "N-DELTA"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [79.1800, 31.1800]
+      }
+    }
+  ]
+}

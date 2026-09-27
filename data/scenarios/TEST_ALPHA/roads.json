@@ -1,0 +1,69 @@
+{
+  "type": "FeatureCollection",
+  "name": "TEST_ALPHA_Roads",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "X01",
+      "properties": {
+        "id": "X01",
+        "u": "N-ALPHA",
+        "v": "N-ALPHA-MID1",
+        "road_class": "PRIMARY",
+        "speed_kmh": 50,
+        "length_m": 2500.0,
+        "travel_time_min": 3.0,
+        "source": "Synthetic OSM Transport Test Fixture"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [78.6100, 30.4100],
+          [78.6300, 30.4300]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "X02",
+      "properties": {
+        "id": "X02",
+        "u": "N-ALPHA-MID1",
+        "v": "N-ALPHA-MID2",
+        "road_class": "PRIMARY",
+        "speed_kmh": 50,
+        "length_m": 3333.3,
+        "travel_time_min": 4.0,
+        "source": "Synthetic OSM Transport Test Fixture"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [78.6300, 30.4300],
+          [78.6550, 30.4550]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "X03",
+      "properties": {
+        "id": "X03",
+        "u": "N-ALPHA-MID2",
+        "v": "N-BETA",
+        "road_class": "SECONDARY",
+        "speed_kmh": 50,
+        "length_m": 3333.3,
+        "travel_time_min": 4.0,
+        "source": "Synthetic OSM Transport Test Fixture"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [78.6550, 30.4550],
+          [78.6800, 30.4800]
+        ]
+      }
+    }
+  ]
+}

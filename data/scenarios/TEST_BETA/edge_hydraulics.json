@@ -1,0 +1,20 @@
+{
+  "Y01": {
+    "arrival_s": 4800,
+    "max_depth_m": 1.8,
+    "max_vel_mps": 1.4,
+    "inundated": true
+  },
+  "Y02": {
+    "arrival_s": 1500,
+    "max_depth_m": 4.5,
+    "max_vel_mps": 2.8,
+    "inundated": true
+  },
+  "Y03": {
+    "arrival_s": 3600,
+    "max_depth_m": 2.1,
+    "max_vel_mps": 1.6,
+    "inundated": true
+  }
+}
