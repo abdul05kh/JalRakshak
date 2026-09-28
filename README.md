@@ -330,10 +330,16 @@ To maintain complete research honesty and academic rigor, JalRakshak categorizes
 
 ## 18. Project Team
 
-*Team JalRakshak — Smart India Hackathon (SIH 2026)*
+*Developed by Team JalRakshak — Smart India Hackathon (SIH 2026)*
 
-- **Lead Architecture & Hydrodynamic Modeling:** Abdul K.
-- **Geospatial Engineering & Frontend Development:** JalRakshak Team Contributors
+| Team Member | Role / Domain | GitHub Profile | Contact | Core Responsibilities |
+|---|---|---|---|---|
+| **Mohammad Abdul Kalam Hussain** | Team Lead / ML Engineer | [@abdul05kh](https://github.com/abdul05kh) | `abdul05kh.college@gmail.com` | System architecture, EWE mathematical formulation, HEC-RAS 2D unsteady integration, end-to-end pipeline coordination. |
+| **Siri Chandana** | Hydrodynamic / GIS Specialist | [@kotagirisirichandana](https://github.com/kotagirisirichandana) | `kotagirisirichandana73@gmail.com` | Hydrodynamic boundary conditions, GLO-30 terrain conditioning, geospatial coordinate projection, inundation mesh modeling. |
+| **Mohammad Zakiruddin** | Frontend Developer | [@zakirverse](https://github.com/zakirverse) | `zakirmd.1805@gmail.com` | React + Vite UI architecture, ArcGIS Maps SDK 3D SceneView integration, interactive hydraulic controllers, responsive dashboard. |
+| **Mohammed Numan** | AI Engineer | [@mohammednumaan716](https://github.com/mohammednumaan716) | `mohammednumaan901@gmail.com` | Intelligent routing analysis, surrogate model research, automated parameter optimization, decision logic validation. |
+| **Manivarun Chintala** | Data Infrastructure / Backend Developer | [@manivarun-05](https://github.com/manivarun-05) | `manivarunchintala2005.2728@gmail.com` | FastAPI REST endpoints, multi-scenario spatial indexing, KD-Tree road-hydraulic mapping pipeline, cloud deployment. |
+| **Thaniska** | QA & Verification Lead | [@thanishkaX](https://github.com/thanishkaX) | `ramatenkithanishka@gmail.com` | Pytest test suite, mathematical edge case validation, scenario isolation verification, end-to-end acceptance testing. |
 
 ---
 
