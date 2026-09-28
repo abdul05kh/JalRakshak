@@ -117,3 +117,57 @@ class RoadHydraulicMapper:
 
         return edge_hydraulics
 
+    def generate_inundation_geojson(
+        self,
+        hydraulic_data: HydraulicScenarioData,
+        min_depth_threshold_m: float = 0.30,
+        cell_half_size_m: float = 37.5
+    ) -> Dict[str, Any]:
+        """
+        Constructs high-fidelity 2D/3D polygonal mesh GeoJSON representing inundated HEC-RAS cells.
+        Each feature carries depth_m, arrival_s, arrival_min, wse_m, and bed_elevation_m.
+        """
+        max_depths = np.max(hydraulic_data.depth_series_m, axis=0) if hasattr(hydraulic_data, "depth_series_m") else []
+        flooded_indices = np.where(max_depths >= min_depth_threshold_m)[0] if len(max_depths) > 0 else []
+
+        features = []
+        for idx in flooded_indices:
+            cx, cy = hydraulic_data.cell_coords[idx]
+            max_d = float(max_depths[idx])
+            arr_s = float(hydraulic_data.cell_arrival_times_sec[idx])
+            arr_min = round(arr_s / 60.0, 1) if np.isfinite(arr_s) else 999.0
+            wse = float(np.max(hydraulic_data.water_surface_m[:, idx])) if hasattr(hydraulic_data, "water_surface_m") else 0.0
+            bed_elev = float(hydraulic_data.cell_min_elev_m[idx]) if hasattr(hydraulic_data, "cell_min_elev_m") else 0.0
+
+            # 4 vertices in UTM coordinates converted to WGS84 [lon, lat]
+            c1 = list(geo_transformer.utm_to_wgs84(cx - cell_half_size_m, cy - cell_half_size_m))
+            c2 = list(geo_transformer.utm_to_wgs84(cx + cell_half_size_m, cy - cell_half_size_m))
+            c3 = list(geo_transformer.utm_to_wgs84(cx + cell_half_size_m, cy + cell_half_size_m))
+            c4 = list(geo_transformer.utm_to_wgs84(cx - cell_half_size_m, cy + cell_half_size_m))
+
+            poly_coords = [[c1, c2, c3, c4, c1]]
+            features.append({
+                "type": "Feature",
+                "properties": {
+                    "scenario_id": hydraulic_data.scenario_id,
+                    "cell_id": f"HEC-CELL-{idx + 1}",
+                    "max_depth_m": round(max_d, 2),
+                    "depth_m": round(max_d, 2),
+                    "arrival_s": round(arr_s, 1),
+                    "arrival_min": arr_min,
+                    "wse_m": round(wse, 2),
+                    "bed_elevation_m": round(bed_elev, 2),
+                    "inundated": True
+                },
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": poly_coords
+                }
+            })
+
+        return {
+            "type": "FeatureCollection",
+            "features": features
+        }
+
+

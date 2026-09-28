@@ -194,6 +194,7 @@ class Database:
                             )
                             # Map roads to hydraulic cells
                             edge_hydraulics = self.road_mapper.map_roads_to_hydraulics(self.roads, hyd_data)
+                            inundation = self.road_mapper.generate_inundation_geojson(hyd_data)
 
                             manifest_entry = {
                                 "scenario_id": sc_key,
@@ -239,7 +240,7 @@ class Database:
                                 source_type="HECRAS_REAL_RESULT",
                                 roads=self.roads,
                                 evacuation_points=self.evacuation_points,
-                                inundation={"type": "FeatureCollection", "features": []},
+                                inundation=inundation,
                                 edge_hydraulics=edge_hydraulics,
                                 hydraulic_data=hyd_data,
                                 crs=hyd_data.crs,
@@ -252,7 +253,7 @@ class Database:
 
                             self.scenarios[sc_key] = {
                                 "manifest": manifest_entry,
-                                "inundation": {"type": "FeatureCollection", "features": []},
+                                "inundation": inundation,
                                 "edge_hydraulics": edge_hydraulics,
                                 "roads": self.roads,
                                 "evacuation_points": self.evacuation_points,
