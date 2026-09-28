@@ -1,28 +1,44 @@
 # Python
 .venv/
+env/
+venv/
+ENV/
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
+*.py[cod]
+*$py.class
 .pytest_cache/
+.coverage
+htmlcov/
 *.egg-info/
 dist/
 build/
+*.log
 
-# Node
+# Node & Frontend
 node_modules/
 frontend/node_modules/
 frontend/dist/
-.npm
+.npm/
+.eslintcache
 
-# Frontend environment files (contain deployment-specific URLs and secrets)
-# For local dev: set values in frontend/.env.local (not committed)
-# For production: inject VITE_API_BASE_URL in CI/CD pipeline at build time
-frontend/.env.local
-frontend/.env.production
+# Environment & Secrets (Keep .env.example tracked)
+.env
+.env.*
+!.env.example
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
+
+# Temporary & Scratch Output
+*.tmp
+*.temp
+scratch/tmp/
 
 # IDE & OS
 .vscode/
 .idea/
+*.swp
+*.swo
 .DS_Store
 Thumbs.db
+desktop.ini

@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 320" width="100%" height="100%" style="background:#0b1120; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+  <defs>
+    <filter id="glow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#0284c7" flood-opacity="0.3" />
+    </filter>
+  </defs>
+
+  <rect width="860" height="280" x="20" y="20" rx="12" fill="#0f172a" stroke="#1e293b" stroke-width="2" filter="url(#glow)" />
+  
+  <text x="450" y="55" fill="#38bdf8" font-size="16" font-weight="700" text-anchor="middle" letter-spacing="1">EVACUATION WINDOW EQUATION (EWE)</text>
+  <text x="450" y="78" fill="#94a3b8" font-size="12" text-anchor="middle">Deterministic Departure Deadline Formulation for Road Evacuation Routes</text>
+
+  <!-- Formula 1: Segment Deadline -->
+  <g transform="translate(60, 100)">
+    <rect width="360" height="70" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5" />
+    <text x="180" y="44" fill="#f8fafc" font-size="20" font-weight="700" font-family="monospace" text-anchor="middle">
+      D<tspan font-size="14" dy="4">i</tspan><tspan font-size="20" dy="-4"> = A</tspan><tspan font-size="14" dy="4">i</tspan><tspan font-size="20" dy="-4"> − T</tspan><tspan font-size="14" dy="4">i</tspan><tspan font-size="20" dy="-4"> − B</tspan>
+    </text>
+  </g>
+
+  <!-- Formula 2: Governing Bottleneck -->
+  <g transform="translate(480, 100)">
+    <rect width="360" height="70" rx="8" fill="#1e293b" stroke="#f59e0b" stroke-width="1.5" />
+    <text x="180" y="44" fill="#fbbf24" font-size="20" font-weight="700" font-family="monospace" text-anchor="middle">
+      D<tspan font-size="14" dy="4">route</tspan><tspan font-size="20" dy="-4"> = min </tspan><tspan font-size="14" dy="4">i ∈ R</tspan><tspan font-size="20" dy="-4"> (D</tspan><tspan font-size="14" dy="4">i</tspan><tspan font-size="20" dy="-4">)</tspan>
+    </text>
+  </g>
+
+  <!-- Explanations -->
+  <g transform="translate(60, 190)">
+    <circle cx="10" cy="10" r="4" fill="#38bdf8" />
+    <text x="25" y="14" fill="#e2e8f0" font-size="12"><tspan font-weight="700" fill="#38bdf8">A<tspan font-size="9">i</tspan></tspan> : Modeled flood arrival timestamp at road segment i (threshold: depth ≥ 0.30 m or velocity ≥ 1.0 m/s)</text>
+    
+    <circle cx="10" cy="35" r="4" fill="#38bdf8" />
+    <text x="25" y="39" fill="#e2e8f0" font-size="12"><tspan font-weight="700" fill="#38bdf8">T<tspan font-size="9">i</tspan></tspan> : Cumulative travel time from origin node to reach segment i (based on configured road class speed)</text>
+
+    <circle cx="10" cy="60" r="4" fill="#38bdf8" />
+    <text x="25" y="64" fill="#e2e8f0" font-size="12"><tspan font-weight="700" fill="#38bdf8">B</tspan> : Operational safety buffer margin configured by disaster response authority (e.g. 3 to 5 minutes)</text>
+
+    <circle cx="10" cy="85" r="4" fill="#f59e0b" />
+    <text x="25" y="89" fill="#fde68a" font-size="12"><tspan font-weight="700" fill="#f59e0b">Limiting Segment</tspan> : argmin<tspan font-size="9">i</tspan>(D<tspan font-size="9">i</tspan>) — the governing bottleneck segment whose clearance window constrains the entire route</text>
+  </g>
+</svg>
