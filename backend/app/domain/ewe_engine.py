@@ -18,9 +18,15 @@ class EvacuationWindowEngine:
             props = feat["properties"]
             u = props["u"]
             v = props["v"]
-            length_m = props["length_m"]
-            travel_time_min = props["travel_time_min"]
-            coords = feat["geometry"]["coordinates"]
+            length_m = props.get("length_m", 1000.0)
+            speed_kmh = props.get("speed_kmh", 50.0)
+            travel_time_min = props.get("travel_time_min")
+            if travel_time_min is None:
+                speed_mpm = (speed_kmh * 1000.0) / 60.0
+                travel_time_min = round(length_m / speed_mpm, 2) if speed_mpm > 0 else 1.0
+            
+            road_class = props.get("road_class", "Primary")
+            coords = feat.get("geometry", {}).get("coordinates", [])
             
             # Store node geographic coordinates (lon, lat)
             if coords and len(coords) >= 2:
@@ -32,8 +38,8 @@ class EvacuationWindowEngine:
                 id=road_id,
                 length_m=length_m,
                 travel_time_min=travel_time_min,
-                road_class=props["road_class"],
-                speed_kmh=props["speed_kmh"],
+                road_class=road_class,
+                speed_kmh=speed_kmh,
                 coords=coords
             )
 
@@ -125,11 +131,11 @@ class EvacuationWindowEngine:
                 max_vel = 0.0
                 inundated = False
             else:
-                arr_val = hyd.get("arrival_s")
+                arr_val = hyd.get("arrival_s") if "arrival_s" in hyd else hyd.get("flood_arrival_s")
                 arrival_s = arr_val if (arr_val is not None and arr_val < 99999) else None
-                max_depth = hyd.get("max_depth_m", 0.0)
-                max_vel = hyd.get("max_vel_mps", 0.0)
-                inundated = hyd.get("inundated", False)
+                max_depth = float(hyd.get("max_depth_m", 0.0))
+                max_vel = float(hyd.get("max_vel_mps") if "max_vel_mps" in hyd else hyd.get("max_velocity_mps", 0.0))
+                inundated = hyd.get("inundated", max_depth >= depth_limit_m)
 
             # Edge-level deadline calculation in simulation seconds: D_i = A_i - T_i - B
             if arrival_s is None:

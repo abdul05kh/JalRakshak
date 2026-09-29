@@ -1,3 +1,4 @@
+import os
 import time
 from datetime import datetime, timezone
 from fastapi import FastAPI, Request
@@ -12,11 +13,25 @@ app = FastAPI(
     version="1.0.0"
 )
 
+# Configurable CORS origins (Environment variable or explicit local/production allowed list)
+cors_origins_env = os.getenv("CORS_ORIGINS")
+if cors_origins_env:
+    if cors_origins_env.strip() == "*":
+        allowed_origins = ["*"]
+    else:
+        allowed_origins = [orig.strip() for orig in cors_origins_env.split(",") if orig.strip()]
+else:
+    allowed_origins = [
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "https://jalrakshak-frontend.onrender.com"
+    ]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
 )
 
