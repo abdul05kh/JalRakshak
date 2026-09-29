@@ -111,10 +111,6 @@ export function getAuthoritativeDecision(
   const isMin = scenarioId.toUpperCase().includes("MIN");
   const isMax = scenarioId.toUpperCase().includes("MAX");
   
-  // Default values when backend response is pending
-  const defaultArrival = isMin ? 5700 : isMax ? 2700 : 3600;
-  const defaultTravel = 759;
-  const defaultBuffer = customBufferMin !== undefined ? Math.round(customBufferMin * 60) : 180;
   const defaultPeak = isMin ? 28500 : isMax ? 115000 : 65000;
   const defaultScenName = isMin
     ? "Minimum Inflow / Delayed Breach (Qp = 28,500 m3/s)"
@@ -123,34 +119,29 @@ export function getAuthoritativeDecision(
     : "Central Baseline (Qp = 65,000 m3/s)";
 
   if (!resp || !resp.primary_route) {
-    const arrivalSeconds = defaultArrival;
-    const travelSeconds = defaultTravel;
-    const bufferSeconds = defaultBuffer;
-    const deadlineSeconds = arrivalSeconds - travelSeconds - bufferSeconds;
-
     return {
       scenarioId,
       scenarioName: defaultScenName,
       peakDischargeM3s: defaultPeak,
       routeId,
       routeName: `${routeId} Evacuation Corridor`,
-      originName: "Malidewal Lowland Village",
-      destinationName: "Koteshwar / Chamba Relief Shelter",
-      limitingEdgeId: "R02-E07",
-      limitingSegmentName: "Koteshwar Riverbank Limiting Segment",
-      arrivalSeconds,
-      travelSeconds,
-      bufferSeconds,
-      deadlineSeconds,
-      arrivalFormatted: formatSecondsToRelTime(arrivalSeconds),
-      travelFormatted: formatSecondsToMinSec(travelSeconds),
-      bufferFormatted: formatSecondsToMinSec(bufferSeconds),
-      deadlineFormatted: formatSecondsToRelTime(deadlineSeconds),
-      status: deadlineSeconds < 0 ? "INFEASIBLE" : deadlineSeconds < 300 ? "LOW_MARGIN" : "FEASIBLE",
-      statusBadgeText: deadlineSeconds < 0 ? "INFEASIBLE" : deadlineSeconds < 300 ? "LOW MARGIN" : "FEASIBLE",
-      reasonCode: "MODELED_CLEARANCE_SUFFICIENT",
-      formulaText: `${arrivalSeconds} - ${travelSeconds} - ${bufferSeconds} = ${deadlineSeconds}`,
-      sourceArtifact: resp?.provenance?.artifact_hashes?.inundation_extent?.file || "hecras_model.p01.hdf",
+      originName: "Origin Location",
+      destinationName: "Relief Shelter",
+      limitingEdgeId: "PENDING",
+      limitingSegmentName: "Awaiting Hydraulic Computation",
+      arrivalSeconds: 0,
+      travelSeconds: 0,
+      bufferSeconds: Math.round((customBufferMin ?? 3.0) * 60),
+      deadlineSeconds: 0,
+      arrivalFormatted: "DATA GAP",
+      travelFormatted: "DATA GAP",
+      bufferFormatted: formatSecondsToMinSec(Math.round((customBufferMin ?? 3.0) * 60)),
+      deadlineFormatted: "NOT COMPUTABLE",
+      status: "DATA_GAP",
+      statusBadgeText: "DATA GAP",
+      reasonCode: "HYDRAULIC_DATA_PENDING",
+      formulaText: "DATA GAP — Awaiting API Decision Evaluation",
+      sourceArtifact: "hecras_model.p01.hdf",
       couplingMethod: "150m Corridor Coupling (EPSG:32644)",
       calculationVersion: "EWE-v1.0.0-PROD"
     };
@@ -160,7 +151,7 @@ export function getAuthoritativeDecision(
   const lim = primary.limiting_segment;
   const bufferSeconds = customBufferMin !== undefined ? Math.round(customBufferMin * 60) : Math.round(resp.safety_buffer_min * 60);
 
-  const arrivalSeconds = lim?.flood_arrival_s ?? (primary.edges.find(e => e.flood_arrival_s !== null)?.flood_arrival_s ?? defaultArrival);
+  const arrivalSeconds = lim?.flood_arrival_s ?? (primary.edges.find(e => e.flood_arrival_s !== null)?.flood_arrival_s ?? 0);
   const travelSeconds = lim ? Math.round(lim.cumulative_travel_min * 60) : Math.round(primary.total_travel_time_min * 60);
   const deadlineSeconds = arrivalSeconds - travelSeconds - bufferSeconds;
 
@@ -181,16 +172,16 @@ export function getAuthoritativeDecision(
     routeName: primary.name,
     originName: resp.origin_name,
     destinationName: resp.destination_name,
-    limitingEdgeId: lim?.road_id || "R02-E07",
-    limitingSegmentName: lim ? `${lim.road_id} (${lim.road_class})` : "Limiting Road Segment",
+    limitingEdgeId: lim?.road_id || "NONE",
+    limitingSegmentName: lim ? `${lim.road_id} (${lim.road_class})` : "No Limiting Segment",
     arrivalSeconds,
     travelSeconds,
     bufferSeconds,
     deadlineSeconds,
-    arrivalFormatted: formatSecondsToRelTime(arrivalSeconds),
+    arrivalFormatted: arrivalSeconds > 0 ? formatSecondsToRelTime(arrivalSeconds) : "NO FLOOD ARRIVAL",
     travelFormatted: formatSecondsToMinSec(travelSeconds),
     bufferFormatted: formatSecondsToMinSec(bufferSeconds),
-    deadlineFormatted: formatSecondsToRelTime(deadlineSeconds),
+    deadlineFormatted: deadlineSeconds > 0 ? formatSecondsToRelTime(deadlineSeconds) : "IMMEDIATE / INFEASIBLE",
     status,
     statusBadgeText: status.replace("_", " "),
     reasonCode: lim?.failure_reason || "MODELED_CLEARANCE_SUFFICIENT",
@@ -215,9 +206,6 @@ export function getAuthoritativeEdgeBreakdown(scenarioId: string): EdgeImpactDet
     }
   }
 
-  const isMin = scenarioId.toUpperCase().includes("MIN");
-  const isMax = scenarioId.toUpperCase().includes("MAX");
-
   if (resp && resp.primary_route && resp.primary_route.edges.length > 0) {
     const limitingId = resp.primary_route.limiting_segment?.road_id;
     return resp.primary_route.edges.map((edge: RouteEdgeDetail) => {
@@ -225,12 +213,12 @@ export function getAuthoritativeEdgeBreakdown(scenarioId: string): EdgeImpactDet
       const arrSec = edge.flood_arrival_s;
       const travSec = Math.round(edge.cumulative_travel_min * 60);
       const bufSec = Math.round(resp!.safety_buffer_min * 60);
-      const marginSec = arrSec !== null ? arrSec - travSec - bufSec : 99999;
+      const marginSec = arrSec !== null ? arrSec - travSec - bufSec : null;
       
       let status: "FEASIBLE" | "LOW_MARGIN" | "INUNDATED" = "FEASIBLE";
-      if (marginSec < 0 || !edge.edge_feasible) {
+      if (marginSec !== null && marginSec < 0) {
         status = "INUNDATED";
-      } else if (marginSec < 300) {
+      } else if (marginSec !== null && marginSec < 300) {
         status = "LOW_MARGIN";
       }
 
@@ -240,42 +228,15 @@ export function getAuthoritativeEdgeBreakdown(scenarioId: string): EdgeImpactDet
         lengthKm: roundTo(edge.length_m / 1000, 2),
         speedKmh: edge.speed_kmh,
         travelToEdgeMin: formatSecondsToMinSec(travSec),
-        floodArrivalMin: formatSecondsToRelTime(arrSec ?? 99999),
-        marginMin: marginSec >= 99999 ? "+99:99" : `${marginSec >= 0 ? "+" : "-"}${formatSecondsToMinSec(Math.abs(marginSec))}`,
+        floodArrivalMin: arrSec !== null ? formatSecondsToRelTime(arrSec) : "NO ARRIVAL",
+        marginMin: marginSec !== null ? `${marginSec >= 0 ? "+" : "-"}${formatSecondsToMinSec(Math.abs(marginSec))}` : "N/A",
         status,
         isLimiting
       };
     });
   }
 
-  // Dynamic fallback based on scenario timing if backend response is still loading
-  const baseArrival = isMin ? 5700 : isMax ? 2700 : 3600;
-  const offsets = [
-    { edgeId: "R02-E01", name: "Malidewal Village Exit", lenKm: 0.8, speed: 40, travSec: 72, arrDelta: 1800 },
-    { edgeId: "R02-E02", name: "Bhagirathi Valley Upper Link", lenKm: 1.4, speed: 50, travSec: 172, arrDelta: 1200 },
-    { edgeId: "R02-E03", name: "Jakhnidhar Junction", lenKm: 1.9, speed: 50, travSec: 308, arrDelta: 900 },
-    { edgeId: "R02-E04", name: "Tipri Lowland Bypass", lenKm: 1.2, speed: 45, travSec: 404, arrDelta: 600 },
-    { edgeId: "R02-E05", name: "Koteshwar North Terrace", lenKm: 1.6, speed: 50, travSec: 519, arrDelta: 480 },
-    { edgeId: "R02-E06", name: "Lower Canyon Bridge Approach", lenKm: 1.5, speed: 45, travSec: 639, arrDelta: 240 },
-    { edgeId: "R02-E07", name: "Koteshwar Riverbank Limiting Segment", lenKm: 2.1, speed: 50, travSec: 759, arrDelta: 0 }
-  ];
-
-  return offsets.map((o) => {
-    const isLimiting = o.edgeId === "R02-E07";
-    const arrSec = baseArrival + o.arrDelta;
-    const marginSec = arrSec - o.travSec - 180;
-    return {
-      edgeId: o.edgeId,
-      segmentName: o.name,
-      lengthKm: o.lenKm,
-      speedKmh: o.speed,
-      travelToEdgeMin: formatSecondsToMinSec(o.travSec),
-      floodArrivalMin: formatSecondsToRelTime(arrSec),
-      marginMin: `+${formatSecondsToMinSec(marginSec)}`,
-      status: "FEASIBLE" as const,
-      isLimiting
-    };
-  });
+  return [];
 }
 
 function roundTo(num: number, decimals: number): number {

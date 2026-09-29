@@ -104,8 +104,23 @@ export const App: React.FC = () => {
       .then((layers) => {
         setInundationGeoJSON(layers.inundation_geojson);
         setRoads(layers.roads_geojson?.features || []);
-        setEvacPoints(layers.evacuation_points_geojson?.features || []);
-        handleRunAnalysis(activeScenarioId, selectedOriginId, selectedDestinationId);
+        const points = layers.evacuation_points_geojson?.features || [];
+        setEvacPoints(points);
+        
+        let orig = selectedOriginId;
+        let dest = selectedDestinationId;
+        if (points.length >= 2) {
+          const pointIds = points.map((p: any) => p.properties?.id || p.id);
+          if (!pointIds.includes(orig)) {
+            orig = pointIds[0];
+            setSelectedOriginId(orig);
+          }
+          if (!pointIds.includes(dest)) {
+            dest = pointIds[pointIds.length - 1];
+            setSelectedDestinationId(dest);
+          }
+        }
+        handleRunAnalysis(activeScenarioId, orig, dest);
       })
       .catch((err) => console.error("Failed to load scenario layers:", err));
 
