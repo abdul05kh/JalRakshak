@@ -46,18 +46,23 @@ export class ArcGISHydraulicLayer {
       const maxDepth = props.max_depth_m || props.depth_m || 5.0;
       const arrivalMin = props.arrival_min || (props.arrival_s ? props.arrival_s / 60 : 15.0);
 
-      // Time filtering: only show inundated cells that flood at or before currentTimeMin
-      if (arrivalMin > currentTimeMin) {
-        return;
+      // Time filtering:
+      // In ARRIVAL mode: show full spatial isochrones across the entire valley mesh.
+      // In DEPTH or EXTENT mode: show cells reached by currentTimeMin (or initial breach cells if currentTimeMin == 0).
+      if (mode !== "ARRIVAL") {
+        const effectiveTime = currentTimeMin > 0 ? currentTimeMin : 15;
+        if (arrivalMin > effectiveTime) {
+          return;
+        }
       }
 
-      // Restrained Government Intelligence Palette (No yellow blankets, seamless terrain drape)
+      // Restrained Government Intelligence Palette (Sharp computational mesh net with high-contrast outlines)
       let fillColor: number[]; // [r, g, b, a]
-      let outlineColor: number[] = [56, 189, 248, 0.6];
-      let outlineWidth: number = 1.0;
+      let outlineColor: number[] = [56, 189, 248, 0.85];
+      let outlineWidth: number = 1.2;
 
       if (mode === "EXTENT") {
-        // Mode 1: FLOOD EXTENT (Binary footprint h >= 0.30m)
+        // Mode 1: FLOOD EXTENT (Binary footprint h >= 0.30m with glowing mesh net)
         fillColor = [14, 165, 233, 0.75]; // Aquatic cyan
         outlineColor = [56, 189, 248, 0.95];
         outlineWidth = 1.5;
