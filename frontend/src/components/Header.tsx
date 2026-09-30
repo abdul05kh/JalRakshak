@@ -49,16 +49,16 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
 
   const operationalNav: { id: ViewType; label: string; icon: React.ReactNode }[] = [
-    { id: "OPERATIONAL_MAP", label: "3D MAP", icon: <Map size={13} /> },
-    { id: "EVACUATION_DECISION", label: "DECISION", icon: <Clock size={13} /> },
-    { id: "ROAD_IMPACT", label: "ROAD IMPACT", icon: <Network size={13} /> }
+    { id: "OPERATIONAL_MAP", label: "3D MAP", icon: <Map size={12} /> },
+    { id: "EVACUATION_DECISION", label: "DECISION", icon: <Clock size={12} /> },
+    { id: "ROAD_IMPACT", label: "ROADS", icon: <Network size={12} /> }
   ];
 
   const evidenceNav: { id: ViewType; label: string; icon: React.ReactNode }[] = [
-    { id: "FLOOD_SIMULATION", label: "SIMULATION", icon: <Waves size={13} /> },
-    { id: "SCIENCE_VALIDATION", label: "SCIENCE", icon: <Award size={13} /> },
-    { id: "PROVENANCE", label: "PROVENANCE", icon: <FileCheck size={13} /> },
-    { id: "ARCGIS_TERRAIN_TEST", label: "DIAGNOSTICS", icon: <ShieldCheck size={13} /> }
+    { id: "FLOOD_SIMULATION", label: "SIM", icon: <Waves size={12} /> },
+    { id: "SCIENCE_VALIDATION", label: "SCIENCE", icon: <Award size={12} /> },
+    { id: "PROVENANCE", label: "AUDIT", icon: <FileCheck size={12} /> },
+    { id: "ARCGIS_TERRAIN_TEST", label: "TEST", icon: <ShieldCheck size={12} /> }
   ];
 
   return (
@@ -69,20 +69,24 @@ export const Header: React.FC<HeaderProps> = ({
       display: "flex",
       alignItems: "center",
       justifyContent: "space-between",
-      padding: "0 16px",
+      padding: "0 10px",
       zIndex: 1000,
       userSelect: "none",
-      color: "#ffffff"
+      color: "#ffffff",
+      maxWidth: "100vw",
+      boxSizing: "border-box",
+      overflowX: "auto",
+      scrollbarWidth: "none"
     }}>
       {/* Left: Brand & Context */}
-      <div style={{ display: "flex", alignItems: "center", gap: "12px", flexShrink: 0 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
         <div 
           onClick={() => onNavigateToView("OPERATIONAL_MAP")}
           style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}
         >
           <div style={{
-            width: "26px",
-            height: "26px",
+            width: "24px",
+            height: "24px",
             borderRadius: "6px",
             backgroundColor: "#2563eb",
             display: "flex",
@@ -91,102 +95,108 @@ export const Header: React.FC<HeaderProps> = ({
             color: "#ffffff",
             boxShadow: "0 2px 8px rgba(37, 99, 235, 0.4)"
           }}>
-            <ShieldCheck size={16} strokeWidth={2.5} />
+            <ShieldCheck size={14} strokeWidth={2.5} />
           </div>
-          <span style={{ fontWeight: 900, fontSize: "14px", letterSpacing: "-0.3px", color: "#ffffff" }}>
+          <span style={{ fontWeight: 900, fontSize: "13px", letterSpacing: "-0.3px", color: "#ffffff" }}>
             JALRAKSHAK
           </span>
         </div>
 
         {dam && (
           <span className="mobile-hide" style={{
-            fontSize: "10.5px",
+            fontSize: "9.5px",
             color: "#94a3b8",
             fontWeight: 600,
-            paddingLeft: "8px",
-            borderLeft: "1px solid rgba(255, 255, 255, 0.15)"
+            paddingLeft: "6px",
+            borderLeft: "1px solid rgba(255, 255, 255, 0.15)",
+            maxWidth: "110px",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis"
           }}>
-            {dam.name} ({dam.river_name})
+            {dam.name}
           </span>
         )}
       </div>
 
       {/* Middle: Scenario & Route Selectors */}
-      <div style={{ display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
         {/* Scenario Selector */}
-        <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-          <label style={{ fontSize: "10px", fontWeight: 800, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+          <label style={{ fontSize: "9.5px", fontWeight: 800, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.5px" }}>
             SCENARIO:
           </label>
           <select
             value={activeScenarioId}
             onChange={(e) => onSelectScenario(e.target.value)}
             style={{
-              padding: "4px 8px",
+              padding: "3px 6px",
               borderRadius: "4px",
               border: "1px solid rgba(255, 255, 255, 0.18)",
               backgroundColor: "#0f172a",
-              fontSize: "11px",
+              fontSize: "10.5px",
               fontWeight: 700,
               color: "#38bdf8",
               cursor: "pointer",
-              outline: "none"
+              outline: "none",
+              maxWidth: "140px"
             }}
           >
-            <option value="SCENARIO_CENTRAL">CENTRAL (Qp = 65,000 m³/s)</option>
-            <option value="SCENARIO_MINIMUM">MINIMUM (Qp = 28,500 m³/s)</option>
-            <option value="SCENARIO_MAXIMUM">MAXIMUM (Qp = 115,000 m³/s)</option>
+            <option value="SCENARIO_CENTRAL">Central (65k m³/s)</option>
+            <option value="SCENARIO_MINIMUM">Min (28.5k m³/s)</option>
+            <option value="SCENARIO_MAXIMUM">Max (115k m³/s)</option>
           </select>
         </div>
 
         {/* Route Selector */}
-        <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-          <label style={{ fontSize: "10px", fontWeight: 800, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+          <label style={{ fontSize: "9.5px", fontWeight: 800, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.5px" }}>
             ROUTE:
           </label>
           <select
             value={selectedRouteId}
             onChange={(e) => onSelectRouteId(e.target.value)}
             style={{
-              padding: "4px 8px",
+              padding: "3px 6px",
               borderRadius: "4px",
               border: "1px solid rgba(255, 255, 255, 0.18)",
               backgroundColor: "#0f172a",
-              fontSize: "11px",
+              fontSize: "10.5px",
               fontWeight: 700,
               color: "#38bdf8",
               cursor: "pointer",
-              outline: "none"
+              outline: "none",
+              maxWidth: "135px"
             }}
           >
-            <option value="R02">R02 — Chamba via Koteshwar (Primary)</option>
-            <option value="R01">R01 — Chamba High Ridge</option>
+            <option value="R02">R02: Chamba Primary</option>
+            <option value="R01">R01: High Ridge</option>
           </select>
         </div>
 
         {/* Timestep Badge */}
         <div style={{
-          padding: "4px 9px",
-          borderRadius: "5px",
+          padding: "3px 7px",
+          borderRadius: "4px",
           backgroundColor: "rgba(30, 41, 59, 0.9)",
           border: "1px solid rgba(56, 189, 248, 0.4)",
           color: "#38bdf8",
-          fontSize: "11px",
+          fontSize: "10px",
           fontWeight: 800,
           fontFamily: "monospace",
           letterSpacing: "0.5px",
           display: "flex",
           alignItems: "center",
-          gap: "5px"
+          gap: "4px"
         }}>
-          <Clock size={12} color="#38bdf8" />
+          <Clock size={11} color="#38bdf8" />
           <span>T+{activeTimestepMin.toString().padStart(2, "0")}:00</span>
         </div>
       </div>
 
       {/* Right: Operational & Evidence Navigation Tabs */}
-      <nav style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "3px" }}>
+      <nav style={{ display: "flex", alignItems: "center", gap: "4px", flexShrink: 0 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "2px" }}>
           {operationalNav.map((item) => {
             const isActive = activeView === item.id;
             return (
@@ -196,16 +206,17 @@ export const Header: React.FC<HeaderProps> = ({
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: "4px",
-                  padding: "5px 9px",
-                  borderRadius: "6px",
+                  gap: "3px",
+                  padding: "4px 6px",
+                  borderRadius: "4px",
                   border: isActive ? "1px solid #3b82f6" : "1px solid transparent",
                   backgroundColor: isActive ? "rgba(59, 130, 246, 0.25)" : "transparent",
                   color: isActive ? "#93c5fd" : "#cbd5e1",
-                  fontSize: "11px",
+                  fontSize: "10px",
                   fontWeight: isActive ? 800 : 500,
                   cursor: "pointer",
-                  transition: "all 0.15s ease"
+                  transition: "all 0.15s ease",
+                  whiteSpace: "nowrap"
                 }}
               >
                 {item.icon}
@@ -215,9 +226,9 @@ export const Header: React.FC<HeaderProps> = ({
           })}
         </div>
 
-        <span style={{ height: "18px", width: "1px", backgroundColor: "rgba(255,255,255,0.15)", margin: "0 2px" }} />
+        <span style={{ height: "16px", width: "1px", backgroundColor: "rgba(255,255,255,0.15)", margin: "0 1px" }} />
 
-        <div style={{ display: "flex", alignItems: "center", gap: "3px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "2px" }}>
           {evidenceNav.map((item) => {
             const isActive = activeView === item.id;
             return (
@@ -228,16 +239,17 @@ export const Header: React.FC<HeaderProps> = ({
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: "4px",
-                  padding: "4px 7px",
-                  borderRadius: "5px",
+                  gap: "3px",
+                  padding: "4px 6px",
+                  borderRadius: "4px",
                   border: isActive ? "1px solid #a855f7" : "1px solid transparent",
                   backgroundColor: isActive ? "rgba(168, 85, 247, 0.20)" : "transparent",
                   color: isActive ? "#d8b4fe" : "#94a3b8",
-                  fontSize: "10px",
+                  fontSize: "9.5px",
                   fontWeight: isActive ? 800 : 500,
                   cursor: "pointer",
-                  transition: "all 0.15s ease"
+                  transition: "all 0.15s ease",
+                  whiteSpace: "nowrap"
                 }}
               >
                 {item.icon}
@@ -247,7 +259,7 @@ export const Header: React.FC<HeaderProps> = ({
           })}
         </div>
 
-        <span style={{ height: "18px", width: "1px", backgroundColor: "rgba(255,255,255,0.15)", margin: "0 2px" }} />
+        <span style={{ height: "16px", width: "1px", backgroundColor: "rgba(255,255,255,0.15)", margin: "0 1px" }} />
 
         {/* Persistent Post-Submission Update Trigger */}
         <button
@@ -262,20 +274,21 @@ export const Header: React.FC<HeaderProps> = ({
           style={{
             display: "flex",
             alignItems: "center",
-            gap: "5px",
+            gap: "4px",
             padding: "4px 8px",
             borderRadius: "5px",
             border: "1px solid #f59e0b",
-            backgroundColor: "rgba(245, 158, 11, 0.20)",
+            backgroundColor: "rgba(245, 158, 11, 0.22)",
             color: "#fbbf24",
-            fontSize: "10.5px",
+            fontSize: "10px",
             fontWeight: 800,
             cursor: "pointer",
-            boxShadow: "0 0 8px rgba(245, 158, 11, 0.25)",
-            transition: "all 0.15s ease"
+            boxShadow: "0 0 8px rgba(245, 158, 11, 0.3)",
+            whiteSpace: "nowrap",
+            flexShrink: 0
           }}
         >
-          <span style={{ display: "inline-block", width: "6px", height: "6px", borderRadius: "50%", backgroundColor: "#f59e0b" }} />
+          <span style={{ display: "inline-block", width: "5px", height: "5px", borderRadius: "50%", backgroundColor: "#f59e0b" }} />
           <span>UPDATE NOTICE</span>
         </button>
       </nav>
