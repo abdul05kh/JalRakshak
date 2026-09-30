@@ -15,68 +15,158 @@ export const PostSubmissionNoticeModal: React.FC<PostSubmissionNoticeModalProps>
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md overflow-y-auto animate-fadeIn">
+    <div style={{
+      position: "fixed",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      zIndex: 9999,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "16px",
+      backgroundColor: "rgba(15, 23, 42, 0.85)",
+      backdropFilter: "blur(8px)",
+      WebkitBackdropFilter: "blur(8px)"
+    }}>
       <div 
-        className="relative w-full max-w-4xl max-h-[92vh] flex flex-col bg-gradient-to-b from-slate-900 via-slate-900/95 to-slate-950 border border-amber-500/40 rounded-2xl shadow-2xl shadow-amber-950/40 text-slate-100 overflow-hidden"
+        style={{
+          position: "relative",
+          width: "100%",
+          maxWidth: "860px",
+          maxHeight: "90vh",
+          display: "flex",
+          flexDirection: "column",
+          backgroundColor: "#0f172a",
+          border: "2px solid #f59e0b",
+          borderRadius: "16px",
+          boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 30px rgba(245, 158, 11, 0.2)",
+          color: "#f8fafc",
+          overflow: "hidden"
+        }}
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-headline"
       >
         {/* Top Header Badge */}
-        <div className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-amber-950/60 via-slate-900 to-amber-950/60 border-b border-amber-500/30">
-          <div className="flex items-center gap-3">
-            <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 border border-amber-500/40">
-              <AlertTriangle className="w-5 h-5 animate-pulse" />
+        <div style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "16px 24px",
+          backgroundColor: "#1e293b",
+          borderBottom: "1px solid rgba(245, 158, 11, 0.3)"
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <span style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "36px",
+              height: "36px",
+              borderRadius: "8px",
+              backgroundColor: "rgba(245, 158, 11, 0.15)",
+              color: "#fbbf24",
+              border: "1px solid rgba(245, 158, 11, 0.4)",
+              flexShrink: 0
+            }}>
+              <AlertTriangle size={20} />
             </span>
             <div>
-              <div className="text-[11px] font-bold tracking-widest text-amber-400 uppercase">
+              <div style={{ fontSize: "11px", fontWeight: 800, letterSpacing: "1px", color: "#fbbf24", textTransform: "uppercase" }}>
                 Smart India Hackathon 2026 — SIH26161
               </div>
-              <h2 id="modal-headline" className="text-sm md:text-base font-black tracking-wide text-white">
+              <h2 id="modal-headline" style={{ fontSize: "16px", fontWeight: 900, letterSpacing: "0.2px", color: "#ffffff", margin: 0 }}>
                 POST-SUBMISSION TECHNICAL UPDATE & DISCLOSURE
               </h2>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors"
+            style={{
+              padding: "8px",
+              color: "#94a3b8",
+              backgroundColor: "transparent",
+              border: "none",
+              borderRadius: "8px",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center"
+            }}
             title="Dismiss to Prototype"
             aria-label="Close modal"
           >
-            <X className="w-5 h-5" />
+            <X size={20} color="#cbd5e1" />
           </button>
         </div>
 
         {/* Scrollable Content Body */}
-        <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-6 text-xs md:text-sm leading-relaxed">
+        <div style={{
+          flex: 1,
+          overflowY: "auto",
+          padding: "24px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "20px",
+          fontSize: "13px",
+          lineHeight: "1.6",
+          color: "#e2e8f0"
+        }}>
           {/* Central Callout Banner */}
-          <div className="p-4 md:p-5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-slate-200 space-y-2">
-            <div className="flex items-center gap-2 text-amber-400 font-bold text-xs uppercase tracking-wider">
-              <ShieldAlert className="w-4 h-4" />
+          <div style={{
+            padding: "18px 20px",
+            borderRadius: "12px",
+            backgroundColor: "rgba(245, 158, 11, 0.08)",
+            border: "1px solid rgba(245, 158, 11, 0.35)",
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px"
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "#fbbf24", fontWeight: 800, fontSize: "12px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+              <ShieldAlert size={16} />
               Important Clarification for Reviewers & Jury
             </div>
-            <p className="font-extrabold text-white text-base md:text-lg tracking-tight">
+            <p style={{ fontWeight: 800, color: "#ffffff", fontSize: "15px", margin: 0 }}>
               THE SUBMITTED PRESENTATION REPRESENTS OUR INITIAL INTERPRETATION OF SIH26161.
             </p>
-            <p className="text-slate-300 text-xs md:text-sm">
+            <p style={{ color: "#cbd5e1", fontSize: "13px", margin: 0 }}>
               The submitted PPT represents our initial interpretation of SIH26161.
               After submission, we identified that our interpretation did not fully capture the breadth of the problem statement.
               We acknowledge that gap. We subsequently revisited the problem and substantially improved the prototype.
               The submitted PPT has NOT been retroactively changed. This repository documents the technical development that followed.
             </p>
-            <div className="p-2.5 rounded-lg bg-slate-950/70 border border-amber-500/30 text-[11.5px] text-amber-300 font-semibold">
-              ⚠️ Important: This is a post-submission technical update. It does not constitute a revised SIH submission. The submitted PPT remains unchanged; this repository documents technical development undertaken after submission.
+            <div style={{
+              padding: "10px 14px",
+              borderRadius: "8px",
+              backgroundColor: "rgba(15, 23, 42, 0.8)",
+              border: "1px solid rgba(245, 158, 11, 0.3)",
+              fontSize: "12px",
+              color: "#fde68a",
+              fontWeight: 600
+            }}>
+              ⚠️ <strong>Important:</strong> This is a post-submission technical update. It does not constitute a revised SIH submission. The submitted PPT remains unchanged; this repository documents technical development undertaken after submission.
             </div>
           </div>
 
           {/* Evolution Progression: Submitted vs Current */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2">
-              <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-slate-500"></span>
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+            gap: "16px"
+          }}>
+            <div style={{
+              padding: "16px",
+              borderRadius: "12px",
+              backgroundColor: "#1e293b",
+              border: "1px solid #334155"
+            }}>
+              <div style={{ fontSize: "11px", fontWeight: 800, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "10px", display: "flex", alignItems: "center", gap: "6px" }}>
+                <span style={{ width: "8px", height: "8px", borderRadius: "50%", backgroundColor: "#64748b" }}></span>
                 Submitted State (Initial Stage)
               </div>
-              <ul className="text-xs text-slate-400 space-y-1.5 list-disc list-inside">
+              <ul style={{ fontSize: "12px", color: "#cbd5e1", margin: 0, paddingLeft: "18px", display: "flex", flexDirection: "column", gap: "6px" }}>
                 <li>Narrower focus on dam-break flood visualization</li>
                 <li>Single-dam hydraulic flood rendering</li>
                 <li>Basic evacuation concept without deterministic route lineage</li>
@@ -85,12 +175,17 @@ export const PostSubmissionNoticeModal: React.FC<PostSubmissionNoticeModalProps>
               </ul>
             </div>
 
-            <div className="p-4 rounded-xl bg-cyan-950/30 border border-cyan-500/30 space-y-2">
-              <div className="text-[11px] font-bold text-cyan-400 uppercase tracking-wider flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+            <div style={{
+              padding: "16px",
+              borderRadius: "12px",
+              backgroundColor: "rgba(14, 116, 144, 0.15)",
+              border: "1px solid rgba(6, 182, 212, 0.4)"
+            }}>
+              <div style={{ fontSize: "11px", fontWeight: 800, color: "#38bdf8", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "10px", display: "flex", alignItems: "center", gap: "6px" }}>
+                <Sparkles size={14} color="#38bdf8" />
                 Current Prototype (Post-Submission Advancement)
               </div>
-              <ul className="text-xs text-slate-200 space-y-1.5 list-disc list-inside">
+              <ul style={{ fontSize: "12px", color: "#e0f2fe", margin: 0, paddingLeft: "18px", display: "flex", flexDirection: "column", gap: "6px" }}>
                 <li>Native HEC-RAS 2D HDF5 hydraulic results ingestion</li>
                 <li>Deterministic Evacuation Window Engine (EWE: departure deadline calculation)</li>
                 <li>Scenario isolation and data-driven loading verified on synthetic test worlds</li>
@@ -102,68 +197,116 @@ export const PostSubmissionNoticeModal: React.FC<PostSubmissionNoticeModalProps>
           </div>
 
           {/* Verified Capabilities Checklist */}
-          <div className="space-y-3">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-emerald-400" />
+          <div>
+            <h3 style={{ fontSize: "12px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.5px", color: "#cbd5e1", marginBottom: "12px", display: "flex", alignItems: "center", gap: "8px" }}>
+              <CheckCircle size={16} color="#34d399" />
               Verified Engineering Capabilities
             </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-300">
-              <div className="flex items-start gap-2 bg-slate-900/60 p-2.5 rounded-lg border border-slate-800">
-                <span className="text-emerald-400 font-bold">✓</span>
-                <span><strong>HEC-RAS 2D Ingestion:</strong> Ingests native 2D shallow water equation outputs across 740+ cells.</span>
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+              gap: "10px",
+              fontSize: "12px",
+              color: "#e2e8f0"
+            }}>
+              <div style={{ display: "flex", alignItems: "flex-start", gap: "8px", backgroundColor: "#1e293b", padding: "12px", borderRadius: "8px", border: "1px solid #334155" }}>
+                <span style={{ color: "#34d399", fontWeight: 800 }}>✓</span>
+                <span><strong style={{ color: "#ffffff" }}>HEC-RAS 2D Ingestion:</strong> Ingests native 2D shallow water equation outputs across 740+ cells.</span>
               </div>
-              <div className="flex items-start gap-2 bg-slate-900/60 p-2.5 rounded-lg border border-slate-800">
-                <span className="text-emerald-400 font-bold">✓</span>
-                <span><strong>Deterministic EWE:</strong> D = min(A_i - T_i - B) calculates exact limiting bottleneck segment.</span>
+              <div style={{ display: "flex", alignItems: "flex-start", gap: "8px", backgroundColor: "#1e293b", padding: "12px", borderRadius: "8px", border: "1px solid #334155" }}>
+                <span style={{ color: "#34d399", fontWeight: 800 }}>✓</span>
+                <span><strong style={{ color: "#ffffff" }}>Deterministic EWE:</strong> D = min(A_i - T_i - B) calculates exact limiting bottleneck segment.</span>
               </div>
-              <div className="flex items-start gap-2 bg-slate-900/60 p-2.5 rounded-lg border border-slate-800">
-                <span className="text-emerald-400 font-bold">✓</span>
-                <span><strong>Spatial Comparator:</strong> Spatial-comparison metrics including IoU, precision, recall, and F1.</span>
+              <div style={{ display: "flex", alignItems: "flex-start", gap: "8px", backgroundColor: "#1e293b", padding: "12px", borderRadius: "8px", border: "1px solid #334155" }}>
+                <span style={{ color: "#34d399", fontWeight: 800 }}>✓</span>
+                <span><strong style={{ color: "#ffffff" }}>Spatial Comparator:</strong> Spatial-comparison metrics including IoU, precision, recall, and F1.</span>
               </div>
-              <div className="flex items-start gap-2 bg-slate-900/60 p-2.5 rounded-lg border border-slate-800">
-                <span className="text-emerald-400 font-bold">✓</span>
-                <span><strong>Disk SHA-256 Provenance:</strong> Live physical disk hashing guarantees artifact integrity.</span>
+              <div style={{ display: "flex", alignItems: "flex-start", gap: "8px", backgroundColor: "#1e293b", padding: "12px", borderRadius: "8px", border: "1px solid #334155" }}>
+                <span style={{ color: "#34d399", fontWeight: 800 }}>✓</span>
+                <span><strong style={{ color: "#ffffff" }}>Disk SHA-256 Provenance:</strong> Live physical disk hashing guarantees artifact integrity.</span>
               </div>
             </div>
           </div>
 
           {/* Mandatory Scientific Limitations */}
-          <div className="p-4 rounded-xl bg-rose-950/20 border border-rose-500/30 text-slate-300 space-y-2">
-            <div className="text-xs font-bold text-rose-400 uppercase tracking-wider flex items-center gap-1.5">
-              <AlertTriangle className="w-4 h-4" />
+          <div style={{
+            padding: "16px",
+            borderRadius: "12px",
+            backgroundColor: "rgba(225, 29, 72, 0.1)",
+            border: "1px solid rgba(244, 63, 94, 0.35)",
+            display: "flex",
+            flexDirection: "column",
+            gap: "8px"
+          }}>
+            <div style={{ fontSize: "12px", fontWeight: 800, color: "#fb7185", textTransform: "uppercase", letterSpacing: "0.5px", display: "flex", alignItems: "center", gap: "6px" }}>
+              <AlertTriangle size={16} color="#fb7185" />
               Explicit Limitations & Scientific Disclaimers
             </div>
-            <ul className="text-xs text-slate-400 space-y-1.5 list-disc list-inside">
-              <li><strong>Physical Validation:</strong> NOT_ESTABLISHED for Tehri Dam due to absence of historic dam failure records.</li>
-              <li><strong>Satellite Observations:</strong> Sentinel-1 flood masks represent surface water backscatter change, not ground truth.</li>
-              <li><strong>External Solvers:</strong> Delft3D and DualSPHysics are external solver interfaces; solver execution is not included in the current demonstration environment.</li>
-              <li><strong>Evacuation Model:</strong> The EWE transforms hydraulic arrival information and configured route assumptions into a deterministic departure window; it is not an independent physical safety model. Dynamic traffic congestion is unmodelled.</li>
+            <ul style={{ fontSize: "12px", color: "#fecdd3", margin: 0, paddingLeft: "18px", display: "flex", flexDirection: "column", gap: "6px" }}>
+              <li><strong style={{ color: "#ffffff" }}>Physical Validation:</strong> NOT_ESTABLISHED for Tehri Dam due to absence of historic dam failure records.</li>
+              <li><strong style={{ color: "#ffffff" }}>Satellite Observations:</strong> Sentinel-1 flood masks represent surface water backscatter change, not ground truth.</li>
+              <li><strong style={{ color: "#ffffff" }}>External Solvers:</strong> Delft3D and DualSPHysics are external solver interfaces; solver execution is not included in the current demonstration environment.</li>
+              <li><strong style={{ color: "#ffffff" }}>Evacuation Model:</strong> The EWE transforms hydraulic arrival information and configured route assumptions into a deterministic departure window; it is not an independent physical safety model. Dynamic traffic congestion is unmodelled.</li>
             </ul>
           </div>
         </div>
 
         {/* Action Footer */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-6 py-4 bg-slate-950 border-t border-slate-800">
-          <div className="text-[11px] text-slate-400">
-            Build: <code className="text-cyan-400 font-mono">f668c7d</code> • Status: <span className="text-amber-400 font-semibold">Demo-Ready Research Prototype</span>
+        <div style={{
+          display: "flex",
+          flexWrap: "wrap",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: "12px",
+          padding: "16px 24px",
+          backgroundColor: "#090d16",
+          borderTop: "1px solid #1e293b"
+        }}>
+          <div style={{ fontSize: "11px", color: "#94a3b8" }}>
+            Build: <code style={{ color: "#38bdf8", fontFamily: "monospace" }}>f668c7d</code> • Status: <span style={{ color: "#fbbf24", fontWeight: 700 }}>Demo-Ready Research Prototype</span>
           </div>
-          <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
             <button
               onClick={() => {
                 onClose();
                 onReadFullUpdate();
               }}
-              className="flex items-center justify-center gap-2 px-4 py-2 text-xs font-semibold text-cyan-300 hover:text-white bg-slate-800 hover:bg-slate-700 border border-cyan-500/40 rounded-xl transition-all"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                padding: "8px 16px",
+                fontSize: "12px",
+                fontWeight: 700,
+                color: "#38bdf8",
+                backgroundColor: "#1e293b",
+                border: "1px solid rgba(56, 189, 248, 0.4)",
+                borderRadius: "8px",
+                cursor: "pointer"
+              }}
             >
-              <BookOpen className="w-3.5 h-3.5" />
+              <BookOpen size={14} />
               What Changed After Submission
             </button>
             <button
               onClick={onClose}
-              className="flex items-center justify-center gap-2 px-5 py-2 text-xs font-bold text-slate-950 bg-gradient-to-r from-amber-400 to-amber-300 hover:from-amber-300 hover:to-amber-200 rounded-xl shadow-lg shadow-amber-500/20 transition-all cursor-pointer"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                padding: "8px 18px",
+                fontSize: "12px",
+                fontWeight: 800,
+                color: "#0f172a",
+                backgroundColor: "#f59e0b",
+                border: "none",
+                borderRadius: "8px",
+                cursor: "pointer",
+                boxShadow: "0 4px 12px rgba(245, 158, 11, 0.3)"
+              }}
             >
               Explore Updated Prototype
-              <ArrowRight className="w-3.5 h-3.5" />
+              <ArrowRight size={14} />
             </button>
           </div>
         </div>
