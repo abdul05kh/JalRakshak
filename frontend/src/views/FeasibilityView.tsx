@@ -153,16 +153,16 @@ export const FeasibilityView: React.FC<FeasibilityViewProps> = ({ onNavigateToVi
       width: "100%",
       height: "100%",
       overflowY: "auto",
-      backgroundColor: "#090d16",
-      color: "#f8fafc",
+      backgroundColor: "var(--jr-bg, #F4EFE6)",
+      color: "var(--jr-text, #24343A)",
       display: "flex",
       flexDirection: "column"
     }}>
       {/* Top Banner */}
       <div style={{
         padding: "16px 28px",
-        backgroundColor: "rgba(15, 23, 42, 0.95)",
-        borderBottom: "1px solid rgba(255, 255, 255, 0.10)",
+        backgroundColor: "var(--jr-surface, #FBF8F2)",
+        borderBottom: "1px solid var(--jr-border, #D8D1C5)",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
@@ -174,19 +174,19 @@ export const FeasibilityView: React.FC<FeasibilityViewProps> = ({ onNavigateToVi
             width: "36px",
             height: "36px",
             borderRadius: "8px",
-            backgroundColor: "rgba(34, 197, 94, 0.2)",
-            border: "1px solid rgba(34, 197, 94, 0.4)",
+            backgroundColor: "var(--jr-blue-100, #D9EEF7)",
+            border: "1px solid var(--jr-blue-400, #76B8D0)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center"
           }}>
-            <CheckSquare size={20} color="#4ade80" />
+            <CheckSquare size={20} color="var(--jr-blue-600, #3D8EAE)" />
           </div>
           <div>
-            <h1 style={{ margin: 0, fontSize: "16px", fontWeight: 800, color: "#ffffff" }}>
+            <h1 style={{ margin: 0, fontSize: "16px", fontWeight: 800, color: "var(--jr-text, #24343A)" }}>
               SYSTEM FEASIBILITY & OPERATIONAL IMPLEMENTATION AUDIT
             </h1>
-            <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "2px" }}>
+            <div style={{ fontSize: "11px", color: "var(--jr-text-muted, #65747A)", marginTop: "2px" }}>
               10 Comprehensive Operational Dimensions | Production Engineering Assessment
             </div>
           </div>
@@ -197,9 +197,9 @@ export const FeasibilityView: React.FC<FeasibilityViewProps> = ({ onNavigateToVi
           style={{
             padding: "6px 14px",
             borderRadius: "6px",
-            border: "1px solid rgba(255, 255, 255, 0.2)",
-            backgroundColor: "rgba(255, 255, 255, 0.05)",
-            color: "#cbd5e1",
+            border: "1px solid var(--jr-border, #D8D1C5)",
+            backgroundColor: "var(--jr-surface-alt, #EDE7DC)",
+            color: "var(--jr-text, #24343A)",
             fontSize: "11px",
             fontWeight: 700,
             cursor: "pointer"
@@ -223,7 +223,7 @@ export const FeasibilityView: React.FC<FeasibilityViewProps> = ({ onNavigateToVi
       }}>
         {/* Left Column: 10 Sections Menu */}
         <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-          <div style={{ fontSize: "11px", fontWeight: 800, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "4px" }}>
+          <div style={{ fontSize: "11px", fontWeight: 800, color: "var(--jr-text-muted, #65747A)", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "4px" }}>
             10 FEASIBILITY DOMAINS
           </div>
 
@@ -236,8 +236,8 @@ export const FeasibilityView: React.FC<FeasibilityViewProps> = ({ onNavigateToVi
                 style={{
                   padding: "10px 14px",
                   borderRadius: "8px",
-                  border: isSelected ? "1px solid #38bdf8" : "1px solid rgba(255, 255, 255, 0.06)",
-                  backgroundColor: isSelected ? "rgba(56, 189, 248, 0.15)" : "rgba(15, 23, 42, 0.6)",
+                  border: isSelected ? "1.5px solid var(--jr-blue-600, #3D8EAE)" : "1px solid var(--jr-border, #D8D1C5)",
+                  backgroundColor: isSelected ? "var(--jr-blue-50, #EAF6FB)" : "var(--jr-surface, #FBF8F2)",
                   cursor: "pointer",
                   textAlign: "left",
                   display: "flex",
@@ -247,20 +247,20 @@ export const FeasibilityView: React.FC<FeasibilityViewProps> = ({ onNavigateToVi
                 }}
               >
                 <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                  <span style={{ fontSize: "11px", fontWeight: 900, color: isSelected ? "#38bdf8" : "#64748b" }}>
+                  <span style={{ fontSize: "11px", fontWeight: 900, color: isSelected ? "var(--jr-blue-800, #24566A)" : "var(--jr-text-muted, #65747A)" }}>
                     {s.number}
                   </span>
                   <div>
-                    <div style={{ fontSize: "12px", fontWeight: isSelected ? 800 : 600, color: isSelected ? "#ffffff" : "#cbd5e1" }}>
+                    <div style={{ fontSize: "12px", fontWeight: isSelected ? 800 : 600, color: isSelected ? "var(--jr-blue-800, #24566A)" : "var(--jr-text, #24343A)" }}>
                       {s.title}
                     </div>
-                    <div style={{ fontSize: "10px", color: "#94a3b8" }}>
+                    <div style={{ fontSize: "10px", color: "var(--jr-text-muted, #65747A)" }}>
                       Category: {s.category}
                     </div>
                   </div>
                 </div>
 
-                <ChevronRight size={14} color={isSelected ? "#38bdf8" : "#475569"} />
+                <ChevronRight size={14} color={isSelected ? "var(--jr-blue-600, #3D8EAE)" : "var(--jr-text-muted, #65747A)"} />
               </button>
             );
           })}
@@ -268,22 +268,22 @@ export const FeasibilityView: React.FC<FeasibilityViewProps> = ({ onNavigateToVi
 
         {/* Right Column: Detailed Card for Active Section */}
         <div style={{
-          backgroundColor: "#1e293b",
+          backgroundColor: "var(--jr-surface, #FBF8F2)",
           borderRadius: "12px",
-          border: "1px solid rgba(255, 255, 255, 0.12)",
+          border: "1px solid var(--jr-border, #D8D1C5)",
           padding: "24px",
           display: "flex",
           flexDirection: "column",
           gap: "18px",
-          boxShadow: "0 20px 40px rgba(0,0,0,0.3)"
+          boxShadow: "0 4px 16px rgba(36, 52, 58, 0.06)"
         }}>
           {/* Header of Active Section */}
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "10px", borderBottom: "1px solid rgba(255, 255, 255, 0.10)", paddingBottom: "14px" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "10px", borderBottom: "1px solid var(--jr-border, #D8D1C5)", paddingBottom: "14px" }}>
             <div>
-              <div style={{ fontSize: "11px", fontWeight: 800, color: "#38bdf8", textTransform: "uppercase" }}>
+              <div style={{ fontSize: "11px", fontWeight: 800, color: "var(--jr-blue-600, #3D8EAE)", textTransform: "uppercase" }}>
                 SECTION {active.number} — {active.category}
               </div>
-              <h2 style={{ margin: "4px 0 0 0", fontSize: "20px", fontWeight: 800, color: "#ffffff" }}>
+              <h2 style={{ margin: "4px 0 0 0", fontSize: "20px", fontWeight: 800, color: "var(--jr-text, #24343A)" }}>
                 {active.title}
               </h2>
             </div>
@@ -291,9 +291,9 @@ export const FeasibilityView: React.FC<FeasibilityViewProps> = ({ onNavigateToVi
             <span style={{
               padding: "4px 10px",
               borderRadius: "4px",
-              backgroundColor: "rgba(34, 197, 94, 0.2)",
-              border: "1px solid rgba(34, 197, 94, 0.4)",
-              color: "#86efac",
+              backgroundColor: "var(--jr-blue-50, #EAF6FB)",
+              border: "1px solid var(--jr-blue-200, #B9DDEB)",
+              color: "var(--jr-blue-800, #24566A)",
               fontSize: "11px",
               fontWeight: 800
             }}>
@@ -304,41 +304,41 @@ export const FeasibilityView: React.FC<FeasibilityViewProps> = ({ onNavigateToVi
           {/* Grid of 4 Detail Boxes */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
             {/* Box 1: What We Need */}
-            <div style={{ backgroundColor: "rgba(15, 23, 42, 0.7)", borderRadius: "8px", border: "1px solid rgba(255, 255, 255, 0.08)", padding: "14px" }}>
-              <div style={{ fontSize: "11px", fontWeight: 800, color: "#60a5fa", marginBottom: "6px" }}>
+            <div style={{ backgroundColor: "var(--jr-surface-alt, #EDE7DC)", borderRadius: "8px", border: "1px solid var(--jr-border, #D8D1C5)", padding: "14px" }}>
+              <div style={{ fontSize: "11px", fontWeight: 800, color: "var(--jr-blue-800, #24566A)", marginBottom: "6px" }}>
                 WHAT WE NEED
               </div>
-              <div style={{ fontSize: "12px", color: "#cbd5e1", lineHeight: "1.5" }}>
+              <div style={{ fontSize: "12px", color: "var(--jr-text, #24343A)", lineHeight: "1.5" }}>
                 {active.whatWeNeed}
               </div>
             </div>
 
             {/* Box 2: Why It Matters */}
-            <div style={{ backgroundColor: "rgba(15, 23, 42, 0.7)", borderRadius: "8px", border: "1px solid rgba(255, 255, 255, 0.08)", padding: "14px" }}>
-              <div style={{ fontSize: "11px", fontWeight: 800, color: "#38bdf8", marginBottom: "6px" }}>
+            <div style={{ backgroundColor: "var(--jr-surface-alt, #EDE7DC)", borderRadius: "8px", border: "1px solid var(--jr-border, #D8D1C5)", padding: "14px" }}>
+              <div style={{ fontSize: "11px", fontWeight: 800, color: "var(--jr-blue-600, #3D8EAE)", marginBottom: "6px" }}>
                 WHY IT MATTERS
               </div>
-              <div style={{ fontSize: "12px", color: "#cbd5e1", lineHeight: "1.5" }}>
+              <div style={{ fontSize: "12px", color: "var(--jr-text, #24343A)", lineHeight: "1.5" }}>
                 {active.whyItMatters}
               </div>
             </div>
 
             {/* Box 3: Production Technology */}
-            <div style={{ backgroundColor: "rgba(15, 23, 42, 0.7)", borderRadius: "8px", border: "1px solid rgba(34, 197, 94, 0.3)", padding: "14px" }}>
-              <div style={{ fontSize: "11px", fontWeight: 800, color: "#4ade80", marginBottom: "6px" }}>
+            <div style={{ backgroundColor: "var(--jr-surface-alt, #EDE7DC)", borderRadius: "8px", border: "1px solid var(--jr-border, #D8D1C5)", padding: "14px" }}>
+              <div style={{ fontSize: "11px", fontWeight: 800, color: "var(--jr-success, #3F7D62)", marginBottom: "6px" }}>
                 PRODUCTION TECHNOLOGY
               </div>
-              <div style={{ fontSize: "12px", color: "#cbd5e1", lineHeight: "1.5" }}>
+              <div style={{ fontSize: "12px", color: "var(--jr-text, #24343A)", lineHeight: "1.5" }}>
                 {active.technology}
               </div>
             </div>
 
             {/* Box 4: Known Limitation */}
-            <div style={{ backgroundColor: "rgba(15, 23, 42, 0.7)", borderRadius: "8px", border: "1px solid rgba(245, 158, 11, 0.3)", padding: "14px" }}>
-              <div style={{ fontSize: "11px", fontWeight: 800, color: "#fbbf24", marginBottom: "6px" }}>
+            <div style={{ backgroundColor: "#FFFBEB", borderRadius: "8px", border: "1px solid #A97835", padding: "14px" }}>
+              <div style={{ fontSize: "11px", fontWeight: 800, color: "#A97835", marginBottom: "6px" }}>
                 CURRENT LIMITATION
               </div>
-              <div style={{ fontSize: "12px", color: "#cbd5e1", lineHeight: "1.5" }}>
+              <div style={{ fontSize: "12px", color: "var(--jr-text, #24343A)", lineHeight: "1.5" }}>
                 {active.limitation}
               </div>
             </div>
@@ -346,15 +346,15 @@ export const FeasibilityView: React.FC<FeasibilityViewProps> = ({ onNavigateToVi
 
           {/* Next Step Box */}
           <div style={{
-            backgroundColor: "rgba(59, 130, 246, 0.15)",
+            backgroundColor: "var(--jr-blue-50, #EAF6FB)",
             borderRadius: "8px",
-            border: "1px solid #3b82f6",
+            border: "1px solid var(--jr-blue-400, #76B8D0)",
             padding: "16px"
           }}>
-            <div style={{ fontSize: "11px", fontWeight: 800, color: "#93c5fd", marginBottom: "4px" }}>
+            <div style={{ fontSize: "11px", fontWeight: 800, color: "var(--jr-blue-800, #24566A)", marginBottom: "4px" }}>
               ACTIONABLE ENGINEERING ROADMAP / NEXT STEP:
             </div>
-            <div style={{ fontSize: "13px", color: "#ffffff", fontWeight: 600 }}>
+            <div style={{ fontSize: "13px", color: "var(--jr-text, #24343A)", fontWeight: 600 }}>
               {active.nextStep}
             </div>
           </div>

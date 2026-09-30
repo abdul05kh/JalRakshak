@@ -7,6 +7,7 @@ from fastapi import APIRouter, HTTPException, Query, Body
 
 import os
 import hashlib
+from pydantic import BaseModel, Field
 from backend.app.domain.database import db
 from backend.app.domain.models import (
     RouteConstraints,
@@ -15,12 +16,15 @@ from backend.app.domain.models import (
     PointQueryResponse,
     RouteAnalyzeRequest,
     RouteAnalyzeResponse,
-    ScenarioComparisonResponse
+    ScenarioComparisonResponse,
+    ProvenanceRecord
 )
 from backend.app.domain.hydraulic_adapter import HECRASAdapter
 from backend.app.domain.ewe_engine import EvacuationWindowEngine, EWE_ALGORITHM_VERSION
 from backend.app.domain.validation_service import ScientificValidationService
 from backend.app.domain.exporter import ScenarioExporter
+from backend.app.domain.provenance_service import provenance_service
+from backend.app.domain.scenario_import_service import scenario_import_service
 from backend.app.integrations.gee import GEEAuthProvider, GEEQueryBuilder, FloodExtentComparator
 from backend.app.domain.damage_model import ExposureAndDamageEngine
 from backend.app.domain.hydraulic_adapters import Delft3DAdapter, SPHAdapter, HydraulicModelComparator
@@ -127,6 +131,26 @@ def create_scenario(req: ScenarioCreateRequest):
             "solver_version": adapter.solver_version
         }
     }
+
+class ScenarioImportRequest(BaseModel):
+    artifact_path: str = Field(..., description="Path to prepared HEC-RAS 2D unsteady HDF5 result (*.p##.hdf)")
+    scenario_id: Optional[str] = None
+    scenario_name: Optional[str] = None
+    dam_id: Optional[str] = "dam-tehri-001"
+    arrival_threshold_m: Optional[float] = 0.30
+
+@router.post("/scenarios/import")
+def import_hecras_scenario(req: ScenarioImportRequest):
+    res = scenario_import_service.import_hecras_artifact(
+        file_path=req.artifact_path,
+        scenario_id=req.scenario_id,
+        scenario_name=req.scenario_name,
+        dam_id=req.dam_id or "dam-tehri-001",
+        arrival_threshold_m=req.arrival_threshold_m or 0.30
+    )
+    if res.get("status") == "DATA_GAP":
+        raise HTTPException(status_code=422, detail=res)
+    return res
 
 @router.get("/scenarios/{scenario_id}")
 def get_scenario(scenario_id: str):
@@ -581,7 +605,7 @@ def analyze_route(req: RouteAnalyzeRequest):
         "Physical validation against historical dam-break event not established"
     ]
 
-    return RouteAnalyzeResponse(
+    resp = RouteAnalyzeResponse(
         decision_id=dec_id,
         decision_timestamp=now_iso,
         scenario_id=ctx.scenario_id,
@@ -630,6 +654,35 @@ def analyze_route(req: RouteAnalyzeRequest):
             "decision_rule": "Conservative edge-level: D_deadline = min_i(A_i - T_i - B)"
         }
     )
+
+    # Record authoritative decision provenance record
+    provenance_service.record_decision_provenance(
+        decision_id=dec_id,
+        scenario_id=ctx.scenario_id,
+        route_id=primary_route["name"] if primary_route else "NO_ROUTE",
+        hydraulic_artifact=hyd_artifact,
+        artifact_hash=hyd_hash,
+        solver=solver_ver,
+        solver_version=solver_ver,
+        terrain_source=ctx.manifest.get("simulation", {}).get("terrain_source", "Copernicus GLO-30 DSM (Resampled/Conditioned)"),
+        terrain_crs=ctx.manifest.get("simulation", {}).get("crs", "EPSG:32644"),
+        arrival_threshold_m=constraints.depth_limit_m,
+        safety_buffer_min=constraints.safety_buffer_min,
+        travel_speed_kmh=50.0,
+        ewe_version=EWE_ALGORITHM_VERSION
+    )
+
+    return resp
+
+@router.get("/decisions/{decision_id}/provenance", response_model=ProvenanceRecord)
+def get_decision_provenance(decision_id: str):
+    record = provenance_service.get_provenance(decision_id)
+    if not record:
+        raise HTTPException(
+            status_code=404,
+            detail={"code": "DECISION_NOT_FOUND", "message": f"Provenance record for decision {decision_id} not found."}
+        )
+    return record
 
 @router.post("/scenarios/compare", response_model=ScenarioComparisonResponse)
 def compare_scenarios(

@@ -1,15 +1,19 @@
 """
 Authoritative Coordinate Transformation Utility for JalRakshak
 Handles bidirectional transformations between WGS84 (EPSG:4326) and UTM Zone 44N (EPSG:32644).
+Declares horizontal CRS and vertical datum status explicitly.
 """
 
-from typing import Tuple, List
+from typing import Tuple, List, Optional
 import math
 
 class GeoTransformer:
     def __init__(self, target_crs: str = "EPSG:32644", source_crs: str = "EPSG:4326"):
         self.target_crs = target_crs
         self.source_crs = source_crs
+        self.units = "meters"
+        self.vertical_datum_status = "NOT_ESTABLISHED"  # Copernicus DSM without ground-survey calibration
+        
         # WGS84 Ellipsoid constants
         self.a = 6378137.0
         self.f = 1 / 298.257223563
@@ -21,8 +25,34 @@ class GeoTransformer:
         self.false_easting = 500000.0
         self.false_northing = 0.0
 
+    def validate_coordinates(self, lon: float, lat: float) -> Tuple[bool, Optional[str]]:
+        """Validate that input coordinates are finite and within geographic bounds."""
+        if not (math.isfinite(lon) and math.isfinite(lat)):
+            return False, f"Coordinates must be finite numbers: lon={lon}, lat={lat}"
+        if not (-180.0 <= lon <= 180.0):
+            return False, f"Longitude {lon} out of bounds [-180, 180]"
+        if not (-90.0 <= lat <= 90.0):
+            return False, f"Latitude {lat} out of bounds [-90, 90]"
+        return True, None
+
+    def validate_linestring_coords(self, coords: List[List[float]]) -> Tuple[bool, Optional[str]]:
+        """Validate LineString coordinate list for empty, NaN, or degenerate geometries."""
+        if not coords or len(coords) < 2:
+            return False, "LineString geometry must contain at least 2 coordinate pairs."
+        for idx, pt in enumerate(coords):
+            if len(pt) < 2:
+                return False, f"Coordinate pair at index {idx} has fewer than 2 elements: {pt}"
+            valid, err = self.validate_coordinates(pt[0], pt[1])
+            if not valid:
+                return False, f"Invalid point at index {idx}: {err}"
+        return True, None
+
     def wgs84_to_utm(self, lon: float, lat: float) -> Tuple[float, float]:
         """Transform (lon, lat) in EPSG:4326 to (easting, northing) in EPSG:32644."""
+        valid, err = self.validate_coordinates(lon, lat)
+        if not valid:
+            raise ValueError(f"Cannot transform invalid coordinates: {err}")
+
         phi = math.radians(lat)
         lam = math.radians(lon)
         
@@ -50,6 +80,9 @@ class GeoTransformer:
 
     def utm_to_wgs84(self, easting: float, northing: float) -> Tuple[float, float]:
         """Transform (easting, northing) in EPSG:32644 to (lon, lat) in EPSG:4326."""
+        if not (math.isfinite(easting) and math.isfinite(northing)):
+            raise ValueError(f"Projected coordinates must be finite: easting={easting}, northing={northing}")
+
         e1 = (1 - math.sqrt(1 - self.e**2)) / (1 + math.sqrt(1 - self.e**2))
         x = easting - self.false_easting
         y = northing - self.false_northing
@@ -105,4 +138,3 @@ class GeoTransformer:
         return results
 
 geo_transformer = GeoTransformer()
-

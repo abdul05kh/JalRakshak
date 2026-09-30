@@ -98,46 +98,46 @@ export const DecisionPanel: React.FC<DecisionPanelProps> = ({
     switch (status) {
       case "FEASIBLE":
         return {
-          bg: "#f0fdf4",
-          border: "#86efac",
-          titleColor: "#15803d",
-          tagBg: "#166534",
+          bg: "var(--status-feasible-bg, #E8F4EE)",
+          border: "var(--status-feasible-border, #A3CFB8)",
+          titleColor: "var(--status-feasible-text, #2C634B)",
+          tagBg: "var(--status-feasible-text, #2C634B)",
           tagText: "#ffffff",
           badgeText: "FEASIBLE",
-          icon: <CheckCircle2 size={24} strokeWidth={2.5} color="#16a34a" />,
+          icon: <CheckCircle2 size={24} strokeWidth={2.5} color="var(--status-feasible-text, #2C634B)" />,
           summary: "Evacuation route is feasible under current scenario and configured assumptions."
         };
       case "LOW MARGIN":
         return {
-          bg: "#fffbeb",
-          border: "#fde68a",
-          titleColor: "#b45309",
-          tagBg: "#b45309",
+          bg: "var(--status-lowmargin-bg, #FCF4E7)",
+          border: "var(--status-lowmargin-border, #E8C895)",
+          titleColor: "var(--status-lowmargin-text, #825820)",
+          tagBg: "var(--status-lowmargin-text, #825820)",
           tagText: "#ffffff",
           badgeText: "LOW MARGIN",
-          icon: <AlertTriangle size={24} strokeWidth={2.5} color="#d97706" />,
+          icon: <AlertTriangle size={24} strokeWidth={2.5} color="var(--status-lowmargin-text, #825820)" />,
           summary: "Route is feasible under current scenario, but safety margin is narrow (< 5 min)."
         };
       case "INFEASIBLE":
         return {
-          bg: "#fef2f2",
-          border: "#fecaca",
-          titleColor: "#991b1b",
-          tagBg: "#b91c1c",
+          bg: "var(--status-infeasible-bg, #FAECEC)",
+          border: "var(--status-infeasible-border, #E89E9E)",
+          titleColor: "var(--status-infeasible-text, #873636)",
+          tagBg: "var(--status-infeasible-text, #873636)",
           tagText: "#ffffff",
           badgeText: "INFEASIBLE",
-          icon: <XCircle size={24} strokeWidth={2.5} color="#dc2626" />,
+          icon: <XCircle size={24} strokeWidth={2.5} color="var(--status-infeasible-text, #873636)" />,
           summary: "Floodwaters breach route before vehicle clears limiting segment under current assumptions."
         };
       default:
         return {
-          bg: "#f8fafc",
-          border: "#cbd5e1",
-          titleColor: "#475569",
-          tagBg: "#475569",
+          bg: "var(--status-datagap-bg, #EDE7DC)",
+          border: "var(--status-datagap-border, #D8D1C5)",
+          titleColor: "var(--status-datagap-text, #65747A)",
+          tagBg: "var(--status-datagap-text, #65747A)",
           tagText: "#ffffff",
           badgeText: "DATA GAP",
-          icon: <HelpCircle size={24} strokeWidth={2.5} color="#64748b" />,
+          icon: <HelpCircle size={24} strokeWidth={2.5} color="var(--status-datagap-text, #65747A)" />,
           summary: "Cannot compute feasibility due to missing or uncoupled hydraulic data."
         };
     }
@@ -175,8 +175,8 @@ export const DecisionPanel: React.FC<DecisionPanelProps> = ({
   return (
     <div style={{
       width: "420px",
-      backgroundColor: "#ffffff",
-      borderLeft: "1px solid var(--border-subtle)",
+      backgroundColor: "var(--jr-surface, #FBF8F2)",
+      borderLeft: "1px solid var(--jr-border, #D8D1C5)",
       display: "flex",
       flexDirection: "column",
       height: "calc(100vh - 58px)",
@@ -190,14 +190,14 @@ export const DecisionPanel: React.FC<DecisionPanelProps> = ({
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        borderBottom: "2px solid #0f172a",
+        borderBottom: "2px solid var(--jr-border, #D8D1C5)",
         paddingBottom: "8px"
       }}>
         <div>
-          <div style={{ fontSize: "10px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.5px", color: "#64748b" }}>
+          <div style={{ fontSize: "10px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.5px", color: "var(--jr-text-muted, #65747A)" }}>
             {analysisResult?.scenario_name ? analysisResult.scenario_name.toUpperCase() : "FLOOD SCENARIO"}
           </div>
-          <div style={{ fontSize: "14px", fontWeight: 800, color: "#0f172a" }}>
+          <div style={{ fontSize: "14px", fontWeight: 800, color: "var(--jr-text, #24343A)" }}>
             {selectedOrigin?.properties.name || "Origin"} → {selectedDest?.properties.name || "Destination"}
           </div>
         </div>
@@ -206,9 +206,9 @@ export const DecisionPanel: React.FC<DecisionPanelProps> = ({
           fontWeight: 700,
           padding: "3px 7px",
           borderRadius: "4px",
-          backgroundColor: "#f1f5f9",
-          color: "#475569",
-          border: "1px solid #cbd5e1"
+          backgroundColor: "var(--jr-surface-alt, #EDE7DC)",
+          color: "var(--jr-text, #24343A)",
+          border: "1px solid var(--jr-border, #D8D1C5)"
         }}>
           ROUTE DECISION
         </div>

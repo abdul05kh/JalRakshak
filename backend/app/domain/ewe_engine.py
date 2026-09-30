@@ -195,6 +195,8 @@ class EvacuationWindowEngine:
                 "max_velocity_mps": max_vel,
                 "edge_deadline_s": edge_deadline_s if edge_deadline_s != float("inf") else None,
                 "edge_deadline_utc": edge_deadline_utc,
+                "margin_min": round(edge_margin_s / 60.0, 1) if arrival_s is not None else None,
+                "edge_margin_s": edge_margin_s if arrival_s is not None else None,
                 "edge_feasible": edge_feasible,
                 "failure_reason": failure_reason
             })

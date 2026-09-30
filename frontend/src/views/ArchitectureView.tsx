@@ -26,16 +26,16 @@ export const ArchitectureView: React.FC<ArchitectureViewProps> = ({ onNavigateTo
       width: "100%",
       height: "100%",
       overflowY: "auto",
-      backgroundColor: "#090d16",
-      color: "#f8fafc",
+      backgroundColor: "var(--jr-bg, #F4EFE6)",
+      color: "var(--jr-text, #24343A)",
       display: "flex",
       flexDirection: "column"
     }}>
       {/* Header Banner */}
       <div style={{
         padding: "16px 28px",
-        backgroundColor: "rgba(15, 23, 42, 0.95)",
-        borderBottom: "1px solid rgba(255, 255, 255, 0.10)",
+        backgroundColor: "var(--jr-surface, #FBF8F2)",
+        borderBottom: "1px solid var(--jr-border, #D8D1C5)",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
@@ -47,19 +47,19 @@ export const ArchitectureView: React.FC<ArchitectureViewProps> = ({ onNavigateTo
             width: "36px",
             height: "36px",
             borderRadius: "8px",
-            backgroundColor: "rgba(124, 58, 237, 0.2)",
-            border: "1px solid rgba(124, 58, 237, 0.4)",
+            backgroundColor: "var(--jr-blue-100, #D9EEF7)",
+            border: "1px solid var(--jr-blue-400, #76B8D0)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center"
           }}>
-            <Cpu size={20} color="#a78bfa" />
+            <Cpu size={20} color="var(--jr-blue-600, #3D8EAE)" />
           </div>
           <div>
-            <h1 style={{ margin: 0, fontSize: "16px", fontWeight: 800, color: "#ffffff" }}>
+            <h1 style={{ margin: 0, fontSize: "16px", fontWeight: 800, color: "var(--jr-text, #24343A)" }}>
               SYSTEM ARCHITECTURE & COMPUTATIONAL DATA PIPELINES
             </h1>
-            <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "2px" }}>
+            <div style={{ fontSize: "11px", color: "var(--jr-text-muted, #65747A)", marginTop: "2px" }}>
               End-to-End Technical Blueprint: Pipelines A through J | Verified Multi-Tier Pipeline
             </div>
           </div>
@@ -70,9 +70,9 @@ export const ArchitectureView: React.FC<ArchitectureViewProps> = ({ onNavigateTo
           style={{
             padding: "6px 14px",
             borderRadius: "6px",
-            border: "1px solid rgba(255, 255, 255, 0.2)",
-            backgroundColor: "rgba(255, 255, 255, 0.05)",
-            color: "#cbd5e1",
+            border: "1px solid var(--jr-border, #D8D1C5)",
+            backgroundColor: "var(--jr-surface-alt, #EDE7DC)",
+            color: "var(--jr-text, #24343A)",
             fontSize: "11px",
             fontWeight: 700,
             cursor: "pointer"
@@ -97,13 +97,13 @@ export const ArchitectureView: React.FC<ArchitectureViewProps> = ({ onNavigateTo
         
         {/* Architecture Data Flow Diagram */}
         <div style={{
-          backgroundColor: "#0f172a",
+          backgroundColor: "var(--jr-surface, #FBF8F2)",
           borderRadius: "12px",
-          border: "1px solid rgba(255, 255, 255, 0.12)",
+          border: "1px solid var(--jr-border, #D8D1C5)",
           padding: "24px",
-          boxShadow: "0 20px 40px rgba(0,0,0,0.3)"
+          boxShadow: "0 4px 12px rgba(36, 52, 58, 0.05)"
         }}>
-          <h2 style={{ margin: "0 0 16px 0", fontSize: "16px", fontWeight: 800, color: "#ffffff" }}>
+          <h2 style={{ margin: "0 0 16px 0", fontSize: "16px", fontWeight: 800, color: "var(--jr-text, #24343A)" }}>
             End-to-End System Data Flow
           </h2>
 
@@ -114,20 +114,20 @@ export const ArchitectureView: React.FC<ArchitectureViewProps> = ({ onNavigateTo
             alignItems: "center"
           }}>
             {[
-              { step: "01", title: "Terrain DSM", sub: "GLO-30 (30m)", color: "#38bdf8" },
-              { step: "02", title: "Breach Invert", sub: "635m Assumption", color: "#f59e0b" },
-              { step: "03", title: "HEC-RAS 2D", sub: "SWE Unsteady", color: "#60a5fa" },
-              { step: "04", title: "Road Graph", sub: "OSM Ingestion", color: "#34d399" },
-              { step: "05", title: "150m Coupling", sub: "Spatial STRtree", color: "#a78bfa" },
-              { step: "06", title: "EWE Solver", sub: "D = A - T - B", color: "#4ade80" },
-              { step: "07", title: "3D Map UI", sub: "Decision Directives", color: "#f43f5e" }
+              { step: "01", title: "Terrain DSM", sub: "GLO-30 (30m)", color: "#3D8EAE" },
+              { step: "02", title: "Breach Invert", sub: "635m Assumption", color: "#A97835" },
+              { step: "03", title: "HEC-RAS 2D", sub: "SWE Unsteady", color: "#24566A" },
+              { step: "04", title: "Road Graph", sub: "OSM Ingestion", color: "#3F7D62" },
+              { step: "05", title: "150m Coupling", sub: "Spatial STRtree", color: "#76B8D0" },
+              { step: "06", title: "EWE Solver", sub: "D = A - T - B", color: "#3F7D62" },
+              { step: "07", title: "3D Map UI", sub: "Decision Directives", color: "#A84C4C" }
             ].map((node) => (
               <div
                 key={node.step}
                 style={{
-                  backgroundColor: "rgba(30, 41, 59, 0.8)",
+                  backgroundColor: "var(--jr-surface-alt, #EDE7DC)",
                   borderRadius: "8px",
-                  border: `1px solid ${node.color}40`,
+                  border: `1px solid ${node.color}50`,
                   padding: "12px",
                   textAlign: "center"
                 }}
@@ -135,10 +135,10 @@ export const ArchitectureView: React.FC<ArchitectureViewProps> = ({ onNavigateTo
                 <div style={{ fontSize: "9px", fontWeight: 800, color: node.color }}>
                   STAGE {node.step}
                 </div>
-                <div style={{ fontSize: "13px", fontWeight: 800, color: "#ffffff", margin: "4px 0 2px 0" }}>
+                <div style={{ fontSize: "13px", fontWeight: 800, color: "var(--jr-text, #24343A)", margin: "4px 0 2px 0" }}>
                   {node.title}
                 </div>
-                <div style={{ fontSize: "10px", color: "#94a3b8" }}>
+                <div style={{ fontSize: "10px", color: "var(--jr-text-muted, #65747A)" }}>
                   {node.sub}
                 </div>
               </div>
@@ -148,12 +148,12 @@ export const ArchitectureView: React.FC<ArchitectureViewProps> = ({ onNavigateTo
 
         {/* Pipelines A through J Interactive Explorer */}
         <div style={{
-          backgroundColor: "#1e293b",
+          backgroundColor: "var(--jr-surface, #FBF8F2)",
           borderRadius: "12px",
-          border: "1px solid rgba(255, 255, 255, 0.10)",
+          border: "1px solid var(--jr-border, #D8D1C5)",
           padding: "24px"
         }}>
-          <h2 style={{ margin: "0 0 16px 0", fontSize: "16px", fontWeight: 800, color: "#ffffff" }}>
+          <h2 style={{ margin: "0 0 16px 0", fontSize: "16px", fontWeight: 800, color: "var(--jr-text, #24343A)" }}>
             Data Pipelines (A through J) Detailed Specifications
           </h2>
 
@@ -169,35 +169,36 @@ export const ArchitectureView: React.FC<ArchitectureViewProps> = ({ onNavigateTo
                   key={p.id}
                   onClick={() => setActivePipeline(p.id)}
                   style={{
-                    backgroundColor: isSelected ? "rgba(59, 130, 246, 0.15)" : "rgba(15, 23, 42, 0.6)",
+                    backgroundColor: isSelected ? "var(--jr-blue-50, #EAF6FB)" : "var(--jr-surface-alt, #EDE7DC)",
                     borderRadius: "8px",
-                    border: isSelected ? "1px solid #3b82f6" : "1px solid rgba(255, 255, 255, 0.08)",
+                    border: isSelected ? "1.5px solid var(--jr-blue-600, #3D8EAE)" : "1px solid var(--jr-border, #D8D1C5)",
                     padding: "16px",
                     cursor: "pointer",
                     transition: "all 0.15s ease"
                   }}
                 >
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "6px" }}>
-                    <span style={{ fontSize: "12px", fontWeight: 800, color: isSelected ? "#60a5fa" : "#ffffff" }}>
+                    <span style={{ fontSize: "12px", fontWeight: 800, color: isSelected ? "var(--jr-blue-800, #24566A)" : "var(--jr-text, #24343A)" }}>
                       {p.name}
                     </span>
                     <span style={{
                       fontSize: "9px",
                       padding: "2px 6px",
                       borderRadius: "3px",
-                      backgroundColor: "rgba(255,255,255,0.08)",
-                      color: "#94a3b8"
+                      backgroundColor: "var(--jr-surface, #FBF8F2)",
+                      border: "1px solid var(--jr-border, #D8D1C5)",
+                      color: "var(--jr-text-muted, #65747A)"
                     }}>
                       {p.id}
                     </span>
                   </div>
 
-                  <p style={{ margin: "0 0 10px 0", fontSize: "11px", color: "#cbd5e1", lineHeight: "1.5" }}>
+                  <p style={{ margin: "0 0 10px 0", fontSize: "11px", color: "var(--jr-text, #24343A)", lineHeight: "1.5" }}>
                     {p.desc}
                   </p>
 
-                  <div style={{ fontSize: "10px", color: "#94a3b8", display: "flex", alignItems: "center", gap: "4px" }}>
-                    <strong style={{ color: "#38bdf8" }}>Technology:</strong>
+                  <div style={{ fontSize: "10px", color: "var(--jr-text-muted, #65747A)", display: "flex", alignItems: "center", gap: "4px" }}>
+                    <strong style={{ color: "var(--jr-blue-600, #3D8EAE)" }}>Technology:</strong>
                     <span>{p.tech}</span>
                   </div>
                 </div>
@@ -208,12 +209,12 @@ export const ArchitectureView: React.FC<ArchitectureViewProps> = ({ onNavigateTo
 
         {/* Technology Stack Grid */}
         <div style={{
-          backgroundColor: "#0f172a",
+          backgroundColor: "var(--jr-surface, #FBF8F2)",
           borderRadius: "12px",
-          border: "1px solid rgba(255, 255, 255, 0.10)",
+          border: "1px solid var(--jr-border, #D8D1C5)",
           padding: "20px"
         }}>
-          <h3 style={{ margin: "0 0 14px 0", fontSize: "14px", fontWeight: 800, color: "#ffffff" }}>
+          <h3 style={{ margin: "0 0 14px 0", fontSize: "14px", fontWeight: 800, color: "var(--jr-text, #24343A)" }}>
             Production Technology Stack Summary
           </h3>
 
@@ -226,26 +227,26 @@ export const ArchitectureView: React.FC<ArchitectureViewProps> = ({ onNavigateTo
               { cat: "Hydraulic Engine", name: "HEC-RAS 7.0.1 2D Unsteady", detail: "2D Shallow Water Equations, HDF5 output format" },
               { cat: "Geospatial & Spatial Indexing", name: "Shapely 2.0 / STRtree / GeoPandas", detail: "150m spatial corridor intersection queries" },
               { cat: "Graph Routing Engine", name: "NetworkX / Custom EWE Engine", detail: "Directed graph traversal and arrival-margin evaluation" },
-              { cat: "Backend Framework", name: "Python 3.14 / FastAPI / Pydantic", detail: "Asynchronous REST endpoints with typed schemas" },
+              { cat: "Backend Framework", name: "Python 3.12 / FastAPI / Pydantic", detail: "Asynchronous REST endpoints with typed schemas" },
               { cat: "Frontend Rendering", name: "React 19 / TypeScript / MapLibre GL", detail: "WebGL 3D terrain canvas with custom elevation contours" },
               { cat: "Artifact Verification", name: "hashlib SHA-256 / Manifest Schema", detail: "Immutable cryptographic provenance validation" }
             ].map((t) => (
               <div
                 key={t.name}
                 style={{
-                  backgroundColor: "rgba(30, 41, 59, 0.6)",
+                  backgroundColor: "var(--jr-surface-alt, #EDE7DC)",
                   borderRadius: "6px",
-                  border: "1px solid rgba(255, 255, 255, 0.06)",
+                  border: "1px solid var(--jr-border, #D8D1C5)",
                   padding: "12px"
                 }}
               >
-                <div style={{ fontSize: "9px", fontWeight: 800, color: "#38bdf8", textTransform: "uppercase" }}>
+                <div style={{ fontSize: "9px", fontWeight: 800, color: "var(--jr-blue-600, #3D8EAE)", textTransform: "uppercase" }}>
                   {t.cat}
                 </div>
-                <div style={{ fontSize: "12px", fontWeight: 700, color: "#ffffff", margin: "4px 0 2px 0" }}>
+                <div style={{ fontSize: "12px", fontWeight: 700, color: "var(--jr-text, #24343A)", margin: "4px 0 2px 0" }}>
                   {t.name}
                 </div>
-                <div style={{ fontSize: "10px", color: "#94a3b8" }}>
+                <div style={{ fontSize: "10px", color: "var(--jr-text-muted, #65747A)" }}>
                   {t.detail}
                 </div>
               </div>

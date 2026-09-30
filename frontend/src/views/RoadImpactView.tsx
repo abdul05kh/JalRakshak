@@ -52,15 +52,15 @@ export const RoadImpactView: React.FC<RoadImpactViewProps> = ({
       height: "100%",
       display: "flex",
       flexDirection: "column",
-      backgroundColor: "#060913",
-      color: "#f8fafc",
+      backgroundColor: "var(--jr-bg, #F4EFE6)",
+      color: "var(--jr-text, #24343A)",
       overflow: "hidden"
     }}>
       {/* Top Technical Status Header */}
       <div style={{
         padding: "10px 20px",
-        backgroundColor: "#0b1120",
-        borderBottom: "1px solid rgba(255, 255, 255, 0.10)",
+        backgroundColor: "var(--jr-surface, #FBF8F2)",
+        borderBottom: "1px solid var(--jr-border, #D8D1C5)",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
@@ -73,31 +73,31 @@ export const RoadImpactView: React.FC<RoadImpactViewProps> = ({
             width: "28px",
             height: "28px",
             borderRadius: "5px",
-            backgroundColor: "rgba(56, 189, 248, 0.15)",
-            border: "1px solid rgba(56, 189, 248, 0.3)",
+            backgroundColor: "var(--jr-blue-100, #D9EEF7)",
+            border: "1px solid var(--jr-blue-400, #76B8D0)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center"
           }}>
-            <Network size={16} color="#38bdf8" />
+            <Network size={16} color="var(--jr-blue-600, #3D8EAE)" />
           </div>
           <div>
-            <h1 style={{ margin: 0, fontSize: "13px", fontWeight: 800, color: "#ffffff", letterSpacing: "0.2px" }}>
+            <h1 style={{ margin: 0, fontSize: "13px", fontWeight: 800, color: "var(--jr-text, #24343A)", letterSpacing: "0.2px" }}>
               ROAD NETWORK TOPOLOGY & EDGE COUPLING
             </h1>
-            <div style={{ fontSize: "10.5px", color: "#94a3b8", display: "flex", alignItems: "center", gap: "6px", marginTop: "1px" }}>
-              <span>Route: <strong style={{ color: "#38bdf8" }}>{selectedRouteId} (7 Edges, 10.5 km)</strong></span>
+            <div style={{ fontSize: "10.5px", color: "var(--jr-text-muted, #65747A)", display: "flex", alignItems: "center", gap: "6px", marginTop: "1px" }}>
+              <span>Route: <strong style={{ color: "var(--jr-blue-600, #3D8EAE)" }}>{selectedRouteId} (7 Edges, 10.5 km)</strong></span>
               <span>•</span>
-              <span>Coupling: <strong style={{ color: "#cbd5e1" }}>150m Perpendicular Envelope</strong></span>
+              <span>Coupling: <strong style={{ color: "var(--jr-text, #24343A)" }}>150m Perpendicular Envelope</strong></span>
               <span>•</span>
-              <span>Threshold: <strong style={{ color: "#f59e0b" }}>h &ge; 0.30 m</strong></span>
+              <span>Threshold: <strong style={{ color: "#A97835" }}>h &ge; 0.30 m</strong></span>
             </div>
           </div>
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
           {/* Hydraulic Mode Switcher */}
-          <div style={{ display: "flex", alignItems: "center", gap: "2px", backgroundColor: "rgba(15, 23, 42, 0.8)", padding: "2px 4px", borderRadius: "4px", border: "1px solid rgba(255,255,255,0.1)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "2px", backgroundColor: "var(--jr-surface-alt, #EDE7DC)", padding: "2px 4px", borderRadius: "4px", border: "1px solid var(--jr-border, #D8D1C5)" }}>
             {(["ARRIVAL", "DEPTH", "EXTENT"] as const).map((m) => (
               <button
                 key={m}
@@ -106,8 +106,8 @@ export const RoadImpactView: React.FC<RoadImpactViewProps> = ({
                   padding: "3px 6px",
                   borderRadius: "3px",
                   border: "none",
-                  backgroundColor: thematicMode === m ? "#38bdf8" : "transparent",
-                  color: thematicMode === m ? "#060913" : "#94a3b8",
+                  backgroundColor: thematicMode === m ? "var(--jr-blue-600, #3D8EAE)" : "transparent",
+                  color: thematicMode === m ? "#FFFFFF" : "var(--jr-text-muted, #65747A)",
                   fontSize: "9px",
                   fontWeight: 800,
                   cursor: "pointer"
@@ -123,9 +123,9 @@ export const RoadImpactView: React.FC<RoadImpactViewProps> = ({
             style={{
               padding: "5px 12px",
               borderRadius: "4px",
-              border: "1px solid #38bdf8",
-              backgroundColor: "rgba(56, 189, 248, 0.15)",
-              color: "#38bdf8",
+              border: "1px solid var(--jr-blue-600, #3D8EAE)",
+              backgroundColor: "var(--jr-blue-50, #EAF6FB)",
+              color: "var(--jr-blue-800, #24566A)",
               fontSize: "10.5px",
               fontWeight: 800,
               cursor: "pointer",
@@ -170,9 +170,9 @@ export const RoadImpactView: React.FC<RoadImpactViewProps> = ({
               top: "14px",
               right: isDrawerOpen ? "340px" : "14px",
               zIndex: 850,
-              backgroundColor: "#0b1120",
-              border: "1px solid rgba(255, 255, 255, 0.15)",
-              color: "#38bdf8",
+              backgroundColor: "var(--jr-surface, #FBF8F2)",
+              border: "1px solid var(--jr-border, #D8D1C5)",
+              color: "var(--jr-blue-800, #24566A)",
               padding: "6px 10px",
               borderRadius: "4px",
               fontSize: "10.5px",
@@ -195,8 +195,8 @@ export const RoadImpactView: React.FC<RoadImpactViewProps> = ({
             width: "330px",
             height: "100%",
             overflowY: "auto",
-            backgroundColor: "#0b1120",
-            borderLeft: "1px solid rgba(255, 255, 255, 0.10)",
+            backgroundColor: "var(--jr-surface, #FBF8F2)",
+            borderLeft: "1px solid var(--jr-border, #D8D1C5)",
             padding: "16px",
             boxSizing: "border-box",
             display: "flex",
@@ -206,9 +206,9 @@ export const RoadImpactView: React.FC<RoadImpactViewProps> = ({
           }}>
             {/* Limiting Edge Highlight Card */}
             <div style={{
-              backgroundColor: "rgba(239, 68, 68, 0.12)",
+              backgroundColor: "#FFF5F5",
               borderRadius: "6px",
-              border: "1.5px solid #ef4444",
+              border: "1.5px solid #A84C4C",
               padding: "12px",
               display: "flex",
               flexDirection: "column",
@@ -218,42 +218,42 @@ export const RoadImpactView: React.FC<RoadImpactViewProps> = ({
                 <span style={{
                   padding: "2px 6px",
                   borderRadius: "3px",
-                  backgroundColor: "#ef4444",
+                  backgroundColor: "#A84C4C",
                   color: "#ffffff",
                   fontSize: "9px",
                   fontWeight: 900
                 }}>
                   LIMITING SEGMENT
                 </span>
-                <span style={{ fontSize: "10px", fontWeight: 800, color: "#f87171" }}>
+                <span style={{ fontSize: "10px", fontWeight: 800, color: "#A84C4C" }}>
                   MIN MARGIN: +44:21
                 </span>
               </div>
 
-              <div style={{ fontSize: "13px", fontWeight: 800, color: "#ffffff" }}>
+              <div style={{ fontSize: "13px", fontWeight: 800, color: "var(--jr-text, #24343A)" }}>
                 {decision.limitingEdgeId} — {decision.limitingSegmentName}
               </div>
 
-              <div style={{ fontSize: "10.5px", color: "#cbd5e1", lineHeight: "1.4", fontFamily: "monospace" }}>
-                Flood Arrival: <strong style={{ color: "#38bdf8" }}>{decision.arrivalFormatted}</strong><br />
-                Cumulative Travel to Edge: <strong style={{ color: "#fbbf24" }}>{decision.travelFormatted}</strong><br />
-                Buffer: <strong style={{ color: "#f87171" }}>{decision.bufferFormatted}</strong><br />
-                Deadline: <strong style={{ color: "#4ade80" }}>{decision.deadlineFormatted}</strong>
+              <div style={{ fontSize: "10.5px", color: "var(--jr-text-muted, #65747A)", lineHeight: "1.4", fontFamily: "monospace" }}>
+                Flood Arrival: <strong style={{ color: "var(--jr-blue-600, #3D8EAE)" }}>{decision.arrivalFormatted}</strong><br />
+                Cumulative Travel to Edge: <strong style={{ color: "#A97835" }}>{decision.travelFormatted}</strong><br />
+                Buffer: <strong style={{ color: "#A84C4C" }}>{decision.bufferFormatted}</strong><br />
+                Deadline: <strong style={{ color: "var(--jr-success, #3F7D62)" }}>{decision.deadlineFormatted}</strong>
               </div>
             </div>
 
             {/* Edge-by-Edge Graph Table */}
             <div style={{
-              backgroundColor: "#0f172a",
+              backgroundColor: "var(--jr-surface-alt, #EDE7DC)",
               borderRadius: "6px",
-              border: "1px solid rgba(255, 255, 255, 0.08)",
+              border: "1px solid var(--jr-border, #D8D1C5)",
               overflow: "hidden"
             }}>
-              <div style={{ padding: "8px 12px", borderBottom: "1px solid rgba(255, 255, 255, 0.08)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <span style={{ fontSize: "11px", fontWeight: 800, color: "#ffffff" }}>
+              <div style={{ padding: "8px 12px", borderBottom: "1px solid var(--jr-border, #D8D1C5)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <span style={{ fontSize: "11px", fontWeight: 800, color: "var(--jr-text, #24343A)" }}>
                   7 Edge Traversal Table
                 </span>
-                <span style={{ fontSize: "9.5px", color: "#94a3b8" }}>
+                <span style={{ fontSize: "9.5px", color: "var(--jr-text-muted, #65747A)" }}>
                   R02 Corridor
                 </span>
               </div>
@@ -261,7 +261,7 @@ export const RoadImpactView: React.FC<RoadImpactViewProps> = ({
               <div style={{ overflowX: "auto" }}>
                 <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "10px", textAlign: "left" }}>
                   <thead>
-                    <tr style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.10)", color: "#94a3b8", backgroundColor: "rgba(11, 17, 32, 0.8)" }}>
+                    <tr style={{ borderBottom: "1px solid var(--jr-border, #D8D1C5)", color: "var(--jr-text-muted, #65747A)", backgroundColor: "var(--jr-surface, #FBF8F2)" }}>
                       <th style={{ padding: "6px 8px" }}>EDGE</th>
                       <th style={{ padding: "6px 8px" }}>CUMULATIVE TRAVEL</th>
                       <th style={{ padding: "6px 8px" }}>ARRIVAL</th>
@@ -277,25 +277,25 @@ export const RoadImpactView: React.FC<RoadImpactViewProps> = ({
                           key={e.edgeId}
                           onClick={() => setSelectedEdgeId(e.edgeId)}
                           style={{
-                            borderBottom: "1px solid rgba(255, 255, 255, 0.04)",
-                            backgroundColor: e.isLimiting ? "rgba(239, 68, 68, 0.15)" : isSelected ? "rgba(56, 189, 248, 0.15)" : "transparent",
+                            borderBottom: "1px solid var(--jr-border, #D8D1C5)",
+                            backgroundColor: e.isLimiting ? "#FFEAE8" : isSelected ? "var(--jr-blue-100, #D9EEF7)" : "transparent",
                             cursor: "pointer"
                           }}
                         >
-                          <td style={{ padding: "6px 8px", fontWeight: 800, color: e.isLimiting ? "#f87171" : "#ffffff" }}>
+                          <td style={{ padding: "6px 8px", fontWeight: 800, color: e.isLimiting ? "#A84C4C" : "var(--jr-text, #24343A)" }}>
                             {e.edgeId}
                           </td>
-                          <td style={{ padding: "6px 8px", color: "#cbd5e1" }}>{e.travelToEdgeMin}</td>
-                          <td style={{ padding: "6px 8px", color: "#38bdf8", fontWeight: 700 }}>{e.floodArrivalMin}</td>
-                          <td style={{ padding: "6px 8px", color: e.isLimiting ? "#fbbf24" : "#4ade80", fontWeight: 800 }}>
+                          <td style={{ padding: "6px 8px", color: "var(--jr-text-muted, #65747A)" }}>{e.travelToEdgeMin}</td>
+                          <td style={{ padding: "6px 8px", color: "var(--jr-blue-600, #3D8EAE)", fontWeight: 700 }}>{e.floodArrivalMin}</td>
+                          <td style={{ padding: "6px 8px", color: e.isLimiting ? "#A97835" : "var(--jr-success, #3F7D62)", fontWeight: 800 }}>
                             {e.marginMin}
                           </td>
                           <td style={{ padding: "6px 8px" }}>
                             <span style={{
                               padding: "1px 4px",
                               borderRadius: "2px",
-                              backgroundColor: e.isLimiting ? "rgba(239,68,68,0.25)" : "rgba(56,189,248,0.15)",
-                              color: e.isLimiting ? "#fca5a5" : "#7dd3fc",
+                              backgroundColor: e.isLimiting ? "#FFD6D3" : "var(--jr-blue-100, #D9EEF7)",
+                              color: e.isLimiting ? "#A84C4C" : "var(--jr-blue-800, #24566A)",
                               fontSize: "8.5px",
                               fontWeight: 800
                             }}>
@@ -312,15 +312,15 @@ export const RoadImpactView: React.FC<RoadImpactViewProps> = ({
 
             {/* Coupling Methodology Note */}
             <div style={{
-              backgroundColor: "rgba(15, 23, 42, 0.7)",
+              backgroundColor: "var(--jr-blue-50, #EAF6FB)",
               borderRadius: "6px",
-              border: "1px solid rgba(255, 255, 255, 0.06)",
+              border: "1px solid var(--jr-blue-200, #B9DDEB)",
               padding: "10px",
               fontSize: "10px",
-              color: "#94a3b8",
+              color: "var(--jr-blue-800, #24566A)",
               lineHeight: "1.4"
             }}>
-              <strong style={{ color: "#38bdf8" }}>Deterministic Coupling Trace:</strong>
+              <strong style={{ color: "var(--jr-blue-800, #24566A)" }}>Deterministic Coupling Trace:</strong>
               <br />
               • OpenStreetMap LineString densified at &le;50m.
               <br />

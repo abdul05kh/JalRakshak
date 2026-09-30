@@ -1,33 +1,5 @@
 @import "leaflet/dist/leaflet.css";
-
-:root {
-  --bg-main: #f8fafc;
-  --bg-surface: #ffffff;
-  --bg-subtle: #f1f5f9;
-  --border-subtle: #e2e8f0;
-  --border-strong: #cbd5e1;
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #64748b;
-  --accent-blue: #2563eb;
-  --accent-blue-subtle: #eff6ff;
-  
-  --status-feasible-bg: #dcfce7;
-  --status-feasible-text: #166534;
-  --status-feasible-border: #86efac;
-
-  --status-lowmargin-bg: #fef3c7;
-  --status-lowmargin-text: #92400e;
-  --status-lowmargin-border: #fcd34d;
-
-  --status-infeasible-bg: #fee2e2;
-  --status-infeasible-text: #991b1b;
-  --status-infeasible-border: #fca5a5;
-
-  --status-datagap-bg: #f1f5f9;
-  --status-datagap-text: #475569;
-  --status-datagap-border: #cbd5e1;
-}
+@import "./styles/tokens.css";
 
 * {
   box-sizing: border-box;
@@ -37,8 +9,8 @@
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  background-color: var(--bg-main);
-  color: var(--text-primary);
+  background-color: var(--jr-bg);
+  color: var(--jr-text);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   overflow: hidden;
@@ -51,6 +23,7 @@ body {
   width: 100vw;
   display: flex;
   flex-direction: column;
+  background-color: var(--jr-bg);
 }
 
 /* Scrollbar styling */
@@ -59,34 +32,36 @@ body {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: var(--jr-surface-alt);
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: var(--jr-border);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: var(--jr-border-strong);
 }
 
 /* Leaflet Overrides */
 .leaflet-container {
   width: 100%;
   height: 100%;
-  background: #e2e8f0;
+  background: var(--jr-surface-alt);
   font-family: inherit;
 }
 
 .leaflet-popup-content-wrapper {
   border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(36, 52, 58, 0.12);
   padding: 2px;
+  background: var(--jr-surface);
+  border: 1px solid var(--jr-border);
 }
 
 .leaflet-popup-content {
   margin: 10px 14px;
   line-height: 1.4;
-  color: var(--text-primary);
+  color: var(--jr-text);
   font-size: 13px;
 }
 
@@ -98,26 +73,78 @@ body {
 }
 
 .pulsing-segment {
-  animation: pulse-red 1.6s infinite ease-in-out;
+  animation: pulse-red 1.5s infinite ease-in-out;
 }
 
-/* Mobile Responsiveness (<= 768px and 390x844 Mobile Viewports) */
-@media (max-width: 768px) {
-  header {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-  header::-webkit-scrollbar {
-    display: none;
-  }
-  .mobile-hide {
-    display: none !important;
-  }
-  .mobile-scroll-x {
-    overflow-x: auto;
-    max-width: 94vw;
-    -webkit-overflow-scrolling: touch;
-    white-space: nowrap;
-  }
+/* Utility button classes conforming to Beige + Light Blue design system */
+.jr-btn-primary {
+  background-color: var(--jr-blue-600);
+  color: #ffffff;
+  border: 1px solid var(--jr-blue-800);
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.jr-btn-primary:hover {
+  background-color: var(--jr-blue-800);
+}
+
+.jr-btn-secondary {
+  background-color: var(--jr-surface);
+  color: var(--jr-text);
+  border: 1px solid var(--jr-border);
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.jr-btn-secondary:hover {
+  background-color: var(--jr-surface-alt);
+}
+
+.jr-badge-feasible {
+  background-color: var(--status-feasible-bg);
+  color: var(--status-feasible-text);
+  border: 1px solid var(--status-feasible-border);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.jr-badge-lowmargin {
+  background-color: var(--status-lowmargin-bg);
+  color: var(--status-lowmargin-text);
+  border: 1px solid var(--status-lowmargin-border);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.jr-badge-infeasible {
+  background-color: var(--status-infeasible-bg);
+  color: var(--status-infeasible-text);
+  border: 1px solid var(--status-infeasible-border);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.jr-badge-datagap {
+  background-color: var(--status-datagap-bg);
+  color: var(--status-datagap-text);
+  border: 1px solid var(--status-datagap-border);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
 }

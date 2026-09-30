@@ -1,5 +1,5 @@
 import React from "react";
-import { Clock } from "lucide-react";
+import { Clock, AlertTriangle, ShieldCheck } from "lucide-react";
 import type { ScenarioSummary, RouteAnalyzeResponse } from "../types";
 import { getAuthoritativeDecision, getAuthoritativeEdgeBreakdown } from "../services/decisionStore";
 
@@ -27,30 +27,31 @@ export const EvacuationDecisionView: React.FC<EvacuationDecisionViewProps> = ({
     switch (status) {
       case "FEASIBLE":
         return {
-          bg: "rgba(56, 189, 248, 0.15)",
-          border: "#38bdf8",
-          text: "#38bdf8",
-          label: "FEASIBLE"
+          bg: "var(--status-feasible-bg, #E8F4EE)",
+          border: "var(--status-feasible-border, #A3CFB8)",
+          text: "var(--status-feasible-text, #2C634B)",
+          label: "FEASIBLE UNDER CONFIGURED ASSUMPTIONS"
         };
       case "LOW_MARGIN":
+      case "LOW MARGIN":
         return {
-          bg: "rgba(245, 158, 11, 0.15)",
-          border: "#f59e0b",
-          text: "#fbbf24",
-          label: "LOW MARGIN"
+          bg: "var(--status-lowmargin-bg, #FCF4E7)",
+          border: "var(--status-lowmargin-border, #E8C895)",
+          text: "var(--status-lowmargin-text, #825820)",
+          label: "FEASIBLE WITH LOW MARGIN"
         };
       case "INFEASIBLE":
         return {
-          bg: "rgba(239, 68, 68, 0.15)",
-          border: "#ef4444",
-          text: "#f87171",
-          label: "INFEASIBLE"
+          bg: "var(--status-infeasible-bg, #FAECEC)",
+          border: "var(--status-infeasible-border, #E89E9E)",
+          text: "var(--status-infeasible-text, #873636)",
+          label: "INFEASIBLE (WATER REACHES ROAD FIRST)"
         };
       default:
         return {
-          bg: "rgba(100, 116, 139, 0.15)",
-          border: "#64748b",
-          text: "#94a3b8",
+          bg: "var(--status-datagap-bg, #EDE7DC)",
+          border: "var(--status-datagap-border, #D8D1C5)",
+          text: "var(--status-datagap-text, #65747A)",
           label: "DATA GAP"
         };
     }
@@ -63,8 +64,8 @@ export const EvacuationDecisionView: React.FC<EvacuationDecisionViewProps> = ({
       width: "100%",
       height: "100%",
       overflowY: "auto",
-      backgroundColor: "#060913",
-      color: "#f8fafc",
+      backgroundColor: "var(--jr-bg, #F4EFE6)",
+      color: "var(--jr-text, #24343A)",
       display: "flex",
       flexDirection: "column",
       fontFamily: "Inter, sans-serif"
@@ -72,8 +73,8 @@ export const EvacuationDecisionView: React.FC<EvacuationDecisionViewProps> = ({
       {/* Top Context Header */}
       <div style={{
         padding: "12px 28px",
-        backgroundColor: "#0b1120",
-        borderBottom: "1px solid rgba(255, 255, 255, 0.10)",
+        backgroundColor: "var(--jr-surface, #FBF8F2)",
+        borderBottom: "1px solid var(--jr-border, #D8D1C5)",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
@@ -85,22 +86,22 @@ export const EvacuationDecisionView: React.FC<EvacuationDecisionViewProps> = ({
             width: "32px",
             height: "32px",
             borderRadius: "6px",
-            backgroundColor: "rgba(56, 189, 248, 0.15)",
-            border: "1px solid rgba(56, 189, 248, 0.3)",
+            backgroundColor: "var(--jr-blue-100, #D9EEF7)",
+            border: "1px solid var(--jr-blue-400, #76B8D0)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center"
           }}>
-            <Clock size={18} color="#38bdf8" />
+            <Clock size={18} color="var(--jr-blue-800, #24566A)" />
           </div>
           <div>
-            <h1 style={{ margin: 0, fontSize: "14px", fontWeight: 800, color: "#ffffff", letterSpacing: "0.3px" }}>
+            <h1 style={{ margin: 0, fontSize: "14px", fontWeight: 800, color: "var(--jr-text, #24343A)", letterSpacing: "0.2px" }}>
               OPERATIONAL EVACUATION DECISION CONSOLE
             </h1>
-            <div style={{ fontSize: "11px", color: "#94a3b8", display: "flex", alignItems: "center", gap: "8px", marginTop: "2px" }}>
-              <span>Scenario: <strong style={{ color: "#38bdf8" }}>{activeSc?.name || decision.scenarioName}</strong></span>
+            <div style={{ fontSize: "11px", color: "var(--jr-text-muted, #65747A)", display: "flex", alignItems: "center", gap: "8px", marginTop: "2px" }}>
+              <span>Scenario: <strong style={{ color: "var(--jr-blue-800, #24566A)" }}>{activeSc?.name || decision.scenarioName}</strong></span>
               <span>•</span>
-              <span>Route: <strong style={{ color: "#cbd5e1" }}>{decision.routeName}</strong></span>
+              <span>Route: <strong style={{ color: "var(--jr-text, #24343A)" }}>{decision.routeName}</strong></span>
               <span>•</span>
               <span>Status: <strong style={{ color: statusInfo.text }}>{statusInfo.label}</strong></span>
             </div>
@@ -112,9 +113,9 @@ export const EvacuationDecisionView: React.FC<EvacuationDecisionViewProps> = ({
           style={{
             padding: "6px 14px",
             borderRadius: "4px",
-            border: "1px solid rgba(255, 255, 255, 0.2)",
-            backgroundColor: "rgba(255, 255, 255, 0.05)",
-            color: "#cbd5e1",
+            border: "1px solid var(--jr-border, #D8D1C5)",
+            backgroundColor: "var(--jr-surface-alt, #EDE7DC)",
+            color: "var(--jr-text, #24343A)",
             fontSize: "11px",
             fontWeight: 700,
             cursor: "pointer"
@@ -136,13 +137,13 @@ export const EvacuationDecisionView: React.FC<EvacuationDecisionViewProps> = ({
         width: "100%",
         boxSizing: "border-box"
       }}>
-        {/* HERO DECISION CARD (Section 27 Specification) */}
+        {/* HERO DECISION CARD */}
         <div style={{
-          backgroundColor: "#0b1120",
+          backgroundColor: "var(--jr-surface, #FBF8F2)",
           borderRadius: "8px",
           border: `1.5px solid ${statusInfo.border}`,
           padding: "24px",
-          boxShadow: "0 16px 36px rgba(0, 0, 0, 0.5)",
+          boxShadow: "0 4px 16px rgba(36, 52, 58, 0.08)",
           display: "flex",
           flexDirection: "column",
           gap: "16px"
@@ -157,113 +158,113 @@ export const EvacuationDecisionView: React.FC<EvacuationDecisionViewProps> = ({
                 border: `1px solid ${statusInfo.border}`,
                 color: statusInfo.text,
                 fontSize: "11px",
-                fontWeight: 900
+                fontWeight: 800
               }}>
                 {statusInfo.label}
               </span>
-              <span style={{ fontSize: "11px", color: "#94a3b8" }}>
-                Scenario: <strong style={{ color: "#38bdf8" }}>{decision.scenarioId.replace("SCENARIO_", "")} (Qp = {decision.peakDischargeM3s.toLocaleString()} m³/s)</strong>
+              <span style={{ fontSize: "11px", color: "var(--jr-text-muted, #65747A)" }}>
+                Scenario: <strong style={{ color: "var(--jr-blue-800, #24566A)" }}>{decision.scenarioId.replace("SCENARIO_", "")} (Qp = {decision.peakDischargeM3s.toLocaleString()} m³/s)</strong>
               </span>
             </div>
 
-            <div style={{ fontSize: "11px", color: "#94a3b8" }}>
-              Limiting Segment: <strong style={{ color: "#ef4444" }}>{decision.limitingEdgeId} ({decision.limitingSegmentName})</strong>
+            <div style={{ fontSize: "11px", color: "var(--jr-text-muted, #65747A)" }}>
+              Governing Limiting Segment: <strong style={{ color: "var(--jr-danger, #A84C4C)" }}>{decision.limitingEdgeId} ({decision.limitingSegmentName})</strong>
             </div>
           </div>
 
           {/* Huge Hero Decision Command */}
           <div style={{
-            backgroundColor: "rgba(15, 23, 42, 0.8)",
-            border: "1px solid rgba(255, 255, 255, 0.10)",
+            backgroundColor: "var(--jr-surface-alt, #EDE7DC)",
+            border: "1px solid var(--jr-border, #D8D1C5)",
             borderRadius: "6px",
             padding: "20px",
             textAlign: "center"
           }}>
-            <div style={{ fontSize: "11px", fontWeight: 800, textTransform: "uppercase", color: "#94a3b8", letterSpacing: "1px" }}>
+            <div style={{ fontSize: "11px", fontWeight: 800, textTransform: "uppercase", color: "var(--jr-text-muted, #65747A)", letterSpacing: "1px" }}>
               LATEST FEASIBLE DEPARTURE
             </div>
             <div style={{
-              fontSize: "44px",
+              fontSize: "42px",
               fontWeight: 900,
               fontFamily: "monospace",
               letterSpacing: "-1px",
-              color: "#ffffff",
+              color: "var(--jr-blue-800, #24566A)",
               margin: "6px 0"
             }}>
               LEAVE BY {decision.deadlineFormatted}
             </div>
-            <div style={{ fontSize: "12px", color: "#cbd5e1" }}>
-              A departure at <strong style={{ color: "#38bdf8" }}>{decision.deadlineFormatted}</strong> reaches limiting edge <strong style={{ color: "#ef4444" }}>{decision.limitingEdgeId}</strong> before its modeled flood-arrival threshold (<strong style={{ color: "#60a5fa" }}>{decision.arrivalFormatted}</strong>), including the configured {decision.bufferFormatted} safety buffer.
+            <div style={{ fontSize: "12px", color: "var(--jr-text, #24343A)", maxWidth: "800px", margin: "0 auto" }}>
+              A departure at <strong style={{ color: "var(--jr-blue-800, #24566A)" }}>{decision.deadlineFormatted}</strong> reaches limiting edge <strong style={{ color: "var(--jr-danger, #A84C4C)" }}>{decision.limitingEdgeId}</strong> before its modeled flood-arrival threshold (<strong style={{ color: "var(--jr-blue-600, #3D8EAE)" }}>{decision.arrivalFormatted}</strong>), including the configured {decision.bufferFormatted} safety buffer.
             </div>
           </div>
 
-          {/* Mathematical Proof Row */}
+          {/* Mathematical Proof Row (A_i -> T_i -> B -> D) */}
           <div style={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
             gap: "12px",
             paddingTop: "6px"
           }}>
-            <div style={{ backgroundColor: "#0f172a", padding: "12px", borderRadius: "5px", border: "1px solid rgba(255,255,255,0.06)" }}>
-              <div style={{ fontSize: "10px", color: "#94a3b8", fontWeight: 700 }}>FLOOD ARRIVAL (A_i)</div>
-              <div style={{ fontSize: "18px", fontWeight: 900, fontFamily: "monospace", color: "#38bdf8", marginTop: "2px" }}>
+            <div style={{ backgroundColor: "var(--jr-blue-50, #EAF6FB)", padding: "12px", borderRadius: "5px", border: "1px solid var(--jr-blue-200, #B9DDEB)" }}>
+              <div style={{ fontSize: "10px", color: "var(--jr-blue-800, #24566A)", fontWeight: 800 }}>1. WATER ARRIVAL (A_i)</div>
+              <div style={{ fontSize: "18px", fontWeight: 900, fontFamily: "monospace", color: "var(--jr-blue-800, #24566A)", marginTop: "2px" }}>
                 {decision.arrivalFormatted}
               </div>
-              <div style={{ fontSize: "9.5px", color: "#64748b", marginTop: "2px" }}>Threshold h &ge; 0.30m at R02-E07</div>
+              <div style={{ fontSize: "9.5px", color: "var(--jr-text-muted, #65747A)", marginTop: "2px" }}>Depth threshold h &ge; 0.30m at {decision.limitingEdgeId}</div>
             </div>
 
-            <div style={{ backgroundColor: "#0f172a", padding: "12px", borderRadius: "5px", border: "1px solid rgba(255,255,255,0.06)" }}>
-              <div style={{ fontSize: "10px", color: "#94a3b8", fontWeight: 700 }}>minus CUMULATIVE TRAVEL (T_i)</div>
-              <div style={{ fontSize: "18px", fontWeight: 900, fontFamily: "monospace", color: "#fbbf24", marginTop: "2px" }}>
+            <div style={{ backgroundColor: "var(--status-lowmargin-bg, #FCF4E7)", padding: "12px", borderRadius: "5px", border: "1px solid var(--status-lowmargin-border, #E8C895)" }}>
+              <div style={{ fontSize: "10px", color: "var(--status-lowmargin-text, #825820)", fontWeight: 800 }}>2. minus TRAVEL TIME (T_i)</div>
+              <div style={{ fontSize: "18px", fontWeight: 900, fontFamily: "monospace", color: "var(--status-lowmargin-text, #825820)", marginTop: "2px" }}>
                 - {decision.travelFormatted}
               </div>
-              <div style={{ fontSize: "9.5px", color: "#64748b", marginTop: "2px" }}>Origin to limiting edge traversal</div>
+              <div style={{ fontSize: "9.5px", color: "var(--jr-text-muted, #65747A)", marginTop: "2px" }}>Origin to limiting edge traversal (50 km/h)</div>
             </div>
 
-            <div style={{ backgroundColor: "#0f172a", padding: "12px", borderRadius: "5px", border: "1px solid rgba(255,255,255,0.06)" }}>
-              <div style={{ fontSize: "10px", color: "#94a3b8", fontWeight: 700 }}>minus BUFFER (B)</div>
-              <div style={{ fontSize: "18px", fontWeight: 900, fontFamily: "monospace", color: "#f87171", marginTop: "2px" }}>
+            <div style={{ backgroundColor: "var(--status-infeasible-bg, #FAECEC)", padding: "12px", borderRadius: "5px", border: "1px solid var(--status-infeasible-border, #E89E9E)" }}>
+              <div style={{ fontSize: "10px", color: "var(--status-infeasible-text, #873636)", fontWeight: 800 }}>3. minus SAFETY BUFFER (B)</div>
+              <div style={{ fontSize: "18px", fontWeight: 900, fontFamily: "monospace", color: "var(--status-infeasible-text, #873636)", marginTop: "2px" }}>
                 - {decision.bufferFormatted}
               </div>
-              <div style={{ fontSize: "9.5px", color: "#64748b", marginTop: "2px" }}>Configured safety buffer</div>
+              <div style={{ fontSize: "9.5px", color: "var(--jr-text-muted, #65747A)", marginTop: "2px" }}>Configured emergency safety allowance</div>
             </div>
 
-            <div style={{ backgroundColor: "rgba(56, 189, 248, 0.1)", padding: "12px", borderRadius: "5px", border: "1px solid rgba(56, 189, 248, 0.3)" }}>
-              <div style={{ fontSize: "10px", color: "#38bdf8", fontWeight: 800 }}>= DEPARTURE DEADLINE</div>
-              <div style={{ fontSize: "18px", fontWeight: 900, fontFamily: "monospace", color: "#ffffff", marginTop: "2px" }}>
+            <div style={{ backgroundColor: "var(--status-feasible-bg, #E8F4EE)", padding: "12px", borderRadius: "5px", border: "1px solid var(--status-feasible-border, #A3CFB8)" }}>
+              <div style={{ fontSize: "10px", color: "var(--status-feasible-text, #2C634B)", fontWeight: 800 }}>= LATEST DEPARTURE</div>
+              <div style={{ fontSize: "18px", fontWeight: 900, fontFamily: "monospace", color: "var(--status-feasible-text, #2C634B)", marginTop: "2px" }}>
                 {decision.deadlineFormatted}
               </div>
-              <div style={{ fontSize: "9.5px", color: "#38bdf8", marginTop: "2px" }}>60:00 - 12:39 - 03:00 = 44:21</div>
+              <div style={{ fontSize: "9.5px", color: "var(--status-feasible-text, #2C634B)", marginTop: "2px" }}>D = min_i(A_i - T_i - B) = 44:21</div>
             </div>
           </div>
         </div>
 
-        {/* Route Segment Table */}
+        {/* Route Segment Breakdown Table with Explicit Margins */}
         <div style={{
-          backgroundColor: "#0b1120",
+          backgroundColor: "var(--jr-surface, #FBF8F2)",
           borderRadius: "8px",
-          border: "1px solid rgba(255, 255, 255, 0.10)",
+          border: "1px solid var(--jr-border, #D8D1C5)",
           overflow: "hidden"
         }}>
-          <div style={{ padding: "12px 16px", borderBottom: "1px solid rgba(255, 255, 255, 0.08)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <span style={{ fontSize: "12px", fontWeight: 800, color: "#ffffff" }}>
-              Route R02 Limiting Edge Breakdown
+          <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--jr-border, #D8D1C5)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <span style={{ fontSize: "12px", fontWeight: 800, color: "var(--jr-text, #24343A)" }}>
+              Route {selectedRouteId} Segment Margins & Limiting Bottleneck
             </span>
-            <span style={{ fontSize: "10px", color: "#94a3b8" }}>
-              7 Edges Coupled via 150m Perpendicular Envelope
+            <span style={{ fontSize: "10px", color: "var(--jr-text-muted, #65747A)" }}>
+              7 Segments Coupled via 150m Perpendicular Envelope
             </span>
           </div>
 
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "11px", textAlign: "left" }}>
             <thead>
-              <tr style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.08)", color: "#94a3b8", backgroundColor: "#0f172a" }}>
-                <th style={{ padding: "8px 12px" }}>EDGE</th>
+              <tr style={{ borderBottom: "1px solid var(--jr-border, #D8D1C5)", color: "var(--jr-text-muted, #65747A)", backgroundColor: "var(--jr-surface-alt, #EDE7DC)" }}>
+                <th style={{ padding: "8px 12px" }}>SEGMENT ID</th>
                 <th style={{ padding: "8px 12px" }}>NAME</th>
                 <th style={{ padding: "8px 12px" }}>LENGTH</th>
                 <th style={{ padding: "8px 12px" }}>CUMULATIVE TRAVEL</th>
-                <th style={{ padding: "8px 12px" }}>FLOOD ARRIVAL</th>
-                <th style={{ padding: "8px 12px" }}>MARGIN</th>
-                <th style={{ padding: "8px 12px" }}>STATUS</th>
+                <th style={{ padding: "8px 12px" }}>WATER ARRIVAL</th>
+                <th style={{ padding: "8px 12px" }}>AVAILABLE MARGIN</th>
+                <th style={{ padding: "8px 12px" }}>ROLE</th>
               </tr>
             </thead>
             <tbody>
@@ -271,30 +272,31 @@ export const EvacuationDecisionView: React.FC<EvacuationDecisionViewProps> = ({
                 <tr
                   key={e.edgeId}
                   style={{
-                    borderBottom: "1px solid rgba(255, 255, 255, 0.04)",
-                    backgroundColor: e.isLimiting ? "rgba(239, 68, 68, 0.15)" : "transparent"
+                    borderBottom: "1px solid var(--jr-border-subtle, #E8E2D7)",
+                    backgroundColor: e.isLimiting ? "var(--status-infeasible-bg, #FAECEC)" : "transparent"
                   }}
                 >
-                  <td style={{ padding: "8px 12px", fontWeight: 800, color: e.isLimiting ? "#f87171" : "#ffffff" }}>
+                  <td style={{ padding: "8px 12px", fontWeight: 800, color: e.isLimiting ? "var(--status-infeasible-text, #873636)" : "var(--jr-text, #24343A)" }}>
                     {e.edgeId}
                   </td>
-                  <td style={{ padding: "8px 12px", color: "#cbd5e1" }}>{e.segmentName}</td>
-                  <td style={{ padding: "8px 12px", color: "#94a3b8" }}>{e.lengthKm} km</td>
-                  <td style={{ padding: "8px 12px", color: "#cbd5e1" }}>{e.travelToEdgeMin}</td>
-                  <td style={{ padding: "8px 12px", color: "#38bdf8", fontWeight: 700 }}>{e.floodArrivalMin}</td>
-                  <td style={{ padding: "8px 12px", color: e.isLimiting ? "#fbbf24" : "#4ade80", fontWeight: 800 }}>
+                  <td style={{ padding: "8px 12px", color: "var(--jr-text, #24343A)" }}>{e.segmentName}</td>
+                  <td style={{ padding: "8px 12px", color: "var(--jr-text-muted, #65747A)" }}>{e.lengthKm} km</td>
+                  <td style={{ padding: "8px 12px", color: "var(--jr-text, #24343A)" }}>{e.travelToEdgeMin}</td>
+                  <td style={{ padding: "8px 12px", color: "var(--jr-blue-800, #24566A)", fontWeight: 700 }}>{e.floodArrivalMin}</td>
+                  <td style={{ padding: "8px 12px", color: e.isLimiting ? "var(--status-infeasible-text, #873636)" : "var(--status-feasible-text, #2C634B)", fontWeight: 800 }}>
                     {e.marginMin}
                   </td>
                   <td style={{ padding: "8px 12px" }}>
                     <span style={{
                       padding: "2px 6px",
                       borderRadius: "3px",
-                      backgroundColor: e.isLimiting ? "rgba(239,68,68,0.25)" : "rgba(56,189,248,0.15)",
-                      color: e.isLimiting ? "#fca5a5" : "#7dd3fc",
+                      backgroundColor: e.isLimiting ? "var(--status-infeasible-bg, #FAECEC)" : "var(--status-feasible-bg, #E8F4EE)",
+                      border: `1px solid ${e.isLimiting ? "var(--status-infeasible-border, #E89E9E)" : "var(--status-feasible-border, #A3CFB8)"}`,
+                      color: e.isLimiting ? "var(--status-infeasible-text, #873636)" : "var(--status-feasible-text, #2C634B)",
                       fontSize: "9px",
                       fontWeight: 800
                     }}>
-                      {e.isLimiting ? "LIMITING" : "FEASIBLE"}
+                      {e.isLimiting ? "LIMITING (Min Margin)" : "FEASIBLE"}
                     </span>
                   </td>
                 </tr>
@@ -303,65 +305,65 @@ export const EvacuationDecisionView: React.FC<EvacuationDecisionViewProps> = ({
           </table>
         </div>
 
-        {/* Multi-Scenario Decision Comparison Matrix (Feature 5) */}
+        {/* Multi-Scenario Decision Comparison Matrix */}
         <div style={{
-          backgroundColor: "#0b1120",
+          backgroundColor: "var(--jr-surface, #FBF8F2)",
           borderRadius: "8px",
-          border: "1px solid rgba(255, 255, 255, 0.10)",
+          border: "1px solid var(--jr-border, #D8D1C5)",
           padding: "16px"
         }}>
-          <div style={{ fontSize: "12px", fontWeight: 800, color: "#ffffff", marginBottom: "10px" }}>
-            Operational Decision Delta across Breach Scenarios (Route R02)
+          <div style={{ fontSize: "12px", fontWeight: 800, color: "var(--jr-text, #24343A)", marginBottom: "10px" }}>
+            Operational Decision Delta across Prepared Breach Scenarios (Route {selectedRouteId})
           </div>
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "11px", textAlign: "left" }}>
             <thead>
-              <tr style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.12)", color: "#94a3b8", backgroundColor: "#0f172a" }}>
+              <tr style={{ borderBottom: "1px solid var(--jr-border, #D8D1C5)", color: "var(--jr-text-muted, #65747A)", backgroundColor: "var(--jr-surface-alt, #EDE7DC)" }}>
                 <th style={{ padding: "8px 10px" }}>SCENARIO</th>
                 <th style={{ padding: "8px 10px" }}>PEAK DISCHARGE</th>
-                <th style={{ padding: "8px 10px" }}>FLOOD ARRIVAL</th>
+                <th style={{ padding: "8px 10px" }}>WATER ARRIVAL</th>
                 <th style={{ padding: "8px 10px" }}>TRAVEL TIME</th>
-                <th style={{ padding: "8px 10px" }}>SAFETY BUFFER</th>
+                <th style={{ padding: "8px 10px" }}>BUFFER</th>
                 <th style={{ padding: "8px 10px" }}>LATEST DEPARTURE</th>
                 <th style={{ padding: "8px 10px" }}>LIMITING SEGMENT</th>
                 <th style={{ padding: "8px 10px" }}>DECISION STATUS</th>
               </tr>
             </thead>
             <tbody>
-              <tr style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.04)" }}>
-                <td style={{ padding: "8px 10px", fontWeight: 700, color: "#38bdf8" }}>MINIMUM BREACH</td>
-                <td style={{ padding: "8px 10px", color: "#cbd5e1" }}>28,500 m³/s</td>
-                <td style={{ padding: "8px 10px", color: "#38bdf8" }}>T+95:00</td>
-                <td style={{ padding: "8px 10px", color: "#cbd5e1" }}>12:39</td>
-                <td style={{ padding: "8px 10px", color: "#cbd5e1" }}>03:00</td>
-                <td style={{ padding: "8px 10px", fontWeight: 800, color: "#4ade80" }}>T+79:21</td>
-                <td style={{ padding: "8px 10px", color: "#ef4444" }}>R02-E07</td>
-                <td style={{ padding: "8px 10px", color: "#4ade80", fontWeight: 800 }}>FEASIBLE (+35m margin)</td>
+              <tr style={{ borderBottom: "1px solid var(--jr-border-subtle, #E8E2D7)" }}>
+                <td style={{ padding: "8px 10px", fontWeight: 700, color: "var(--jr-blue-800, #24566A)" }}>MINIMUM BREACH</td>
+                <td style={{ padding: "8px 10px" }}>28,500 m³/s</td>
+                <td style={{ padding: "8px 10px", color: "var(--jr-blue-800, #24566A)" }}>T+95:00</td>
+                <td style={{ padding: "8px 10px" }}>12:39</td>
+                <td style={{ padding: "8px 10px" }}>03:00</td>
+                <td style={{ padding: "8px 10px", fontWeight: 800, color: "var(--status-feasible-text, #2C634B)" }}>T+79:21</td>
+                <td style={{ padding: "8px 10px", color: "var(--jr-danger, #A84C4C)" }}>R02-E07</td>
+                <td style={{ padding: "8px 10px", color: "var(--status-feasible-text, #2C634B)", fontWeight: 800 }}>FEASIBLE (+35m margin)</td>
               </tr>
-              <tr style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.04)", backgroundColor: "rgba(56, 189, 248, 0.05)" }}>
-                <td style={{ padding: "8px 10px", fontWeight: 700, color: "#ffffff" }}>CENTRAL (BASELINE)</td>
-                <td style={{ padding: "8px 10px", color: "#cbd5e1" }}>65,000 m³/s</td>
-                <td style={{ padding: "8px 10px", color: "#38bdf8" }}>T+60:00</td>
-                <td style={{ padding: "8px 10px", color: "#cbd5e1" }}>12:39</td>
-                <td style={{ padding: "8px 10px", color: "#cbd5e1" }}>03:00</td>
-                <td style={{ padding: "8px 10px", fontWeight: 800, color: "#38bdf8" }}>T+44:21</td>
-                <td style={{ padding: "8px 10px", color: "#ef4444" }}>R02-E07</td>
-                <td style={{ padding: "8px 10px", color: "#38bdf8", fontWeight: 800 }}>FEASIBLE (Baseline)</td>
+              <tr style={{ borderBottom: "1px solid var(--jr-border-subtle, #E8E2D7)", backgroundColor: "var(--jr-blue-50, #EAF6FB)" }}>
+                <td style={{ padding: "8px 10px", fontWeight: 700, color: "var(--jr-blue-800, #24566A)" }}>CENTRAL (BASELINE)</td>
+                <td style={{ padding: "8px 10px" }}>65,000 m³/s</td>
+                <td style={{ padding: "8px 10px", color: "var(--jr-blue-800, #24566A)" }}>T+60:00</td>
+                <td style={{ padding: "8px 10px" }}>12:39</td>
+                <td style={{ padding: "8px 10px" }}>03:00</td>
+                <td style={{ padding: "8px 10px", fontWeight: 800, color: "var(--jr-blue-800, #24566A)" }}>T+44:21</td>
+                <td style={{ padding: "8px 10px", color: "var(--jr-danger, #A84C4C)" }}>R02-E07</td>
+                <td style={{ padding: "8px 10px", color: "var(--status-feasible-text, #2C634B)", fontWeight: 800 }}>FEASIBLE (Baseline)</td>
               </tr>
-              <tr style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.04)" }}>
-                <td style={{ padding: "8px 10px", fontWeight: 700, color: "#f87171" }}>MAXIMUM OVERTOPPING</td>
-                <td style={{ padding: "8px 10px", color: "#cbd5e1" }}>115,000 m³/s</td>
-                <td style={{ padding: "8px 10px", color: "#38bdf8" }}>T+45:00</td>
-                <td style={{ padding: "8px 10px", color: "#cbd5e1" }}>12:39</td>
-                <td style={{ padding: "8px 10px", color: "#cbd5e1" }}>03:00</td>
-                <td style={{ padding: "8px 10px", fontWeight: 800, color: "#fbbf24" }}>T+29:21</td>
-                <td style={{ padding: "8px 10px", color: "#ef4444" }}>R02-E07</td>
-                <td style={{ padding: "8px 10px", color: "#fbbf24", fontWeight: 800 }}>LOW MARGIN (-15m delta)</td>
+              <tr style={{ borderBottom: "1px solid var(--jr-border-subtle, #E8E2D7)" }}>
+                <td style={{ padding: "8px 10px", fontWeight: 700, color: "var(--jr-danger, #A84C4C)" }}>MAXIMUM OVERTOPPING</td>
+                <td style={{ padding: "8px 10px" }}>115,000 m³/s</td>
+                <td style={{ padding: "8px 10px", color: "var(--jr-blue-800, #24566A)" }}>T+45:00</td>
+                <td style={{ padding: "8px 10px" }}>12:39</td>
+                <td style={{ padding: "8px 10px" }}>03:00</td>
+                <td style={{ padding: "8px 10px", fontWeight: 800, color: "var(--status-lowmargin-text, #825820)" }}>T+29:21</td>
+                <td style={{ padding: "8px 10px", color: "var(--jr-danger, #A84C4C)" }}>R02-E07</td>
+                <td style={{ padding: "8px 10px", color: "var(--status-lowmargin-text, #825820)", fontWeight: 800 }}>LOW MARGIN (-15m delta)</td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        {/* Operational Model Assumptions & Limitations (Feature 3 & 6) */}
+        {/* Operational Assumptions & Boundary Limitations */}
         <div style={{
           display: "grid",
           gridTemplateColumns: "1fr 1fr",
@@ -369,37 +371,39 @@ export const EvacuationDecisionView: React.FC<EvacuationDecisionViewProps> = ({
         }}>
           {/* Configured Assumptions */}
           <div style={{
-            backgroundColor: "#0b1120",
+            backgroundColor: "var(--jr-blue-50, #EAF6FB)",
             borderRadius: "8px",
-            border: "1px solid rgba(56, 189, 248, 0.3)",
+            border: "1px solid var(--jr-blue-200, #B9DDEB)",
             padding: "16px"
           }}>
-            <div style={{ fontSize: "11px", fontWeight: 800, color: "#38bdf8", textTransform: "uppercase", marginBottom: "8px" }}>
+            <div style={{ fontSize: "11px", fontWeight: 800, color: "var(--jr-blue-800, #24566A)", textTransform: "uppercase", marginBottom: "8px", display: "flex", alignItems: "center", gap: "6px" }}>
+              <ShieldCheck size={14} />
               Configured Operational Model Assumptions
             </div>
-            <ul style={{ fontSize: "11.5px", color: "#cbd5e1", lineHeight: "1.6", margin: 0, paddingLeft: "16px" }}>
-              <li><strong>Vehicle Evacuation Speed:</strong> Configured static 50 km/h (13.89 m/s).</li>
-              <li><strong>Safety Clearance Buffer:</strong> Configured 3.0 min (180 s) staging allowance.</li>
-              <li><strong>Flood Critical Threshold:</strong> Water depth h &ge; 0.30 m or velocity v &ge; 1.0 m/s.</li>
-              <li><strong>Road Coupling:</strong> 150m perpendicular corridor with &le;50m point densification.</li>
+            <ul style={{ fontSize: "11.5px", color: "var(--jr-text, #24343A)", lineHeight: "1.6", margin: 0, paddingLeft: "16px" }}>
+              <li><strong>Vehicle Travel Speed:</strong> 50 km/h (CONFIGURED ASSUMPTION).</li>
+              <li><strong>Emergency Safety Buffer:</strong> 3.0 min (180 s) (CONFIGURED ASSUMPTION).</li>
+              <li><strong>Flood Arrival Criterion:</strong> Water depth h &ge; 0.30 m or velocity v &ge; 1.0 m/s.</li>
+              <li><strong>Road Coupling:</strong> 150m corridor envelope with &le;50m LineString vertex densification.</li>
             </ul>
           </div>
 
           {/* Model Limitations & Scientific Qualification */}
           <div style={{
-            backgroundColor: "#0b1120",
+            backgroundColor: "var(--status-lowmargin-bg, #FCF4E7)",
             borderRadius: "8px",
-            border: "1px solid rgba(245, 158, 11, 0.3)",
+            border: "1px solid var(--status-lowmargin-border, #E8C895)",
             padding: "16px"
           }}>
-            <div style={{ fontSize: "11px", fontWeight: 800, color: "#fbbf24", textTransform: "uppercase", marginBottom: "8px" }}>
-              Model Limitations & Boundary Disclaimers
+            <div style={{ fontSize: "11px", fontWeight: 800, color: "var(--status-lowmargin-text, #825820)", textTransform: "uppercase", marginBottom: "8px", display: "flex", alignItems: "center", gap: "6px" }}>
+              <AlertTriangle size={14} />
+              Explicit Limitations & Boundary Disclaimers
             </div>
-            <ul style={{ fontSize: "11.5px", color: "#cbd5e1", lineHeight: "1.6", margin: 0, paddingLeft: "16px" }}>
-              <li><strong>Traffic Dynamics:</strong> Dynamic traffic congestion and panic queues are unmodelled.</li>
-              <li><strong>Physical Safety:</strong> FEASIBLE status indicates clearance under declared equations, not physical guarantee.</li>
-              <li><strong>Terrain:</strong> Copernicus GLO-30 is a DSM containing forest canopy and structures.</li>
-              <li><strong>Validation:</strong> Forward simulation from USACE HEC-RAS; physical Tehri breach uncalibrated.</li>
+            <ul style={{ fontSize: "11.5px", color: "var(--jr-text, #24343A)", lineHeight: "1.6", margin: 0, paddingLeft: "16px" }}>
+              <li><strong>No Dynamic Traffic Model:</strong> Traffic congestion and vehicle breakdown are unmodelled.</li>
+              <li><strong>No Physical Safety Guarantee:</strong> FEASIBLE status denotes clearance under declared equations.</li>
+              <li><strong>Terrain Source:</strong> Copernicus GLO-30 DSM contains surface canopy; vertical datum not field established.</li>
+              <li><strong>Solver Provenance:</strong> USACE HEC-RAS 2D unsteady forward simulation; SHA-256 verifies artifact integrity.</li>
             </ul>
           </div>
         </div>

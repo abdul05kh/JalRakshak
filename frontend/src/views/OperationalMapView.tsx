@@ -66,7 +66,7 @@ export const OperationalMapView: React.FC<OperationalMapViewProps> = ({
   ];
 
   return (
-    <div style={{ position: "relative", width: "100%", height: "100%", overflow: "hidden", backgroundColor: "#090d16" }}>
+    <div style={{ position: "relative", width: "100%", height: "100%", overflow: "hidden", backgroundColor: "var(--jr-bg, #F4EFE6)" }}>
       {/* 1. Primary 3D Geospatial Map Viewport (Occupies 100% of container) */}
       <MapView
         roads={roads}
@@ -104,19 +104,19 @@ export const OperationalMapView: React.FC<OperationalMapViewProps> = ({
           left: "50%",
           transform: "translateX(-50%)",
           zIndex: 800,
-          backgroundColor: "rgba(15, 23, 42, 0.90)",
+          backgroundColor: "rgba(251, 248, 242, 0.95)",
           backdropFilter: "blur(10px)",
-          border: "1px solid rgba(255, 255, 255, 0.12)",
+          border: "1px solid var(--jr-border, #D8D1C5)",
           borderRadius: "8px",
           padding: "4px 6px",
           display: "flex",
           alignItems: "center",
           gap: "4px",
-          boxShadow: "0 8px 24px rgba(0,0,0,0.4)"
+          boxShadow: "0 4px 16px rgba(36, 52, 58, 0.12)"
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "4px", padding: "0 6px", borderRight: "1px solid rgba(255,255,255,0.15)", color: "#94a3b8", fontSize: "10px", fontWeight: 800, flexShrink: 0 }}>
-          <Video size={12} color="#38bdf8" />
+        <div style={{ display: "flex", alignItems: "center", gap: "4px", padding: "0 6px", borderRight: "1px solid var(--jr-border, #D8D1C5)", color: "var(--jr-text-muted, #65747A)", fontSize: "10px", fontWeight: 800, flexShrink: 0 }}>
+          <Video size={12} color="var(--jr-blue-600, #3D8EAE)" />
           <span>CAMERA:</span>
         </div>
         {cameraButtons.map((btn) => {
@@ -128,9 +128,9 @@ export const OperationalMapView: React.FC<OperationalMapViewProps> = ({
               style={{
                 padding: "4px 8px",
                 borderRadius: "5px",
-                border: isActive ? "1px solid #38bdf8" : "1px solid transparent",
-                backgroundColor: isActive ? "rgba(56, 189, 248, 0.2)" : "transparent",
-                color: isActive ? "#ffffff" : "#cbd5e1",
+                border: isActive ? "1px solid var(--jr-blue-600, #3D8EAE)" : "1px solid transparent",
+                backgroundColor: isActive ? "var(--jr-blue-100, #D9EEF7)" : "transparent",
+                color: isActive ? "var(--jr-blue-800, #24566A)" : "var(--jr-text, #24343A)",
                 fontSize: "10px",
                 fontWeight: isActive ? 800 : 600,
                 cursor: "pointer",
@@ -164,30 +164,30 @@ export const OperationalMapView: React.FC<OperationalMapViewProps> = ({
           top: "14px",
           right: "14px",
           zIndex: 800,
-          backgroundColor: "rgba(15, 23, 42, 0.92)",
+          backgroundColor: "rgba(251, 248, 242, 0.95)",
           backdropFilter: "blur(12px)",
-          border: "1px solid rgba(255, 255, 255, 0.14)",
+          border: "1px solid var(--jr-border, #D8D1C5)",
           borderRadius: "8px",
           padding: "10px 12px",
           width: "195px",
-          color: "#f8fafc",
+          color: "var(--jr-text, #24343A)",
           fontSize: "10.5px",
           display: "flex",
           flexDirection: "column",
           gap: "8px",
-          boxShadow: "0 10px 25px rgba(0,0,0,0.4)"
+          boxShadow: "0 6px 20px rgba(36, 52, 58, 0.12)"
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontWeight: 800, borderBottom: "1px solid rgba(255,255,255,0.1)", paddingBottom: "5px" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontWeight: 800, borderBottom: "1px solid var(--jr-border, #D8D1C5)", paddingBottom: "5px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-            <Layers size={13} color="#38bdf8" />
+            <Layers size={13} color="var(--jr-blue-600, #3D8EAE)" />
             <span>3D LAYERS</span>
           </div>
         </div>
 
         {/* Basemap Selection */}
         <div>
-          <div style={{ fontSize: "9px", fontWeight: 800, color: "#94a3b8", textTransform: "uppercase", marginBottom: "3px" }}>
+          <div style={{ fontSize: "9px", fontWeight: 800, color: "var(--jr-text-muted, #65747A)", textTransform: "uppercase", marginBottom: "3px" }}>
             Basemap
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "3px" }}>
@@ -204,9 +204,9 @@ export const OperationalMapView: React.FC<OperationalMapViewProps> = ({
                   style={{
                     padding: "4px 6px",
                     borderRadius: "4px",
-                    border: isActive ? "1px solid #38bdf8" : "1px solid rgba(255,255,255,0.06)",
-                    backgroundColor: isActive ? "rgba(56, 189, 248, 0.25)" : "rgba(30, 41, 59, 0.4)",
-                    color: isActive ? "#ffffff" : "#94a3b8",
+                    border: isActive ? "1px solid var(--jr-blue-600, #3D8EAE)" : "1px solid var(--jr-border-subtle, #E8E2D7)",
+                    backgroundColor: isActive ? "var(--jr-blue-100, #D9EEF7)" : "var(--jr-surface-alt, #EDE7DC)",
+                    color: isActive ? "var(--jr-blue-800, #24566A)" : "var(--jr-text-muted, #65747A)",
                     fontSize: "9px",
                     fontWeight: isActive ? 800 : 600,
                     textAlign: "center",
@@ -221,15 +221,15 @@ export const OperationalMapView: React.FC<OperationalMapViewProps> = ({
         </div>
 
         {/* Hydraulic Display Mode */}
-        <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: "4px" }}>
-          <div style={{ fontSize: "9px", fontWeight: 800, color: "#94a3b8", textTransform: "uppercase", marginBottom: "3px" }}>
+        <div style={{ borderTop: "1px solid var(--jr-border-subtle, #E8E2D7)", paddingTop: "4px" }}>
+          <div style={{ fontSize: "9px", fontWeight: 800, color: "var(--jr-text-muted, #65747A)", textTransform: "uppercase", marginBottom: "3px" }}>
             HEC-RAS Hydraulics
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
             {[
               { id: "EXTENT", label: "● EXTENT ONLY" },
               { id: "DEPTH", label: "● 3D WATER DEPTH" },
-              { id: "ARRIVAL", label: "● ARRIVAL TIME CONTOURS" }
+              { id: "ARRIVAL", label: "● ARRIVAL CONTOURS" }
             ].map((m) => {
               const isActive = thematicMode === m.id;
               return (
@@ -239,9 +239,9 @@ export const OperationalMapView: React.FC<OperationalMapViewProps> = ({
                   style={{
                     padding: "3px 6px",
                     borderRadius: "4px",
-                    border: isActive ? "1px solid #38bdf8" : "1px solid transparent",
-                    backgroundColor: isActive ? "rgba(56, 189, 248, 0.25)" : "transparent",
-                    color: isActive ? "#ffffff" : "#94a3b8",
+                    border: isActive ? "1px solid var(--jr-blue-600, #3D8EAE)" : "1px solid transparent",
+                    backgroundColor: isActive ? "var(--jr-blue-100, #D9EEF7)" : "transparent",
+                    color: isActive ? "var(--jr-blue-800, #24566A)" : "var(--jr-text-muted, #65747A)",
                     fontSize: "9.5px",
                     fontWeight: isActive ? 800 : 500,
                     textAlign: "left",
@@ -255,9 +255,9 @@ export const OperationalMapView: React.FC<OperationalMapViewProps> = ({
           </div>
         </div>
 
-        {/* Critical Infrastructure Toggle (Hospitals, Shelters, Settlements) */}
-        <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: "4px" }}>
-          <div style={{ fontSize: "9px", fontWeight: 800, color: "#94a3b8", textTransform: "uppercase", marginBottom: "3px" }}>
+        {/* Critical Infrastructure Toggle */}
+        <div style={{ borderTop: "1px solid var(--jr-border-subtle, #E8E2D7)", paddingTop: "4px" }}>
+          <div style={{ fontSize: "9px", fontWeight: 800, color: "var(--jr-text-muted, #65747A)", textTransform: "uppercase", marginBottom: "3px" }}>
             Facilities & Shelters
           </div>
           <button
@@ -267,8 +267,8 @@ export const OperationalMapView: React.FC<OperationalMapViewProps> = ({
               padding: "3px 6px",
               borderRadius: "4px",
               border: "1px solid transparent",
-              backgroundColor: showInfrastructure ? "rgba(236, 72, 153, 0.18)" : "transparent",
-              color: showInfrastructure ? "#f472b6" : "#94a3b8",
+              backgroundColor: showInfrastructure ? "var(--jr-surface-alt, #EDE7DC)" : "transparent",
+              color: showInfrastructure ? "var(--jr-blue-800, #24566A)" : "var(--jr-text-muted, #65747A)",
               fontSize: "10px",
               fontWeight: 700,
               display: "flex",
@@ -283,8 +283,8 @@ export const OperationalMapView: React.FC<OperationalMapViewProps> = ({
         </div>
 
         {/* Roads Layer Toggle */}
-        <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: "4px" }}>
-          <div style={{ fontSize: "9px", fontWeight: 800, color: "#94a3b8", textTransform: "uppercase", marginBottom: "3px" }}>
+        <div style={{ borderTop: "1px solid var(--jr-border-subtle, #E8E2D7)", paddingTop: "4px" }}>
+          <div style={{ fontSize: "9px", fontWeight: 800, color: "var(--jr-text-muted, #65747A)", textTransform: "uppercase", marginBottom: "3px" }}>
             Road Corridors
           </div>
           <button
@@ -294,8 +294,8 @@ export const OperationalMapView: React.FC<OperationalMapViewProps> = ({
               padding: "3px 6px",
               borderRadius: "4px",
               border: "1px solid transparent",
-              backgroundColor: showAllRoads ? "rgba(34, 197, 94, 0.15)" : "transparent",
-              color: showAllRoads ? "#4ade80" : "#94a3b8",
+              backgroundColor: showAllRoads ? "var(--status-feasible-bg, #E8F4EE)" : "transparent",
+              color: showAllRoads ? "var(--status-feasible-text, #2C634B)" : "var(--jr-text-muted, #65747A)",
               fontSize: "10px",
               fontWeight: 700,
               display: "flex",
@@ -310,8 +310,8 @@ export const OperationalMapView: React.FC<OperationalMapViewProps> = ({
         </div>
 
         {/* Terrain Layer Toggle */}
-        <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: "4px" }}>
-          <div style={{ fontSize: "9px", fontWeight: 800, color: "#94a3b8", textTransform: "uppercase", marginBottom: "3px" }}>
+        <div style={{ borderTop: "1px solid var(--jr-border-subtle, #E8E2D7)", paddingTop: "4px" }}>
+          <div style={{ fontSize: "9px", fontWeight: 800, color: "var(--jr-text-muted, #65747A)", textTransform: "uppercase", marginBottom: "3px" }}>
             3D Terrain Relief
           </div>
           <button
@@ -321,8 +321,8 @@ export const OperationalMapView: React.FC<OperationalMapViewProps> = ({
               padding: "3px 6px",
               borderRadius: "4px",
               border: "1px solid transparent",
-              backgroundColor: showTerrain ? "rgba(56, 189, 248, 0.15)" : "transparent",
-              color: showTerrain ? "#38bdf8" : "#94a3b8",
+              backgroundColor: showTerrain ? "var(--jr-blue-50, #EAF6FB)" : "transparent",
+              color: showTerrain ? "var(--jr-blue-800, #24566A)" : "var(--jr-text-muted, #65747A)",
               fontSize: "10px",
               fontWeight: 700,
               display: "flex",
@@ -362,38 +362,39 @@ export const OperationalMapView: React.FC<OperationalMapViewProps> = ({
         bottom: "16px",
         left: "14px",
         zIndex: 800,
-        backgroundColor: "rgba(15, 23, 42, 0.90)",
+        backgroundColor: "rgba(251, 248, 242, 0.95)",
         backdropFilter: "blur(10px)",
-        border: "1px solid rgba(255, 255, 255, 0.12)",
+        border: "1px solid var(--jr-border, #D8D1C5)",
         borderRadius: "8px",
         padding: "8px 10px",
         fontSize: "10px",
         display: "flex",
         flexDirection: "column",
         gap: "4px",
-        color: "#cbd5e1"
+        color: "var(--jr-text, #24343A)",
+        boxShadow: "0 4px 12px rgba(36, 52, 58, 0.10)"
       }}>
-        <div style={{ fontWeight: 800, fontSize: "9px", color: "#94a3b8", textTransform: "uppercase", marginBottom: "1px" }}>
+        <div style={{ fontWeight: 800, fontSize: "9px", color: "var(--jr-text-muted, #65747A)", textTransform: "uppercase", marginBottom: "1px" }}>
           MAP LEGEND
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-          <span style={{ width: "12px", height: "3px", backgroundColor: "#ef4444", borderRadius: "1px" }} />
+          <span style={{ width: "12px", height: "3px", backgroundColor: "var(--jr-danger, #A84C4C)", borderRadius: "1px" }} />
           <span>Limiting Segment (R02-E07)</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-          <span style={{ width: "12px", height: "3px", backgroundColor: "#0284c7", borderRadius: "1px" }} />
+          <span style={{ width: "12px", height: "3px", backgroundColor: "var(--jr-blue-600, #3D8EAE)", borderRadius: "1px" }} />
           <span>Evacuation Route (R02)</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-          <span style={{ width: "10px", height: "8px", backgroundColor: "rgba(14, 165, 233, 0.7)", border: "1px solid #38bdf8", borderRadius: "2px" }} />
+          <span style={{ width: "10px", height: "8px", backgroundColor: "rgba(118, 184, 208, 0.7)", border: "1px solid var(--jr-blue-400, #76B8D0)", borderRadius: "2px" }} />
           <span>Flood Hazard (h &ge; 0.30m)</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-          <span style={{ width: "7px", height: "7px", backgroundColor: "#4ade80", transform: "rotate(45deg)", display: "inline-block" }} />
+          <span style={{ width: "7px", height: "7px", backgroundColor: "var(--status-feasible-text, #2C634B)", transform: "rotate(45deg)", display: "inline-block" }} />
           <span>Designated Safe Shelter</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-          <span style={{ width: "7px", height: "7px", backgroundColor: "#fbbf24", borderRadius: "50%", display: "inline-block" }} />
+          <span style={{ width: "7px", height: "7px", backgroundColor: "var(--status-lowmargin-text, #825820)", borderRadius: "50%", display: "inline-block" }} />
           <span>Settlement Origin</span>
         </div>
       </div>

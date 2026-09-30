@@ -26,9 +26,9 @@ export const PostSubmissionNoticeModal: React.FC<PostSubmissionNoticeModalProps>
       alignItems: "center",
       justifyContent: "center",
       padding: "16px",
-      backgroundColor: "rgba(15, 23, 42, 0.85)",
-      backdropFilter: "blur(8px)",
-      WebkitBackdropFilter: "blur(8px)"
+      backgroundColor: "rgba(36, 52, 58, 0.65)",
+      backdropFilter: "blur(6px)",
+      WebkitBackdropFilter: "blur(6px)"
     }}>
       <div 
         style={{
@@ -38,11 +38,11 @@ export const PostSubmissionNoticeModal: React.FC<PostSubmissionNoticeModalProps>
           maxHeight: "90vh",
           display: "flex",
           flexDirection: "column",
-          backgroundColor: "#0f172a",
-          border: "2px solid #f59e0b",
-          borderRadius: "16px",
-          boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 30px rgba(245, 158, 11, 0.2)",
-          color: "#f8fafc",
+          backgroundColor: "var(--jr-surface, #FBF8F2)",
+          border: "2px solid var(--jr-warning, #A97835)",
+          borderRadius: "14px",
+          boxShadow: "0 20px 40px rgba(36, 52, 58, 0.25)",
+          color: "var(--jr-text, #24343A)",
           overflow: "hidden"
         }}
         role="dialog"
@@ -55,8 +55,8 @@ export const PostSubmissionNoticeModal: React.FC<PostSubmissionNoticeModalProps>
           alignItems: "center",
           justifyContent: "space-between",
           padding: "16px 24px",
-          backgroundColor: "#1e293b",
-          borderBottom: "1px solid rgba(245, 158, 11, 0.3)"
+          backgroundColor: "var(--jr-surface-alt, #EDE7DC)",
+          borderBottom: "1px solid var(--jr-border, #D8D1C5)"
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
             <span style={{
@@ -66,18 +66,18 @@ export const PostSubmissionNoticeModal: React.FC<PostSubmissionNoticeModalProps>
               width: "36px",
               height: "36px",
               borderRadius: "8px",
-              backgroundColor: "rgba(245, 158, 11, 0.15)",
-              color: "#fbbf24",
-              border: "1px solid rgba(245, 158, 11, 0.4)",
+              backgroundColor: "var(--status-lowmargin-bg, #FCF4E7)",
+              color: "var(--status-lowmargin-text, #825820)",
+              border: "1px solid var(--status-lowmargin-border, #E8C895)",
               flexShrink: 0
             }}>
               <AlertTriangle size={20} />
             </span>
             <div>
-              <div style={{ fontSize: "11px", fontWeight: 800, letterSpacing: "1px", color: "#fbbf24", textTransform: "uppercase" }}>
+              <div style={{ fontSize: "11px", fontWeight: 800, letterSpacing: "1px", color: "var(--status-lowmargin-text, #825820)", textTransform: "uppercase" }}>
                 Smart India Hackathon 2026 — SIH26161
               </div>
-              <h2 id="modal-headline" style={{ fontSize: "16px", fontWeight: 900, letterSpacing: "0.2px", color: "#ffffff", margin: 0 }}>
+              <h2 id="modal-headline" style={{ fontSize: "16px", fontWeight: 900, letterSpacing: "0.2px", color: "var(--jr-text, #24343A)", margin: 0 }}>
                 POST-SUBMISSION TECHNICAL UPDATE & DISCLOSURE
               </h2>
             </div>
@@ -86,7 +86,7 @@ export const PostSubmissionNoticeModal: React.FC<PostSubmissionNoticeModalProps>
             onClick={onClose}
             style={{
               padding: "8px",
-              color: "#94a3b8",
+              color: "var(--jr-text-muted, #65747A)",
               backgroundColor: "transparent",
               border: "none",
               borderRadius: "8px",
@@ -98,7 +98,7 @@ export const PostSubmissionNoticeModal: React.FC<PostSubmissionNoticeModalProps>
             title="Dismiss to Prototype"
             aria-label="Close modal"
           >
-            <X size={20} color="#cbd5e1" />
+            <X size={20} color="var(--jr-text, #24343A)" />
           </button>
         </div>
 
@@ -112,26 +112,26 @@ export const PostSubmissionNoticeModal: React.FC<PostSubmissionNoticeModalProps>
           gap: "20px",
           fontSize: "13px",
           lineHeight: "1.6",
-          color: "#e2e8f0"
+          color: "var(--jr-text, #24343A)"
         }}>
           {/* Central Callout Banner */}
           <div style={{
             padding: "18px 20px",
-            borderRadius: "12px",
-            backgroundColor: "rgba(245, 158, 11, 0.08)",
-            border: "1px solid rgba(245, 158, 11, 0.35)",
+            borderRadius: "10px",
+            backgroundColor: "var(--status-lowmargin-bg, #FCF4E7)",
+            border: "1px solid var(--status-lowmargin-border, #E8C895)",
             display: "flex",
             flexDirection: "column",
             gap: "10px"
           }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "#fbbf24", fontWeight: 800, fontSize: "12px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "var(--status-lowmargin-text, #825820)", fontWeight: 800, fontSize: "12px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
               <ShieldAlert size={16} />
               Important Clarification for Reviewers & Jury
             </div>
-            <p style={{ fontWeight: 800, color: "#ffffff", fontSize: "15px", margin: 0 }}>
+            <p style={{ fontWeight: 800, color: "var(--jr-text, #24343A)", fontSize: "15px", margin: 0 }}>
               THE SUBMITTED PRESENTATION REPRESENTS OUR INITIAL INTERPRETATION OF SIH26161.
             </p>
-            <p style={{ color: "#cbd5e1", fontSize: "13px", margin: 0 }}>
+            <p style={{ color: "var(--jr-text, #24343A)", fontSize: "13px", margin: 0 }}>
               The submitted PPT represents our initial interpretation of SIH26161.
               After submission, we identified that our interpretation did not fully capture the breadth of the problem statement.
               We acknowledge that gap. We subsequently revisited the problem and substantially improved the prototype.
@@ -140,10 +140,10 @@ export const PostSubmissionNoticeModal: React.FC<PostSubmissionNoticeModalProps>
             <div style={{
               padding: "10px 14px",
               borderRadius: "8px",
-              backgroundColor: "rgba(15, 23, 42, 0.8)",
-              border: "1px solid rgba(245, 158, 11, 0.3)",
+              backgroundColor: "var(--jr-surface, #FBF8F2)",
+              border: "1px solid var(--status-lowmargin-border, #E8C895)",
               fontSize: "12px",
-              color: "#fde68a",
+              color: "var(--status-lowmargin-text, #825820)",
               fontWeight: 600
             }}>
               ⚠️ <strong>Important:</strong> This is a post-submission technical update. It does not constitute a revised SIH submission. The submitted PPT remains unchanged; this repository documents technical development undertaken after submission.
@@ -158,15 +158,15 @@ export const PostSubmissionNoticeModal: React.FC<PostSubmissionNoticeModalProps>
           }}>
             <div style={{
               padding: "16px",
-              borderRadius: "12px",
-              backgroundColor: "#1e293b",
-              border: "1px solid #334155"
+              borderRadius: "10px",
+              backgroundColor: "var(--jr-surface-alt, #EDE7DC)",
+              border: "1px solid var(--jr-border, #D8D1C5)"
             }}>
-              <div style={{ fontSize: "11px", fontWeight: 800, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "10px", display: "flex", alignItems: "center", gap: "6px" }}>
-                <span style={{ width: "8px", height: "8px", borderRadius: "50%", backgroundColor: "#64748b" }}></span>
+              <div style={{ fontSize: "11px", fontWeight: 800, color: "var(--jr-text-muted, #65747A)", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "10px", display: "flex", alignItems: "center", gap: "6px" }}>
+                <span style={{ width: "8px", height: "8px", borderRadius: "50%", backgroundColor: "var(--jr-text-muted, #65747A)" }}></span>
                 Submitted State (Initial Stage)
               </div>
-              <ul style={{ fontSize: "12px", color: "#cbd5e1", margin: 0, paddingLeft: "18px", display: "flex", flexDirection: "column", gap: "6px" }}>
+              <ul style={{ fontSize: "12px", color: "var(--jr-text, #24343A)", margin: 0, paddingLeft: "18px", display: "flex", flexDirection: "column", gap: "6px" }}>
                 <li>Narrower focus on dam-break flood visualization</li>
                 <li>Single-dam hydraulic flood rendering</li>
                 <li>Basic evacuation concept without deterministic route lineage</li>
@@ -177,15 +177,15 @@ export const PostSubmissionNoticeModal: React.FC<PostSubmissionNoticeModalProps>
 
             <div style={{
               padding: "16px",
-              borderRadius: "12px",
-              backgroundColor: "rgba(14, 116, 144, 0.15)",
-              border: "1px solid rgba(6, 182, 212, 0.4)"
+              borderRadius: "10px",
+              backgroundColor: "var(--jr-blue-50, #EAF6FB)",
+              border: "1px solid var(--jr-blue-200, #B9DDEB)"
             }}>
-              <div style={{ fontSize: "11px", fontWeight: 800, color: "#38bdf8", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "10px", display: "flex", alignItems: "center", gap: "6px" }}>
-                <Sparkles size={14} color="#38bdf8" />
+              <div style={{ fontSize: "11px", fontWeight: 800, color: "var(--jr-blue-800, #24566A)", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "10px", display: "flex", alignItems: "center", gap: "6px" }}>
+                <Sparkles size={14} color="var(--jr-blue-600, #3D8EAE)" />
                 Current Prototype (Post-Submission Advancement)
               </div>
-              <ul style={{ fontSize: "12px", color: "#e0f2fe", margin: 0, paddingLeft: "18px", display: "flex", flexDirection: "column", gap: "6px" }}>
+              <ul style={{ fontSize: "12px", color: "var(--jr-text, #24343A)", margin: 0, paddingLeft: "18px", display: "flex", flexDirection: "column", gap: "6px" }}>
                 <li>Native HEC-RAS 2D HDF5 hydraulic results ingestion</li>
                 <li>Deterministic Evacuation Window Engine (EWE: departure deadline calculation)</li>
                 <li>Scenario isolation and data-driven loading verified on synthetic test worlds</li>
@@ -198,8 +198,8 @@ export const PostSubmissionNoticeModal: React.FC<PostSubmissionNoticeModalProps>
 
           {/* Verified Capabilities Checklist */}
           <div>
-            <h3 style={{ fontSize: "12px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.5px", color: "#cbd5e1", marginBottom: "12px", display: "flex", alignItems: "center", gap: "8px" }}>
-              <CheckCircle size={16} color="#34d399" />
+            <h3 style={{ fontSize: "12px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.5px", color: "var(--jr-text, #24343A)", marginBottom: "12px", display: "flex", alignItems: "center", gap: "8px" }}>
+              <CheckCircle size={16} color="var(--status-feasible-text, #2C634B)" />
               Verified Engineering Capabilities
             </h3>
             <div style={{
@@ -207,23 +207,23 @@ export const PostSubmissionNoticeModal: React.FC<PostSubmissionNoticeModalProps>
               gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
               gap: "10px",
               fontSize: "12px",
-              color: "#e2e8f0"
+              color: "var(--jr-text, #24343A)"
             }}>
-              <div style={{ display: "flex", alignItems: "flex-start", gap: "8px", backgroundColor: "#1e293b", padding: "12px", borderRadius: "8px", border: "1px solid #334155" }}>
-                <span style={{ color: "#34d399", fontWeight: 800 }}>✓</span>
-                <span><strong style={{ color: "#ffffff" }}>HEC-RAS 2D Ingestion:</strong> Ingests native 2D shallow water equation outputs across 740+ cells.</span>
+              <div style={{ display: "flex", alignItems: "flex-start", gap: "8px", backgroundColor: "var(--jr-surface-alt, #EDE7DC)", padding: "12px", borderRadius: "8px", border: "1px solid var(--jr-border, #D8D1C5)" }}>
+                <span style={{ color: "var(--status-feasible-text, #2C634B)", fontWeight: 800 }}>✓</span>
+                <span><strong style={{ color: "var(--jr-text, #24343A)" }}>HEC-RAS 2D Ingestion:</strong> Ingests native 2D shallow water equation outputs across 740+ cells.</span>
               </div>
-              <div style={{ display: "flex", alignItems: "flex-start", gap: "8px", backgroundColor: "#1e293b", padding: "12px", borderRadius: "8px", border: "1px solid #334155" }}>
-                <span style={{ color: "#34d399", fontWeight: 800 }}>✓</span>
-                <span><strong style={{ color: "#ffffff" }}>Deterministic EWE:</strong> D = min(A_i - T_i - B) calculates exact limiting bottleneck segment.</span>
+              <div style={{ display: "flex", alignItems: "flex-start", gap: "8px", backgroundColor: "var(--jr-surface-alt, #EDE7DC)", padding: "12px", borderRadius: "8px", border: "1px solid var(--jr-border, #D8D1C5)" }}>
+                <span style={{ color: "var(--status-feasible-text, #2C634B)", fontWeight: 800 }}>✓</span>
+                <span><strong style={{ color: "var(--jr-text, #24343A)" }}>Deterministic EWE:</strong> D = min(A_i - T_i - B) calculates exact limiting bottleneck segment.</span>
               </div>
-              <div style={{ display: "flex", alignItems: "flex-start", gap: "8px", backgroundColor: "#1e293b", padding: "12px", borderRadius: "8px", border: "1px solid #334155" }}>
-                <span style={{ color: "#34d399", fontWeight: 800 }}>✓</span>
-                <span><strong style={{ color: "#ffffff" }}>Spatial Comparator:</strong> Spatial-comparison metrics including IoU, precision, recall, and F1.</span>
+              <div style={{ display: "flex", alignItems: "flex-start", gap: "8px", backgroundColor: "var(--jr-surface-alt, #EDE7DC)", padding: "12px", borderRadius: "8px", border: "1px solid var(--jr-border, #D8D1C5)" }}>
+                <span style={{ color: "var(--status-feasible-text, #2C634B)", fontWeight: 800 }}>✓</span>
+                <span><strong style={{ color: "var(--jr-text, #24343A)" }}>Spatial Comparator:</strong> Spatial-comparison metrics including IoU, precision, recall, and F1.</span>
               </div>
-              <div style={{ display: "flex", alignItems: "flex-start", gap: "8px", backgroundColor: "#1e293b", padding: "12px", borderRadius: "8px", border: "1px solid #334155" }}>
-                <span style={{ color: "#34d399", fontWeight: 800 }}>✓</span>
-                <span><strong style={{ color: "#ffffff" }}>Disk SHA-256 Provenance:</strong> Live physical disk hashing guarantees artifact integrity.</span>
+              <div style={{ display: "flex", alignItems: "flex-start", gap: "8px", backgroundColor: "var(--jr-surface-alt, #EDE7DC)", padding: "12px", borderRadius: "8px", border: "1px solid var(--jr-border, #D8D1C5)" }}>
+                <span style={{ color: "var(--status-feasible-text, #2C634B)", fontWeight: 800 }}>✓</span>
+                <span><strong style={{ color: "var(--jr-text, #24343A)" }}>Disk SHA-256 Provenance:</strong> Live physical disk hashing guarantees artifact integrity.</span>
               </div>
             </div>
           </div>
@@ -231,22 +231,22 @@ export const PostSubmissionNoticeModal: React.FC<PostSubmissionNoticeModalProps>
           {/* Mandatory Scientific Limitations */}
           <div style={{
             padding: "16px",
-            borderRadius: "12px",
-            backgroundColor: "rgba(225, 29, 72, 0.1)",
-            border: "1px solid rgba(244, 63, 94, 0.35)",
+            borderRadius: "10px",
+            backgroundColor: "var(--status-infeasible-bg, #FAECEC)",
+            border: "1px solid var(--status-infeasible-border, #E89E9E)",
             display: "flex",
             flexDirection: "column",
             gap: "8px"
           }}>
-            <div style={{ fontSize: "12px", fontWeight: 800, color: "#fb7185", textTransform: "uppercase", letterSpacing: "0.5px", display: "flex", alignItems: "center", gap: "6px" }}>
-              <AlertTriangle size={16} color="#fb7185" />
+            <div style={{ fontSize: "12px", fontWeight: 800, color: "var(--status-infeasible-text, #873636)", textTransform: "uppercase", letterSpacing: "0.5px", display: "flex", alignItems: "center", gap: "6px" }}>
+              <AlertTriangle size={16} color="var(--status-infeasible-text, #873636)" />
               Explicit Limitations & Scientific Disclaimers
             </div>
-            <ul style={{ fontSize: "12px", color: "#fecdd3", margin: 0, paddingLeft: "18px", display: "flex", flexDirection: "column", gap: "6px" }}>
-              <li><strong style={{ color: "#ffffff" }}>Physical Validation:</strong> NOT_ESTABLISHED for Tehri Dam due to absence of historic dam failure records.</li>
-              <li><strong style={{ color: "#ffffff" }}>Satellite Observations:</strong> Sentinel-1 flood masks represent surface water backscatter change, not ground truth.</li>
-              <li><strong style={{ color: "#ffffff" }}>External Solvers:</strong> Delft3D and DualSPHysics are external solver interfaces; solver execution is not included in the current demonstration environment.</li>
-              <li><strong style={{ color: "#ffffff" }}>Evacuation Model:</strong> The EWE transforms hydraulic arrival information and configured route assumptions into a deterministic departure window; it is not an independent physical safety model. Dynamic traffic congestion is unmodelled.</li>
+            <ul style={{ fontSize: "12px", color: "var(--status-infeasible-text, #873636)", margin: 0, paddingLeft: "18px", display: "flex", flexDirection: "column", gap: "6px" }}>
+              <li><strong>Physical Validation:</strong> NOT_ESTABLISHED for Tehri Dam due to absence of historic dam failure records.</li>
+              <li><strong>Satellite Observations:</strong> Sentinel-1 flood masks represent surface water backscatter change, not ground truth.</li>
+              <li><strong>External Solvers:</strong> Delft3D and DualSPHysics are external solver interfaces; solver execution is not included in the current demonstration environment.</li>
+              <li><strong>Evacuation Model:</strong> The EWE transforms hydraulic arrival information and configured route assumptions into a deterministic departure window; it is not an independent physical safety model. Dynamic traffic congestion is unmodelled.</li>
             </ul>
           </div>
         </div>
@@ -259,11 +259,11 @@ export const PostSubmissionNoticeModal: React.FC<PostSubmissionNoticeModalProps>
           justifyContent: "space-between",
           gap: "12px",
           padding: "16px 24px",
-          backgroundColor: "#090d16",
-          borderTop: "1px solid #1e293b"
+          backgroundColor: "var(--jr-surface-alt, #EDE7DC)",
+          borderTop: "1px solid var(--jr-border, #D8D1C5)"
         }}>
-          <div style={{ fontSize: "11px", color: "#94a3b8" }}>
-            Build: <code style={{ color: "#38bdf8", fontFamily: "monospace" }}>f668c7d</code> • Status: <span style={{ color: "#fbbf24", fontWeight: 700 }}>Demo-Ready Research Prototype</span>
+          <div style={{ fontSize: "11px", color: "var(--jr-text-muted, #65747A)" }}>
+            Build: <code style={{ color: "var(--jr-blue-800, #24566A)", fontFamily: "monospace" }}>c4b168b</code> • Status: <span style={{ color: "var(--status-lowmargin-text, #825820)", fontWeight: 700 }}>Demo-Ready Research Prototype</span>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
             <button
@@ -278,10 +278,10 @@ export const PostSubmissionNoticeModal: React.FC<PostSubmissionNoticeModalProps>
                 padding: "8px 16px",
                 fontSize: "12px",
                 fontWeight: 700,
-                color: "#38bdf8",
-                backgroundColor: "#1e293b",
-                border: "1px solid rgba(56, 189, 248, 0.4)",
-                borderRadius: "8px",
+                color: "var(--jr-blue-800, #24566A)",
+                backgroundColor: "var(--jr-surface, #FBF8F2)",
+                border: "1px solid var(--jr-border, #D8D1C5)",
+                borderRadius: "6px",
                 cursor: "pointer"
               }}
             >
@@ -297,12 +297,12 @@ export const PostSubmissionNoticeModal: React.FC<PostSubmissionNoticeModalProps>
                 padding: "8px 18px",
                 fontSize: "12px",
                 fontWeight: 800,
-                color: "#0f172a",
-                backgroundColor: "#f59e0b",
+                color: "#ffffff",
+                backgroundColor: "var(--jr-blue-600, #3D8EAE)",
                 border: "none",
-                borderRadius: "8px",
+                borderRadius: "6px",
                 cursor: "pointer",
-                boxShadow: "0 4px 12px rgba(245, 158, 11, 0.3)"
+                boxShadow: "0 2px 8px rgba(61, 142, 174, 0.3)"
               }}
             >
               Explore Updated Prototype

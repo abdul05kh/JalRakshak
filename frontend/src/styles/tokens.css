@@ -1,0 +1,67 @@
+/**
+ * JALRAKSHAK COMMAND-CENTER DESIGN SYSTEM TOKENS
+ * Visual Philosophy: Calm, hydrological, professional, high-density scientific beige + light blue.
+ * Environmental / Base tone: Warm Beige (#F4EFE6, #FBF8F2, #EDE7DC)
+ * Hydrological / Action tone: Light-to-Medium Blue (#EAF6FB, #D9EEF7, #76B8D0, #3D8EAE)
+ * Typography & Text tone: Deep Blue-Gray (#24343A, #65747A)
+ * Borders: Muted warm gray (#D8D1C5)
+ * Critical Alerts: Subdued Terra Cotta / Amber (#A84C4C, #A97835) - strictly for hazards, never decorative.
+ */
+
+:root {
+  /* Environmental Base Palette (Warm Beige & Cream) */
+  --jr-bg: #F4EFE6;
+  --jr-surface: #FBF8F2;
+  --jr-surface-alt: #EDE7DC;
+  --jr-surface-elevated: #FFFFFF;
+
+  /* Hydrological Palette (Light & Medium Water Blues) */
+  --jr-blue-50: #EAF6FB;
+  --jr-blue-100: #D9EEF7;
+  --jr-blue-200: #B9DDEB;
+  --jr-blue-400: #76B8D0;
+  --jr-blue-600: #3D8EAE;
+  --jr-blue-800: #24566A;
+
+  /* Typography & Structure */
+  --jr-text: #24343A;
+  --jr-text-muted: #65747A;
+  --jr-text-subtle: #8A989E;
+  --jr-border: #D8D1C5;
+  --jr-border-subtle: #E8E2D7;
+  --jr-border-strong: #BCB3A4;
+
+  /* Scientific Status & Operational Signals */
+  --jr-success: #3F7D62;
+  --jr-warning: #A97835;
+  --jr-danger: #A84C4C;
+
+  /* Operational Decision Status Tokens (FEASIBLE, LOW MARGIN, INFEASIBLE, DATA GAP) */
+  --status-feasible-bg: #E8F4EE;
+  --status-feasible-text: #2C634B;
+  --status-feasible-border: #A3CFB8;
+
+  --status-lowmargin-bg: #FCF4E7;
+  --status-lowmargin-text: #825820;
+  --status-lowmargin-border: #E8C895;
+
+  --status-infeasible-bg: #FAECEC;
+  --status-infeasible-text: #873636;
+  --status-infeasible-border: #E89E9E;
+
+  --status-datagap-bg: #EDE7DC;
+  --status-datagap-text: #65747A;
+  --status-datagap-border: #D8D1C5;
+
+  /* Legacy Mappings mapped to new Beige + Light Blue System */
+  --bg-main: var(--jr-bg);
+  --bg-surface: var(--jr-surface);
+  --bg-subtle: var(--jr-surface-alt);
+  --border-subtle: var(--jr-border-subtle);
+  --border-strong: var(--jr-border-strong);
+  --text-primary: var(--jr-text);
+  --text-secondary: var(--jr-text-muted);
+  --text-muted: var(--jr-text-subtle);
+  --accent-blue: var(--jr-blue-600);
+  --accent-blue-subtle: var(--jr-blue-50);
+}

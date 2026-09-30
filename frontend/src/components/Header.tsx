@@ -64,15 +64,15 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <header style={{
       height: "50px",
-      backgroundColor: "#0f172a",
-      borderBottom: "1px solid rgba(255, 255, 255, 0.12)",
+      backgroundColor: "var(--jr-surface, #FBF8F2)",
+      borderBottom: "1px solid var(--jr-border, #D8D1C5)",
       display: "flex",
       alignItems: "center",
       justifyContent: "space-between",
       padding: "0 10px",
       zIndex: 1000,
       userSelect: "none",
-      color: "#ffffff",
+      color: "var(--jr-text, #24343A)",
       maxWidth: "100vw",
       boxSizing: "border-box",
       overflowX: "auto",
@@ -88,16 +88,16 @@ export const Header: React.FC<HeaderProps> = ({
             width: "24px",
             height: "24px",
             borderRadius: "6px",
-            backgroundColor: "#2563eb",
+            backgroundColor: "var(--jr-blue-600, #3D8EAE)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             color: "#ffffff",
-            boxShadow: "0 2px 8px rgba(37, 99, 235, 0.4)"
+            boxShadow: "0 2px 6px rgba(61, 142, 174, 0.3)"
           }}>
             <ShieldCheck size={14} strokeWidth={2.5} />
           </div>
-          <span style={{ fontWeight: 900, fontSize: "13px", letterSpacing: "-0.3px", color: "#ffffff" }}>
+          <span style={{ fontWeight: 900, fontSize: "13px", letterSpacing: "-0.3px", color: "var(--jr-text, #24343A)" }}>
             JALRAKSHAK
           </span>
         </div>
@@ -105,10 +105,10 @@ export const Header: React.FC<HeaderProps> = ({
         {dam && (
           <span className="mobile-hide" style={{
             fontSize: "9.5px",
-            color: "#94a3b8",
+            color: "var(--jr-text-muted, #65747A)",
             fontWeight: 600,
             paddingLeft: "6px",
-            borderLeft: "1px solid rgba(255, 255, 255, 0.15)",
+            borderLeft: "1px solid var(--jr-border, #D8D1C5)",
             maxWidth: "110px",
             whiteSpace: "nowrap",
             overflow: "hidden",
@@ -123,7 +123,7 @@ export const Header: React.FC<HeaderProps> = ({
       <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
         {/* Scenario Selector */}
         <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-          <label style={{ fontSize: "9.5px", fontWeight: 800, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+          <label style={{ fontSize: "9.5px", fontWeight: 800, color: "var(--jr-text-muted, #65747A)", textTransform: "uppercase", letterSpacing: "0.5px" }}>
             SCENARIO:
           </label>
           <select
@@ -132,11 +132,11 @@ export const Header: React.FC<HeaderProps> = ({
             style={{
               padding: "3px 6px",
               borderRadius: "4px",
-              border: "1px solid rgba(255, 255, 255, 0.18)",
-              backgroundColor: "#0f172a",
+              border: "1px solid var(--jr-border, #D8D1C5)",
+              backgroundColor: "var(--jr-surface-alt, #EDE7DC)",
               fontSize: "10.5px",
               fontWeight: 700,
-              color: "#38bdf8",
+              color: "var(--jr-blue-800, #24566A)",
               cursor: "pointer",
               outline: "none",
               maxWidth: "140px"
@@ -150,7 +150,7 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Route Selector */}
         <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-          <label style={{ fontSize: "9.5px", fontWeight: 800, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+          <label style={{ fontSize: "9.5px", fontWeight: 800, color: "var(--jr-text-muted, #65747A)", textTransform: "uppercase", letterSpacing: "0.5px" }}>
             ROUTE:
           </label>
           <select
@@ -159,11 +159,11 @@ export const Header: React.FC<HeaderProps> = ({
             style={{
               padding: "3px 6px",
               borderRadius: "4px",
-              border: "1px solid rgba(255, 255, 255, 0.18)",
-              backgroundColor: "#0f172a",
+              border: "1px solid var(--jr-border, #D8D1C5)",
+              backgroundColor: "var(--jr-surface-alt, #EDE7DC)",
               fontSize: "10.5px",
               fontWeight: 700,
-              color: "#38bdf8",
+              color: "var(--jr-blue-800, #24566A)",
               cursor: "pointer",
               outline: "none",
               maxWidth: "135px"
@@ -178,9 +178,9 @@ export const Header: React.FC<HeaderProps> = ({
         <div style={{
           padding: "3px 7px",
           borderRadius: "4px",
-          backgroundColor: "rgba(30, 41, 59, 0.9)",
-          border: "1px solid rgba(56, 189, 248, 0.4)",
-          color: "#38bdf8",
+          backgroundColor: "var(--jr-blue-50, #EAF6FB)",
+          border: "1px solid var(--jr-blue-200, #B9DDEB)",
+          color: "var(--jr-blue-800, #24566A)",
           fontSize: "10px",
           fontWeight: 800,
           fontFamily: "monospace",
@@ -189,7 +189,7 @@ export const Header: React.FC<HeaderProps> = ({
           alignItems: "center",
           gap: "4px"
         }}>
-          <Clock size={11} color="#38bdf8" />
+          <Clock size={11} color="var(--jr-blue-600, #3D8EAE)" />
           <span>T+{activeTimestepMin.toString().padStart(2, "0")}:00</span>
         </div>
       </div>
@@ -209,11 +209,11 @@ export const Header: React.FC<HeaderProps> = ({
                   gap: "3px",
                   padding: "4px 6px",
                   borderRadius: "4px",
-                  border: isActive ? "1px solid #3b82f6" : "1px solid transparent",
-                  backgroundColor: isActive ? "rgba(59, 130, 246, 0.25)" : "transparent",
-                  color: isActive ? "#93c5fd" : "#cbd5e1",
+                  border: isActive ? "1px solid var(--jr-blue-600, #3D8EAE)" : "1px solid transparent",
+                  backgroundColor: isActive ? "var(--jr-blue-100, #D9EEF7)" : "transparent",
+                  color: isActive ? "var(--jr-blue-800, #24566A)" : "var(--jr-text-muted, #65747A)",
                   fontSize: "10px",
-                  fontWeight: isActive ? 800 : 500,
+                  fontWeight: isActive ? 800 : 600,
                   cursor: "pointer",
                   transition: "all 0.15s ease",
                   whiteSpace: "nowrap"
@@ -226,7 +226,7 @@ export const Header: React.FC<HeaderProps> = ({
           })}
         </div>
 
-        <span style={{ height: "16px", width: "1px", backgroundColor: "rgba(255,255,255,0.15)", margin: "0 1px" }} />
+        <span style={{ height: "16px", width: "1px", backgroundColor: "var(--jr-border, #D8D1C5)", margin: "0 1px" }} />
 
         <div style={{ display: "flex", alignItems: "center", gap: "2px" }}>
           {evidenceNav.map((item) => {
@@ -242,9 +242,9 @@ export const Header: React.FC<HeaderProps> = ({
                   gap: "3px",
                   padding: "4px 6px",
                   borderRadius: "4px",
-                  border: isActive ? "1px solid #a855f7" : "1px solid transparent",
-                  backgroundColor: isActive ? "rgba(168, 85, 247, 0.20)" : "transparent",
-                  color: isActive ? "#d8b4fe" : "#94a3b8",
+                  border: isActive ? "1px solid var(--jr-blue-400, #76B8D0)" : "1px solid transparent",
+                  backgroundColor: isActive ? "var(--jr-surface-alt, #EDE7DC)" : "transparent",
+                  color: isActive ? "var(--jr-blue-800, #24566A)" : "var(--jr-text-muted, #65747A)",
                   fontSize: "9.5px",
                   fontWeight: isActive ? 800 : 500,
                   cursor: "pointer",
@@ -259,7 +259,7 @@ export const Header: React.FC<HeaderProps> = ({
           })}
         </div>
 
-        <span style={{ height: "16px", width: "1px", backgroundColor: "rgba(255,255,255,0.15)", margin: "0 1px" }} />
+        <span style={{ height: "16px", width: "1px", backgroundColor: "var(--jr-border, #D8D1C5)", margin: "0 1px" }} />
 
         {/* Persistent Post-Submission Update Trigger */}
         <button
@@ -277,18 +277,18 @@ export const Header: React.FC<HeaderProps> = ({
             gap: "4px",
             padding: "4px 8px",
             borderRadius: "5px",
-            border: "1px solid #f59e0b",
-            backgroundColor: "rgba(245, 158, 11, 0.22)",
-            color: "#fbbf24",
+            border: "1px solid var(--jr-warning, #A97835)",
+            backgroundColor: "var(--status-lowmargin-bg, #FCF4E7)",
+            color: "var(--status-lowmargin-text, #825820)",
             fontSize: "10px",
             fontWeight: 800,
             cursor: "pointer",
-            boxShadow: "0 0 8px rgba(245, 158, 11, 0.3)",
+            boxShadow: "0 1px 4px rgba(169, 120, 53, 0.15)",
             whiteSpace: "nowrap",
             flexShrink: 0
           }}
         >
-          <span style={{ display: "inline-block", width: "5px", height: "5px", borderRadius: "50%", backgroundColor: "#f59e0b" }} />
+          <span style={{ display: "inline-block", width: "5px", height: "5px", borderRadius: "50%", backgroundColor: "var(--jr-warning, #A97835)" }} />
           <span>UPDATE NOTICE</span>
         </button>
       </nav>
