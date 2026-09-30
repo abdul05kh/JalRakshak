@@ -45,15 +45,18 @@ export const App: React.FC = () => {
     return "OPERATIONAL_MAP";
   });
 
-  // Post-Submission Notice Modal State
-  const [showPostSubmissionModal, setShowPostSubmissionModal] = useState<boolean>(() => {
-    if (typeof window === "undefined") return false;
+  // Post-Submission Notice Modal State: Always show on initial load
+  const [showPostSubmissionModal, setShowPostSubmissionModal] = useState<boolean>(true);
+
+  // Clear any legacy persistent storage flags to guarantee popup visibility
+  useEffect(() => {
     try {
-      return sessionStorage.getItem("jalrakshak_post_submission_dismissed") !== "true";
+      localStorage.removeItem("jalrakshak_post_submission_update_v2");
+      sessionStorage.removeItem("jalrakshak_post_submission_dismissed");
     } catch {
-      return true;
+      // Ignore storage errors
     }
-  });
+  }, []);
 
   // Scenarios & Dam Metadata
   const [scenarios, setScenarios] = useState<ScenarioSummary[]>([]);
@@ -312,21 +315,9 @@ export const App: React.FC = () => {
       {/* Full-Screen Post-Submission Technical Notice Modal */}
       <PostSubmissionNoticeModal
         isOpen={showPostSubmissionModal}
-        onClose={() => {
-          setShowPostSubmissionModal(false);
-          try {
-            sessionStorage.setItem("jalrakshak_post_submission_dismissed", "true");
-          } catch (e) {
-            // Ignore sessionStorage errors
-          }
-        }}
+        onClose={() => setShowPostSubmissionModal(false)}
         onReadFullUpdate={() => {
           setShowPostSubmissionModal(false);
-          try {
-            sessionStorage.setItem("jalrakshak_post_submission_dismissed", "true");
-          } catch (e) {
-            // Ignore sessionStorage errors
-          }
           setActiveView("POST_SUBMISSION_UPDATE");
         }}
       />
