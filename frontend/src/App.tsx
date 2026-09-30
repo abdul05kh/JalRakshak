@@ -48,7 +48,11 @@ export const App: React.FC = () => {
   // Post-Submission Notice Modal State
   const [showPostSubmissionModal, setShowPostSubmissionModal] = useState<boolean>(() => {
     if (typeof window === "undefined") return false;
-    return localStorage.getItem("jalrakshak_post_submission_update_v2") === null;
+    try {
+      return sessionStorage.getItem("jalrakshak_post_submission_dismissed") !== "true";
+    } catch {
+      return true;
+    }
   });
 
   // Scenarios & Dam Metadata
@@ -198,6 +202,7 @@ export const App: React.FC = () => {
         activeTimestepMin={activeTimestepMin}
         activeView={activeView}
         onNavigateToView={(view) => setActiveView(view)}
+        onOpenPostSubmissionModal={() => setShowPostSubmissionModal(true)}
       />
 
       {/* Main View Area */}
@@ -310,17 +315,17 @@ export const App: React.FC = () => {
         onClose={() => {
           setShowPostSubmissionModal(false);
           try {
-            localStorage.setItem("jalrakshak_post_submission_update_v2", "true");
+            sessionStorage.setItem("jalrakshak_post_submission_dismissed", "true");
           } catch (e) {
-            // Ignore localStorage errors
+            // Ignore sessionStorage errors
           }
         }}
         onReadFullUpdate={() => {
           setShowPostSubmissionModal(false);
           try {
-            localStorage.setItem("jalrakshak_post_submission_update_v2", "true");
+            sessionStorage.setItem("jalrakshak_post_submission_dismissed", "true");
           } catch (e) {
-            // Ignore localStorage errors
+            // Ignore sessionStorage errors
           }
           setActiveView("POST_SUBMISSION_UPDATE");
         }}

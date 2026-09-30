@@ -32,6 +32,7 @@ interface HeaderProps {
   activeTimestepMin?: number;
   activeView: ViewType;
   onNavigateToView: (view: ViewType) => void;
+  onOpenPostSubmissionModal?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -43,7 +44,8 @@ export const Header: React.FC<HeaderProps> = ({
   onSelectRouteId,
   activeTimestepMin = 60,
   activeView,
-  onNavigateToView
+  onNavigateToView,
+  onOpenPostSubmissionModal
 }) => {
 
   const operationalNav: { id: ViewType; label: string; icon: React.ReactNode }[] = [
@@ -249,7 +251,13 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Persistent Post-Submission Update Trigger */}
         <button
-          onClick={() => onNavigateToView("POST_SUBMISSION_UPDATE")}
+          onClick={() => {
+            if (onOpenPostSubmissionModal) {
+              onOpenPostSubmissionModal();
+            } else {
+              onNavigateToView("POST_SUBMISSION_UPDATE");
+            }
+          }}
           title="Important Post-Submission Technical Update & Disclosure"
           style={{
             display: "flex",
@@ -257,12 +265,13 @@ export const Header: React.FC<HeaderProps> = ({
             gap: "5px",
             padding: "4px 8px",
             borderRadius: "5px",
-            border: activeView === "POST_SUBMISSION_UPDATE" ? "1px solid #f59e0b" : "1px solid rgba(245, 158, 11, 0.4)",
-            backgroundColor: activeView === "POST_SUBMISSION_UPDATE" ? "rgba(245, 158, 11, 0.25)" : "rgba(245, 158, 11, 0.10)",
+            border: "1px solid #f59e0b",
+            backgroundColor: "rgba(245, 158, 11, 0.20)",
             color: "#fbbf24",
-            fontSize: "10px",
+            fontSize: "10.5px",
             fontWeight: 800,
             cursor: "pointer",
+            boxShadow: "0 0 8px rgba(245, 158, 11, 0.25)",
             transition: "all 0.15s ease"
           }}
         >
