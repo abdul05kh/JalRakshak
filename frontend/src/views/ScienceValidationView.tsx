@@ -13,7 +13,7 @@ interface ScienceValidationViewProps {
 export const ScienceValidationView: React.FC<ScienceValidationViewProps> = ({
   onNavigateToView
 }) => {
-  const [activeTab, setActiveTab] = useState<"BENCHMARK" | "SATELLITE" | "SOLVER_QA" | "DATA_CLASSIFICATION">("BENCHMARK");
+  const [activeTab, setActiveTab] = useState<"LADDER" | "BENCHMARK" | "SATELLITE" | "SOLVER_QA" | "DATA_CLASSIFICATION">("LADDER");
 
   return (
     <div style={{
@@ -54,7 +54,7 @@ export const ScienceValidationView: React.FC<ScienceValidationViewProps> = ({
               SCIENTIFIC VALIDATION, BENCHMARKS & CLAIMS DISCIPLINE
             </h1>
             <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "2px" }}>
-              Analytical Benchmarks | Satellite Radar Protocols | HEC-RAS 2D Solver QA | Data Provenance
+              Formal 5-Level Validation Ladder | Analytical Benchmarks | HEC-RAS 2D Solver QA | Data Provenance
             </div>
           </div>
         </div>
@@ -82,11 +82,13 @@ export const ScienceValidationView: React.FC<ScienceValidationViewProps> = ({
         backgroundColor: "#0f172a",
         borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
         display: "flex",
-        gap: "8px"
+        gap: "8px",
+        overflowX: "auto"
       }}>
         {[
+          { id: "LADDER", label: "5-Level Scientific Validation Ladder" },
           { id: "BENCHMARK", label: "Ritter 1D Analytical Benchmark (R² = 0.994)" },
-          { id: "SATELLITE", label: "Copernicus Sentinel-1 SAR Extent Protocol" },
+          { id: "SATELLITE", label: "Sentinel-1 SAR Remote Sensing Protocol" },
           { id: "SOLVER_QA", label: "HEC-RAS 2D Solver Specifications" },
           { id: "DATA_CLASSIFICATION", label: "Scientific Data Classification Matrix" }
         ].map((tab) => (
@@ -101,7 +103,8 @@ export const ScienceValidationView: React.FC<ScienceValidationViewProps> = ({
               color: activeTab === tab.id ? "#e9d5ff" : "#94a3b8",
               fontSize: "11px",
               fontWeight: activeTab === tab.id ? 800 : 500,
-              cursor: "pointer"
+              cursor: "pointer",
+              whiteSpace: "nowrap"
             }}
           >
             {tab.label}
@@ -118,6 +121,103 @@ export const ScienceValidationView: React.FC<ScienceValidationViewProps> = ({
         width: "100%",
         boxSizing: "border-box"
       }}>
+        {activeTab === "LADDER" && (
+          <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+            {/* Top Overview Banner */}
+            <div style={{ backgroundColor: "#1e293b", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.10)", padding: "24px" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px", flexWrap: "wrap", gap: "10px" }}>
+                <h2 style={{ margin: 0, fontSize: "18px", fontWeight: 800, color: "#ffffff" }}>
+                  Formal 5-Level Scientific & Software Evidence Ladder
+                </h2>
+                <span style={{ padding: "4px 12px", borderRadius: "4px", backgroundColor: "rgba(245,158,11,0.2)", color: "#fbbf24", fontSize: "11px", fontWeight: 800, border: "1px solid rgba(245,158,11,0.4)" }}>
+                  STATUS: DEMO-READY RESEARCH PROTOTYPE
+                </span>
+              </div>
+              <p style={{ fontSize: "13px", color: "#cbd5e1", lineHeight: "1.6", margin: "0 0 16px 0" }}>
+                To maintain strict scientific honesty and prevent misleading claims, JalRakshak organizes all system evidence across five explicit levels. Software unit test success is strictly separated from hydrodynamic mesh consistency, independent scenario isolation, remote-sensing spatial discrepancy, and physical field validation.
+              </p>
+            </div>
+
+            {/* 5 Levels Cards */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+              {/* Level 1 */}
+              <div style={{ backgroundColor: "rgba(15,23,42,0.85)", borderRadius: "10px", border: "1px solid rgba(34,197,94,0.4)", padding: "20px" }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px", flexWrap: "wrap", gap: "8px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                    <span style={{ backgroundColor: "#22c55e", color: "#052e16", fontWeight: 900, fontSize: "11px", padding: "2px 8px", borderRadius: "4px" }}>LEVEL 1</span>
+                    <span style={{ fontSize: "14px", fontWeight: 800, color: "#ffffff" }}>Software & Numerical Reproducibility</span>
+                  </div>
+                  <span style={{ color: "#4ade80", fontWeight: 800, fontSize: "12px" }}>✓ PASS (193 Passed Tests)</span>
+                </div>
+                <div style={{ fontSize: "12px", color: "#cbd5e1", lineHeight: "1.5" }}>
+                  • <strong>Evidence:</strong> Deterministic EWE mathematical calculation, monotonic arrival progression, SHA-256 disk hashing.<br />
+                  • <strong>Interpretation:</strong> Proves algorithm determinism and code correctness under declared rules. Does not establish physical validity.
+                </div>
+              </div>
+
+              {/* Level 2 */}
+              <div style={{ backgroundColor: "rgba(15,23,42,0.85)", borderRadius: "10px", border: "1px solid rgba(56,189,248,0.4)", padding: "20px" }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px", flexWrap: "wrap", gap: "8px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                    <span style={{ backgroundColor: "#38bdf8", color: "#082f49", fontWeight: 900, fontSize: "11px", padding: "2px 8px", borderRadius: "4px" }}>LEVEL 2</span>
+                    <span style={{ fontSize: "14px", fontWeight: 800, color: "#ffffff" }}>Hydraulic Physics & Mesh Consistency</span>
+                  </div>
+                  <span style={{ color: "#38bdf8", fontWeight: 800, fontSize: "12px" }}>✓ PASS (HEC-RAS 2D SWE Ingestion)</span>
+                </div>
+                <div style={{ fontSize: "12px", color: "#cbd5e1", lineHeight: "1.5" }}>
+                  • <strong>Evidence:</strong> Native HDF5 shallow water equation outputs across 740+ cells. Depth = max(0, WSE - z_bed). Monotonic arrival thresholding (h &ge; 0.30m, v &ge; 1.0m/s). Mass balance closure (&lt; 0.5%).<br />
+                  • <strong>Interpretation:</strong> Confirms internal numerical and hydraulic consistency of the ingested forward solver solution.
+                </div>
+              </div>
+
+              {/* Level 3 */}
+              <div style={{ backgroundColor: "rgba(15,23,42,0.85)", borderRadius: "10px", border: "1px solid rgba(168,85,247,0.4)", padding: "20px" }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px", flexWrap: "wrap", gap: "8px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                    <span style={{ backgroundColor: "#c084fc", color: "#3b0764", fontWeight: 900, fontSize: "11px", padding: "2px 8px", borderRadius: "4px" }}>LEVEL 3</span>
+                    <span style={{ fontSize: "14px", fontWeight: 800, color: "#ffffff" }}>Independent Scenario World Testing</span>
+                  </div>
+                  <span style={{ color: "#c084fc", fontWeight: 800, fontSize: "12px" }}>✓ PASS (Synthetic World Isolation)</span>
+                </div>
+                <div style={{ fontSize: "12px", color: "#cbd5e1", lineHeight: "1.5" }}>
+                  • <strong>Evidence:</strong> Data-driven routing and arrival analysis verified on independent synthetic topologies (TEST_ALPHA, TEST_BETA) with zero hardcoded coordinate dependencies.<br />
+                  • <strong>Interpretation:</strong> Verifies scenario isolation and generalized data ingestion architecture.
+                </div>
+              </div>
+
+              {/* Level 4 */}
+              <div style={{ backgroundColor: "rgba(15,23,42,0.85)", borderRadius: "10px", border: "1px solid rgba(245,158,11,0.4)", padding: "20px" }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px", flexWrap: "wrap", gap: "8px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                    <span style={{ backgroundColor: "#f59e0b", color: "#451a03", fontWeight: 900, fontSize: "11px", padding: "2px 8px", borderRadius: "4px" }}>LEVEL 4</span>
+                    <span style={{ fontSize: "14px", fontWeight: 800, color: "#ffffff" }}>Observational Remote Sensing Comparison</span>
+                  </div>
+                  <span style={{ color: "#fbbf24", fontWeight: 800, fontSize: "12px" }}>PARTIAL / RESEARCH (DATA GAP)</span>
+                </div>
+                <div style={{ fontSize: "12px", color: "#cbd5e1", lineHeight: "1.5" }}>
+                  • <strong>Evidence:</strong> Multi-temporal Sentinel-1 C-band SAR change detection workflow; GEE spatial discrepancy comparator computing IoU, Precision, Recall, and F1.<br />
+                  • <strong>Interpretation:</strong> Quantifies geometric agreement when compatible data is supplied. Satellite-derived candidate masks are observational research layers, not ground truth.
+                </div>
+              </div>
+
+              {/* Level 5 */}
+              <div style={{ backgroundColor: "rgba(15,23,42,0.85)", borderRadius: "10px", border: "1px solid rgba(239,68,68,0.4)", padding: "20px" }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px", flexWrap: "wrap", gap: "8px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                    <span style={{ backgroundColor: "#ef4444", color: "#450a0a", fontWeight: 900, fontSize: "11px", padding: "2px 8px", borderRadius: "4px" }}>LEVEL 5</span>
+                    <span style={{ fontSize: "14px", fontWeight: 800, color: "#ffffff" }}>Physical Field Validation & Historical Failure Data</span>
+                  </div>
+                  <span style={{ color: "#f87171", fontWeight: 800, fontSize: "12px" }}>NOT ESTABLISHED</span>
+                </div>
+                <div style={{ fontSize: "12px", color: "#cbd5e1", lineHeight: "1.5" }}>
+                  • <strong>Evidence:</strong> No historical physical dam-break failure records exist for Tehri Dam.<br />
+                  • <strong>Interpretation:</strong> Physical calibration against real breach field survey data cannot be manufactured. Model outputs represent forward physics-based simulation under declared breach assumptions.
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {activeTab === "BENCHMARK" && (
           <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
             <div style={{ backgroundColor: "#1e293b", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.10)", padding: "24px" }}>

@@ -247,7 +247,7 @@ export const EvacuationDecisionView: React.FC<EvacuationDecisionViewProps> = ({
         }}>
           <div style={{ padding: "12px 16px", borderBottom: "1px solid rgba(255, 255, 255, 0.08)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <span style={{ fontSize: "12px", fontWeight: 800, color: "#ffffff" }}>
-              Route R02 Limiting Edge Analysis
+              Route R02 Limiting Edge Breakdown
             </span>
             <span style={{ fontSize: "10px", color: "#94a3b8" }}>
               7 Edges Coupled via 150m Perpendicular Envelope
@@ -301,6 +301,107 @@ export const EvacuationDecisionView: React.FC<EvacuationDecisionViewProps> = ({
               ))}
             </tbody>
           </table>
+        </div>
+
+        {/* Multi-Scenario Decision Comparison Matrix (Feature 5) */}
+        <div style={{
+          backgroundColor: "#0b1120",
+          borderRadius: "8px",
+          border: "1px solid rgba(255, 255, 255, 0.10)",
+          padding: "16px"
+        }}>
+          <div style={{ fontSize: "12px", fontWeight: 800, color: "#ffffff", marginBottom: "10px" }}>
+            Operational Decision Delta across Breach Scenarios (Route R02)
+          </div>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "11px", textAlign: "left" }}>
+            <thead>
+              <tr style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.12)", color: "#94a3b8", backgroundColor: "#0f172a" }}>
+                <th style={{ padding: "8px 10px" }}>SCENARIO</th>
+                <th style={{ padding: "8px 10px" }}>PEAK DISCHARGE</th>
+                <th style={{ padding: "8px 10px" }}>FLOOD ARRIVAL</th>
+                <th style={{ padding: "8px 10px" }}>TRAVEL TIME</th>
+                <th style={{ padding: "8px 10px" }}>SAFETY BUFFER</th>
+                <th style={{ padding: "8px 10px" }}>LATEST DEPARTURE</th>
+                <th style={{ padding: "8px 10px" }}>LIMITING SEGMENT</th>
+                <th style={{ padding: "8px 10px" }}>DECISION STATUS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.04)" }}>
+                <td style={{ padding: "8px 10px", fontWeight: 700, color: "#38bdf8" }}>MINIMUM BREACH</td>
+                <td style={{ padding: "8px 10px", color: "#cbd5e1" }}>28,500 m³/s</td>
+                <td style={{ padding: "8px 10px", color: "#38bdf8" }}>T+95:00</td>
+                <td style={{ padding: "8px 10px", color: "#cbd5e1" }}>12:39</td>
+                <td style={{ padding: "8px 10px", color: "#cbd5e1" }}>03:00</td>
+                <td style={{ padding: "8px 10px", fontWeight: 800, color: "#4ade80" }}>T+79:21</td>
+                <td style={{ padding: "8px 10px", color: "#ef4444" }}>R02-E07</td>
+                <td style={{ padding: "8px 10px", color: "#4ade80", fontWeight: 800 }}>FEASIBLE (+35m margin)</td>
+              </tr>
+              <tr style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.04)", backgroundColor: "rgba(56, 189, 248, 0.05)" }}>
+                <td style={{ padding: "8px 10px", fontWeight: 700, color: "#ffffff" }}>CENTRAL (BASELINE)</td>
+                <td style={{ padding: "8px 10px", color: "#cbd5e1" }}>65,000 m³/s</td>
+                <td style={{ padding: "8px 10px", color: "#38bdf8" }}>T+60:00</td>
+                <td style={{ padding: "8px 10px", color: "#cbd5e1" }}>12:39</td>
+                <td style={{ padding: "8px 10px", color: "#cbd5e1" }}>03:00</td>
+                <td style={{ padding: "8px 10px", fontWeight: 800, color: "#38bdf8" }}>T+44:21</td>
+                <td style={{ padding: "8px 10px", color: "#ef4444" }}>R02-E07</td>
+                <td style={{ padding: "8px 10px", color: "#38bdf8", fontWeight: 800 }}>FEASIBLE (Baseline)</td>
+              </tr>
+              <tr style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.04)" }}>
+                <td style={{ padding: "8px 10px", fontWeight: 700, color: "#f87171" }}>MAXIMUM OVERTOPPING</td>
+                <td style={{ padding: "8px 10px", color: "#cbd5e1" }}>115,000 m³/s</td>
+                <td style={{ padding: "8px 10px", color: "#38bdf8" }}>T+45:00</td>
+                <td style={{ padding: "8px 10px", color: "#cbd5e1" }}>12:39</td>
+                <td style={{ padding: "8px 10px", color: "#cbd5e1" }}>03:00</td>
+                <td style={{ padding: "8px 10px", fontWeight: 800, color: "#fbbf24" }}>T+29:21</td>
+                <td style={{ padding: "8px 10px", color: "#ef4444" }}>R02-E07</td>
+                <td style={{ padding: "8px 10px", color: "#fbbf24", fontWeight: 800 }}>LOW MARGIN (-15m delta)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        {/* Operational Model Assumptions & Limitations (Feature 3 & 6) */}
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          gap: "14px"
+        }}>
+          {/* Configured Assumptions */}
+          <div style={{
+            backgroundColor: "#0b1120",
+            borderRadius: "8px",
+            border: "1px solid rgba(56, 189, 248, 0.3)",
+            padding: "16px"
+          }}>
+            <div style={{ fontSize: "11px", fontWeight: 800, color: "#38bdf8", textTransform: "uppercase", marginBottom: "8px" }}>
+              Configured Operational Model Assumptions
+            </div>
+            <ul style={{ fontSize: "11.5px", color: "#cbd5e1", lineHeight: "1.6", margin: 0, paddingLeft: "16px" }}>
+              <li><strong>Vehicle Evacuation Speed:</strong> Configured static 50 km/h (13.89 m/s).</li>
+              <li><strong>Safety Clearance Buffer:</strong> Configured 3.0 min (180 s) staging allowance.</li>
+              <li><strong>Flood Critical Threshold:</strong> Water depth h &ge; 0.30 m or velocity v &ge; 1.0 m/s.</li>
+              <li><strong>Road Coupling:</strong> 150m perpendicular corridor with &le;50m point densification.</li>
+            </ul>
+          </div>
+
+          {/* Model Limitations & Scientific Qualification */}
+          <div style={{
+            backgroundColor: "#0b1120",
+            borderRadius: "8px",
+            border: "1px solid rgba(245, 158, 11, 0.3)",
+            padding: "16px"
+          }}>
+            <div style={{ fontSize: "11px", fontWeight: 800, color: "#fbbf24", textTransform: "uppercase", marginBottom: "8px" }}>
+              Model Limitations & Boundary Disclaimers
+            </div>
+            <ul style={{ fontSize: "11.5px", color: "#cbd5e1", lineHeight: "1.6", margin: 0, paddingLeft: "16px" }}>
+              <li><strong>Traffic Dynamics:</strong> Dynamic traffic congestion and panic queues are unmodelled.</li>
+              <li><strong>Physical Safety:</strong> FEASIBLE status indicates clearance under declared equations, not physical guarantee.</li>
+              <li><strong>Terrain:</strong> Copernicus GLO-30 is a DSM containing forest canopy and structures.</li>
+              <li><strong>Validation:</strong> Forward simulation from USACE HEC-RAS; physical Tehri breach uncalibrated.</li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
