@@ -9,6 +9,8 @@ import { FeasibilityView } from "./views/FeasibilityView";
 import { ScienceValidationView } from "./views/ScienceValidationView";
 import { ProvenanceView } from "./views/ProvenanceView";
 import { ArcGISTerrainTestView } from "./views/ArcGISTerrainTestView";
+import { PostSubmissionUpdateView } from "./views/PostSubmissionUpdateView";
+import { PostSubmissionNoticeModal } from "./components/PostSubmissionNoticeModal";
 import { StateDebugPanel } from "./components/StateDebugPanel";
 
 import type {
@@ -32,10 +34,21 @@ import { setBackendAnalysisResult } from "./services/decisionStore";
 export const App: React.FC = () => {
   // Navigation View State: Dedicated Full-Screen Pages
   const [activeView, setActiveView] = useState<ViewType>(() => {
-    if (typeof window !== "undefined" && window.location.pathname === "/arcgis-terrain-test") {
-      return "ARCGIS_TERRAIN_TEST";
+    if (typeof window !== "undefined") {
+      if (window.location.pathname === "/arcgis-terrain-test") {
+        return "ARCGIS_TERRAIN_TEST";
+      }
+      if (window.location.pathname === "/post-submission-update") {
+        return "POST_SUBMISSION_UPDATE";
+      }
     }
     return "OPERATIONAL_MAP";
+  });
+
+  // Post-Submission Notice Modal State
+  const [showPostSubmissionModal, setShowPostSubmissionModal] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return localStorage.getItem("jalrakshak_post_submission_update_v2") === null;
   });
 
   // Scenarios & Dam Metadata
@@ -283,7 +296,35 @@ export const App: React.FC = () => {
             onNavigateToView={(view) => setActiveView(view as ViewType)}
           />
         )}
+
+        {activeView === "POST_SUBMISSION_UPDATE" && (
+          <PostSubmissionUpdateView
+            onBackToMap={() => setActiveView("OPERATIONAL_MAP")}
+          />
+        )}
       </main>
+
+      {/* Full-Screen Post-Submission Technical Notice Modal */}
+      <PostSubmissionNoticeModal
+        isOpen={showPostSubmissionModal}
+        onClose={() => {
+          setShowPostSubmissionModal(false);
+          try {
+            localStorage.setItem("jalrakshak_post_submission_update_v2", "true");
+          } catch (e) {
+            // Ignore localStorage errors
+          }
+        }}
+        onReadFullUpdate={() => {
+          setShowPostSubmissionModal(false);
+          try {
+            localStorage.setItem("jalrakshak_post_submission_update_v2", "true");
+          } catch (e) {
+            // Ignore localStorage errors
+          }
+          setActiveView("POST_SUBMISSION_UPDATE");
+        }}
+      />
 
       {/* Developer State Debug Panel (Gated behind dev flag / Ctrl+Shift+D) */}
       {(typeof window !== "undefined" && (window as any).__JALRAKSHAK_ENABLE_DEV_PANEL__) && (

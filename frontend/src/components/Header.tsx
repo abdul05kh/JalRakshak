@@ -19,7 +19,8 @@ export type ViewType =
   | "FEASIBILITY"
   | "SCIENCE_VALIDATION" 
   | "PROVENANCE"
-  | "ARCGIS_TERRAIN_TEST";
+  | "ARCGIS_TERRAIN_TEST"
+  | "POST_SUBMISSION_UPDATE";
 
 interface HeaderProps {
   scenarios: ScenarioSummary[];
@@ -243,6 +244,31 @@ export const Header: React.FC<HeaderProps> = ({
             );
           })}
         </div>
+
+        <span style={{ height: "18px", width: "1px", backgroundColor: "rgba(255,255,255,0.15)", margin: "0 2px" }} />
+
+        {/* Persistent Post-Submission Update Trigger */}
+        <button
+          onClick={() => onNavigateToView("POST_SUBMISSION_UPDATE")}
+          title="Important Post-Submission Technical Update & Disclosure"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "5px",
+            padding: "4px 8px",
+            borderRadius: "5px",
+            border: activeView === "POST_SUBMISSION_UPDATE" ? "1px solid #f59e0b" : "1px solid rgba(245, 158, 11, 0.4)",
+            backgroundColor: activeView === "POST_SUBMISSION_UPDATE" ? "rgba(245, 158, 11, 0.25)" : "rgba(245, 158, 11, 0.10)",
+            color: "#fbbf24",
+            fontSize: "10px",
+            fontWeight: 800,
+            cursor: "pointer",
+            transition: "all 0.15s ease"
+          }}
+        >
+          <span style={{ display: "inline-block", width: "6px", height: "6px", borderRadius: "50%", backgroundColor: "#f59e0b" }} />
+          <span>UPDATE NOTICE</span>
+        </button>
       </nav>
     </header>
   );
