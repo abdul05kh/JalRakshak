@@ -56,16 +56,15 @@ export const PostSubmissionUpdateView: React.FC<PostSubmissionUpdateViewProps> =
         </p>
         <div className="text-xs md:text-sm text-slate-300 space-y-2 leading-relaxed">
           <p>
-            Our initial submission placed too much emphasis on dam-break hydrodynamics, 3D visualization, and localized evacuation decision support. 
-            While these remain essential core pillars of JalRakshak, a deeper post-submission forensic deconstruction of the official NTRO/MIC problem statement revealed that the full intended solution space is significantly broader.
+            The submitted PPT represents our initial interpretation of SIH26161.
+            After submission, we identified that our initial interpretation placed too much emphasis on localized dam-break hydrodynamics, 3D visualization, and evacuation routing, and did not fully capture the broader generalized modelling, multi-dataset, and remote-sensing scope of SIH26161.
           </p>
           <p>
-            The complete problem statement expects a <strong>generalized modelling framework</strong> incorporating multi-source hydrological datasets, 
-            digital elevation models, multi-temporal satellite imagery, multi-hydrodynamic solver adapters (HEC-RAS, Delft3D, SPH), standardized GIS export pipelines (KML/GeoJSON), and near-real-time Google Earth Engine analysis.
+            We acknowledge this gap. Rather than defending our original narrower interpretation, we revisited the problem statement, reworked the architecture, and advanced the prototype.
           </p>
-          <p className="text-amber-300 font-medium">
-            We recognized this gap after submission. Rather than defending our original narrower interpretation, we revisited the problem statement and substantially improved the prototype, architecture, and scientific evidence base.
-          </p>
+          <div className="p-3 rounded-lg bg-slate-950/70 border border-amber-500/30 text-xs text-amber-300 font-semibold">
+            ⚠️ Important: This is a post-submission technical update. It does not constitute a revised SIH submission. The submitted PPT remains unchanged; this repository documents technical development undertaken after submission.
+          </div>
         </div>
       </div>
 
@@ -81,7 +80,7 @@ export const PostSubmissionUpdateView: React.FC<PostSubmissionUpdateViewProps> =
               <tr className="bg-slate-900 border-b border-slate-800 text-slate-400 text-[11px] font-bold uppercase tracking-wider">
                 <th className="p-3.5">Engineering Domain</th>
                 <th className="p-3.5 w-1/3 text-slate-400">Submitted State (Initial Stage)</th>
-                <th className="p-3.5 w-1/2 text-cyan-400">Current Prototype (Substantially Advanced)</th>
+                <th className="p-3.5 w-1/2 text-cyan-400">Current Prototype (Post-Submission Advancement)</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800 text-slate-300">
@@ -90,28 +89,28 @@ export const PostSubmissionUpdateView: React.FC<PostSubmissionUpdateViewProps> =
                   <Waves className="w-3.5 h-3.5 text-blue-400" /> Hydrodynamics
                 </td>
                 <td className="p-3.5 text-slate-400">Localized hydraulic/GIS visualization</td>
-                <td className="p-3.5 text-cyan-200">Native HEC-RAS 7.0.1 2D unsteady flow HDF5 ingestion across 3 breach plans (28.5k, 65k, 115k m³/s) with cell-level depth, velocity, and arrival timestamps.</td>
+                <td className="p-3.5 text-cyan-200">Native HEC-RAS 2D unsteady flow HDF5 ingestion across 3 breach plans (28.5k, 65k, 115k m³/s) with cell-level depth, velocity, and arrival timestamps.</td>
               </tr>
               <tr>
                 <td className="p-3.5 font-bold text-white flex items-center gap-2">
                   <Clock className="w-3.5 h-3.5 text-amber-400" /> Evacuation Engine
                 </td>
                 <td className="p-3.5 text-slate-400">Basic route clearance concept</td>
-                <td className="p-3.5 text-cyan-200">Deterministic Evacuation Window Engine (EWE) mathematically calculating D_deadline = min(A_i - T_i - B) and extracting the exact limiting bottleneck road segment.</td>
+                <td className="p-3.5 text-cyan-200">Deterministic Evacuation Window Engine (EWE) mathematically calculating D_deadline = min(A_i - T_i - B) and extracting the limiting bottleneck segment.</td>
               </tr>
               <tr>
                 <td className="p-3.5 font-bold text-white flex items-center gap-2">
                   <Map className="w-3.5 h-3.5 text-emerald-400" /> GIS & Road Coupling
                 </td>
                 <td className="p-3.5 text-slate-400">Visual road overlay</td>
-                <td className="p-3.5 text-cyan-200">Projected coordinate transformation (UTM 44N to WGS84) with 150m perpendicular corridor search and line densification to prevent false overtopping.</td>
+                <td className="p-3.5 text-cyan-200">Projected coordinate transformation (UTM 44N to WGS84) with 150m perpendicular corridor search and line densification.</td>
               </tr>
               <tr>
                 <td className="p-3.5 font-bold text-white flex items-center gap-2">
                   <Radio className="w-3.5 h-3.5 text-purple-400" /> Satellite / GEE
                 </td>
                 <td className="p-3.5 text-slate-400">Limited/absent satellite integration</td>
-                <td className="p-3.5 text-cyan-200">Multi-temporal Sentinel-1 SAR change detection research workflow and GEE spatial comparator calculating exact IoU, Precision, Recall, and F1 metrics.</td>
+                <td className="p-3.5 text-cyan-200">Multi-temporal Sentinel-1 SAR change detection research workflow. Spatial-comparison metrics (IoU, precision, recall, F1) are computed when compatible extents are supplied.</td>
               </tr>
               <tr>
                 <td className="p-3.5 font-bold text-white flex items-center gap-2">
@@ -125,21 +124,21 @@ export const PostSubmissionUpdateView: React.FC<PostSubmissionUpdateViewProps> =
                   <FileCheck className="w-3.5 h-3.5 text-teal-400" /> GIS Exports
                 </td>
                 <td className="p-3.5 text-slate-400">No export functionality</td>
-                <td className="p-3.5 text-cyan-200">Production OGC KML 2.2 XML and RFC 7946 GeoJSON export endpoints containing full hydraulic telemetry and departure margins.</td>
+                <td className="p-3.5 text-cyan-200">OGC KML 2.2 XML and RFC 7946 GeoJSON export endpoints containing hydraulic telemetry and departure margins.</td>
               </tr>
               <tr>
                 <td className="p-3.5 font-bold text-white flex items-center gap-2">
-                  <ShieldCheck className="w-3.5 h-3.5 text-green-400" /> Provenance & Validation
+                  <ShieldCheck className="w-3.5 h-3.5 text-green-400" /> Provenance & Verification
                 </td>
                 <td className="p-3.5 text-slate-400">Early exploratory tests</td>
-                <td className="p-3.5 text-cyan-200">193 automated Pytest test suites, real-time SHA-256 physical disk hashing, and strict black-box scenario generalization verification.</td>
+                <td className="p-3.5 text-cyan-200">193 automated Pytest test suites passing, real-time SHA-256 physical disk hashing, and synthetic test world isolation.</td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
 
-      {/* Verified Scientific Boundaries & Limitations */}
+      {/* Verified Boundaries & Explicit Limitations */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Verified Capabilities */}
         <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
@@ -148,11 +147,11 @@ export const PostSubmissionUpdateView: React.FC<PostSubmissionUpdateViewProps> =
             3. Verified Technical Capabilities
           </div>
           <ul className="text-xs text-slate-300 space-y-2 list-disc list-inside leading-relaxed">
-            <li><strong>Authoritative Hydraulic Ingestion:</strong> Reads native HEC-RAS 2D HDF5 geometry, water surface elevations, and velocities without procedural fabrications.</li>
-            <li><strong>Deterministic Bottleneck Extraction:</strong> Mathematically identifies the exact limiting road segment (argmin D_i) determining route cut-off.</li>
-            <li><strong>Standardized GIS Interoperability:</strong> Exports compliant KML and GeoJSON files for district emergency command GIS ingestion.</li>
-            <li><strong>Spatial Satellite Discrepancy:</strong> Computes true IoU, precision, and recall comparing satellite water masks with simulated flood extents.</li>
-            <li><strong>Zero Hardcoding:</strong> Fully scenario-driven architecture verified across independent test worlds (TEST_ALPHA, TEST_BETA).</li>
+            <li><strong>Authoritative Hydraulic Ingestion:</strong> Ingests native HEC-RAS 2D HDF5 geometry, water surface elevations, and velocities without procedural fabrications.</li>
+            <li><strong>Deterministic Bottleneck Extraction:</strong> Identifies the exact limiting road segment (argmin D_i) determining route cut-off.</li>
+            <li><strong>Standardized GIS Exports:</strong> Exports compliant KML and GeoJSON files via REST endpoints.</li>
+            <li><strong>Spatial Comparison Metrics:</strong> Computes IoU, precision, and recall comparing satellite water masks with simulated extents when compatible inputs are provided.</li>
+            <li><strong>Scenario Isolation:</strong> Scenario isolation and data-driven loading were verified on independent synthetic test worlds (TEST_ALPHA, TEST_BETA).</li>
           </ul>
         </div>
 
@@ -165,8 +164,8 @@ export const PostSubmissionUpdateView: React.FC<PostSubmissionUpdateViewProps> =
           <ul className="text-xs text-slate-300 space-y-2 list-disc list-inside leading-relaxed">
             <li><strong>Physical Validation:</strong> NOT_ESTABLISHED for Tehri Dam due to lack of historic physical dam-break failure records.</li>
             <li><strong>Satellite Ground Truth:</strong> Sentinel-1 backscatter depressions are candidate flood masks, not calibrated ground truth for HEC-RAS.</li>
-            <li><strong>Solvers:</strong> Delft3D and SPH are external adapter interfaces; commercial solvers are truthfully marked NOT_CONFIGURED.</li>
-            <li><strong>Traffic Dynamics:</strong> Evacuation speed (50 km/h) is a static configured parameter; dynamic congestion is unmodelled.</li>
+            <li><strong>External Solvers:</strong> Delft3D and DualSPHysics are external adapter interfaces; external solver execution is not included in the current demonstration environment.</li>
+            <li><strong>Evacuation Model:</strong> The EWE transforms hydraulic arrival information and configured route assumptions into a deterministic departure window; it is not an independent physical safety model. Dynamic traffic congestion is unmodelled.</li>
             <li><strong>Event Comparability:</strong> July 2024 Balganga satellite data is an observation demo, not validation of Tehri dam-break simulations.</li>
           </ul>
         </div>

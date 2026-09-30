@@ -17,15 +17,15 @@
 > **Important clarification for reviewers & jury:**  
 > The PPT and prototype submitted during the original Smart India Hackathon submission represent our **initial interpretation** of SIH26161.
 >
-> After submission, we performed a deeper, forensic technical analysis of the official problem statement and identified that our initial interpretation did not fully capture its breadth.
+> After submission, we performed a deeper technical analysis of the official problem statement and identified that our initial interpretation did not fully capture its breadth.
 >
 > **We acknowledge this gap.**
 >
-> Rather than leaving the prototype at the submitted state or defending an incomplete scope, we revisited the problem statement and substantially improved JalRakshak. The current repository therefore contains functionality, architecture, scientific validation work, and research capabilities that were not represented in the submitted PPT.
+> Rather than leaving the prototype at the submitted state, we revisited the problem statement and substantially improved JalRakshak. The current repository therefore contains functionality, architecture, and research capabilities that were not represented in the submitted PPT.
 >
-> **The submitted PPT has not been retroactively rewritten.** This repository and its documentation record the technical evolution that followed.
+> **The submitted PPT has not been retroactively changed.** This repository and its documentation record the technical development that followed.
 >
-> We are deliberately transparent about what is implemented, what is research-only, what is an external-solver interface, and what remains future work.
+> **Important: This is a post-submission technical update. It does not constitute a revised SIH submission. The submitted PPT remains unchanged; this repository documents technical development undertaken after submission.**
 
 ---
 
@@ -37,43 +37,43 @@
 
 ## 1. What We Initially Got Wrong
 
-Our initial interpretation placed too much emphasis on dam-break hydrodynamics, 3D visualization, and evacuation decision support for a single high-profile study area.
+Our initial interpretation placed too much emphasis on localized dam-break hydrodynamics, 3D visualization, and evacuation decision support for a single study area.
 
-While these remain essential pillars of JalRakshak, deeper deconstruction of SIH26161 showed that the intended solution space is significantly broader:
-* **Multi-Dataset Ingestion:** Generalizing beyond single-basin elevation and hydrology to ingest global DEMs, hydrological boundary series, and multi-temporal remote sensing.
+During subsequent technical analysis, the broader scope of SIH26161 became clear:
+* **Multi-Dataset Ingestion:** Ingesting global DEMs, hydrological boundary series, and multi-temporal remote sensing.
 * **Satellite / Google Earth Engine (GEE):** Near-real-time satellite observation, SAR water extraction, and observational flood tracking.
 * **Multi-Model Support:** Interoperability with diverse hydrodynamic formulations including 2D shallow water solvers (HEC-RAS), Flexible Mesh (Delft3D FM), and Smoothed Particle Hydrodynamics (SPH).
-* **Interoperability & Generalization:** Automated scenario generation, standardized OGC KML / RFC 7946 GeoJSON GIS exports, and complete independence from hardcoded coordinates.
+* **Interoperability & Generalization:** Standardized OGC KML / RFC 7946 GeoJSON GIS exports and data-driven scenario architecture.
 
-We recognized this gap only after submission. Rather than defending the original narrower interpretation, we corrected our technical direction and substantially reworked the prototype.
+We recognized this gap after submission. Rather than defending the original narrower interpretation, we corrected our technical direction and reworked the prototype.
 
 ---
 
 ## 2. What Changed After Submission?
 
-| Engineering Domain | Initial Submission (Earlier Stage) | Current Prototype (Substantially Advanced) | Evidence & Code Reference |
+| Engineering Domain | Initial Submission (Earlier Stage) | Current Prototype (Post-Submission Advancement) | Evidence & Code Reference |
 | :--- | :--- | :--- | :--- |
 | **Problem Scope** | Dam-break 3D visualization & routing concept | Generalized hydrodynamic & remote sensing framework | [`docs/POST_SUBMISSION_UPDATE.md`](docs/POST_SUBMISSION_UPDATE.md) |
 | **Hydrodynamic Pipeline** | Procedural / localized flood propagation | Native HEC-RAS 2D unsteady flow HDF5 ingestion across 3 breach plans ($28.5\text{k}, 65\text{k}, 115\text{k m}^3/\text{s}$) | [`backend/app/domain/hecras_reader.py`](backend/app/domain/hecras_reader.py) |
 | **Decision Engine** | Basic route clearance concept | Deterministic Evacuation Window Engine (EWE) solving $D_{\text{deadline}} = \min_i(A_i - T_i - B)$ | [`backend/app/domain/decision.py`](backend/app/domain/decision.py) |
 | **Road-Hydraulic Coupling** | Simple 2D point overlay | Projected coordinate transformation (UTM 44N to WGS84) + 150m corridor search + segment densification | [`backend/app/domain/gis.py`](backend/app/domain/gis.py) |
-| **Satellite / GEE** | Conceptual / absent | Multi-temporal Sentinel-1 SAR change detection pipeline + GEE spatial discrepancy comparator | [`backend/app/integrations/gee/`](backend/app/integrations/gee/) |
+| **Satellite / GEE** | Limited / absent | Multi-temporal Sentinel-1 SAR change detection research workflow; spatial discrepancy comparator | [`backend/app/integrations/gee/`](backend/app/integrations/gee/) |
 | **Multi-Model Support** | Single model assumption | Unified `HydraulicModelAdapter` interface (HEC-RAS, Delft3D FM, DualSPHysics SPH) | [`backend/app/domain/hydraulic_adapters/`](backend/app/domain/hydraulic_adapters/) |
-| **GIS Interoperability** | No export capabilities | RFC 7946 GeoJSON and OGC KML 2.2 export with full hydraulic telemetry | [`backend/app/domain/exporter.py`](backend/app/domain/exporter.py) |
-| **Scenario Isolation** | Hardcoded Tehri coordinate assumptions | Clean scenario world isolation verified with black-box synthetic worlds (`TEST_ALPHA`, `TEST_BETA`) | [`backend/tests/test_scenario_generalization.py`](backend/tests/test_scenario_generalization.py) |
+| **GIS Interoperability** | No export capabilities | OGC KML 2.2 XML and RFC 7946 GeoJSON export endpoints with hydraulic telemetry | [`backend/app/domain/exporter.py`](backend/app/domain/exporter.py) |
+| **Scenario Isolation** | Hardcoded Tehri coordinate assumptions | Scenario isolation and data-driven loading verified on independent synthetic test worlds (`TEST_ALPHA`, `TEST_BETA`) | [`backend/tests/test_scenario_generalization.py`](backend/tests/test_scenario_generalization.py) |
 | **Data Lineage & Provenance** | Unverified claims | Live SHA-256 physical file hashing with deterministic verification | [`backend/app/domain/provenance.py`](backend/app/domain/provenance.py) |
-| **Software Verification** | Early manual tests | 193 automated Pytest test suites passing in release CI environment | [`backend/tests/`](backend/tests/) |
+| **Software Verification** | Early manual tests | 193 automated Pytest test suites passing in release environment | [`backend/tests/`](backend/tests/) |
 
 ---
 
 ## 3. Core Product Story: From Hydraulic Physics to Evacuation Decisions
 
-When severe breach or high-volume spillway release occurs at a major dam, 2D hydrodynamic solvers compute massive meshes of depths ($h$), water surface elevations ($WSE$), and velocities ($\mathbf{v}$). 
+When severe breach or high-volume spillway release occurs at a major dam, 2D hydrodynamic solvers compute large meshes of depths ($h$), water surface elevations ($WSE$), and velocities ($\mathbf{v}$). 
 
-Emergency commanders and district disaster managers do not have the time or specialized tools to parse gigabytes of raw mesh arrays during a crisis. They need answers to four questions:
+Emergency commanders and district disaster managers need direct operational clarity during a crisis:
 
 1. **WHERE:** Which downstream communities and road corridors are in the flood wave's trajectory?
-2. **WHEN:** At what exact minute does the flood wave arrive at each critical road segment?
+2. **WHEN:** At what exact minute does the flood wave reach each critical road segment?
 3. **WHAT:** What is the absolute latest departure deadline before an evacuation corridor is cut off?
 4. **WHY:** Which exact road segment is the governing bottleneck and what hydraulic conditions dictate that deadline?
 
@@ -83,11 +83,11 @@ Emergency commanders and district disaster managers do not have the time or spec
 
 ## 4. Why JalRakshak Matters
 
-We chose not to leave the repository aligned with our earlier submission presentation. The technically responsible approach is to document how our understanding of SIH26161 evolved and provide concrete software and scientific evidence of that advancement.
+We chose not to leave the repository aligned solely with our earlier submission presentation. The technically responsible approach is to document how our understanding of SIH26161 evolved and provide concrete software and scientific evidence of that advancement.
 
 This repository serves both as:
 1. **The current JalRakshak decision-support prototype**, and
-2. **A transparent record of post-submission engineering rigor.**
+2. **A transparent record of post-submission technical development.**
 
 ---
 
@@ -104,7 +104,7 @@ This repository serves both as:
                        HYDRODYNAMIC SOLVERS
     ┌────────────────────────────────────────────────────────┐
     │  HEC-RAS 2D Unsteady      │  Delft3D Flexible Mesh     │
-    │  (Authoritative / Native) │  (Adapter Interface)       │
+    │  (Native Ingestion)       │  (Adapter Interface)       │
     │                           │  DualSPHysics SPH          │
     │                           │  (Adapter Interface)       │
     └───────────────────────────┬────────────────────────────┘
@@ -145,7 +145,7 @@ This repository serves both as:
 
 ## 6. Native HEC-RAS 2D Hydrodynamic Pipeline
 
-JalRakshak ingests authentic 2D unsteady shallow water equation solutions generated via **USACE HEC-RAS**:
+JalRakshak ingests 2D unsteady shallow water equation solutions generated via **USACE HEC-RAS**:
 * **Artifact Schema:** Native HDF5 plan files (`.p01.hdf`, `.p02.hdf`, `.p03.hdf`).
 * **Mesh Coverage:** 740+ cell center coordinates, face point connectivity, and bathymetric bed elevations ($z_{\text{bed}}$).
 * **Ingested Variables:**
@@ -167,10 +167,11 @@ Sentinel-1 GRD (IW) ──► Radiometric Calibration ──► Lee Speckle Filt
 ```
 
 * **Observation Workflow:** Developed under `backend/app/integrations/gee/` utilizing Google Earth Engine and Sentinel-1 C-band Synthetic Aperture Radar (SAR) ground range detected (GRD) imagery.
-* **Demonstrated Data:** 969 Sentinel-1 scenes indexed for the Bhagirathi river basin across Orbit 63 (Descending) and Orbit 129 (Ascending).
+* **Scene Indexing:** 969 Sentinel-1 scenes were indexed for the configured AOI/query (they do not all form a continuous homogeneous time series).
 * **Controlled Observation Example:** Pre-event (2024-07-25 00:44 UTC) vs Post-event (2024-08-06 00:44 UTC) for the Balganga valley flood event.
-* **Spatial Discrepancy Engine:** Computes exact spatial overlap metrics:
+* **Spatial Comparison Engine:** Spatial-comparison metrics including IoU, precision, recall, and F1 can be computed when compatible simulated and observed extents are supplied:
   $$\text{IoU} = \frac{|M_{\text{sim}} \cap M_{\text{obs}}|}{|M_{\text{sim}} \cup M_{\text{obs}}|}, \quad \text{Precision} = \frac{|M_{\text{sim}} \cap M_{\text{obs}}|}{|M_{\text{sim}}|}, \quad \text{Recall} = \frac{|M_{\text{sim}} \cap M_{\text{obs}}|}{|M_{\text{obs}}|}, \quad F_1 = 2 \cdot \frac{P \cdot R}{P + R}$$
+  These metrics quantify geometric agreement under the specified comparison inputs; they do not by themselves establish physical validation.
 
 ### Critical Remote Sensing Disclaimers
 * Sentinel-1 SAR change detection detects surface roughness/specular reflection change.
@@ -198,6 +199,8 @@ For an evacuation route comprising ordered road segments $e_1, e_2, \dots, e_n$:
 4. **Governing Limiting Road Segment:**
    $$e_{\text{limiting}} = \arg\min_{i \in \{1, \dots, n\}} (A_i - T_i - B)$$
 
+*Scientific Qualification:* The EWE transforms hydraulic arrival information and configured route assumptions into a deterministic departure window. It is not an independent physical safety model and dynamic traffic congestion is unmodelled.
+
 ### Deterministic Operational Classifications
 * `FEASIBLE`: $D_{\text{deadline}} \ge 300\,\text{s}$ ($\ge 5\text{ minutes}$ margin).
 * `LOW MARGIN`: $0\,\text{s} \le D_{\text{deadline}} < 300\,\text{s}$ (Immediate departure required).
@@ -216,10 +219,9 @@ For an evacuation route comprising ordered road segments $e_1, e_2, \dots, e_n$:
 
 ## 10. Generalized Scenario Architecture
 
-JalRakshak enforces strict world isolation without hardcoded coordinate assumptions:
-* Tested across independent synthetic worlds (`TEST_ALPHA`, `TEST_BETA`) in automated CI suites.
+* Scenario isolation and data-driven loading were verified on independent synthetic test worlds (`TEST_ALPHA`, `TEST_BETA`) in automated CI suites.
 * All routes, shelters, origins, and hydraulic grids are loaded dynamically through standardized scenario schemas.
-* *Note:* While the architecture supports generalized scenario loading, arbitrary real-time native HEC-RAS solver mesh creation on novel rivers requires external cluster compute.
+* *Note:* While the architecture supports data-driven scenario ingestion, arbitrary real-time native HEC-RAS solver mesh creation on novel rivers requires external compute.
 
 ---
 
@@ -228,9 +230,9 @@ JalRakshak enforces strict world isolation without hardcoded coordinate assumpti
 | Verification Dimension | Scope & Methodology | Evidence & Status |
 | :--- | :--- | :--- |
 | **Software Verification** | Automated Pytest test suites covering domain math, API contracts, GIS projection, EWE edge cases, and CORS. | **193 Passed, 1 Skipped** in release environment. |
-| **Scientific Evidence** | Verification that hydraulic depth, velocity, and arrival fields are faithfully extracted from native HEC-RAS 2D HDF5 tables. | **Verified** against USACE HEC-RAS plan artifacts. |
+| **Scientific Evidence** | Verification that hydraulic depth, velocity, and arrival fields are extracted from native HEC-RAS 2D HDF5 tables. | **Verified** against USACE HEC-RAS plan artifacts. |
 | **Physical Model Calibration** | Calibration of breach parameters against historical dam failure field data. | **NOT_ESTABLISHED** (Tehri Dam has no historical failure). |
-| **Operational Validation** | Human-in-the-loop stress testing with emergency response personnel under active disaster drills. | **Exploratory prototype validation**. |
+| **Operational Validation** | Human-in-the-loop testing with emergency response workflows. | **Exploratory prototype validation**. |
 
 ---
 
@@ -245,7 +247,7 @@ JalRakshak verifies the physical integrity of every ingested hydraulic dataset v
 ## 13. Standardized GIS Interoperability (KML & GeoJSON)
 
 * **RFC 7946 GeoJSON:** Validated multi-layer FeatureCollections for inundation polygons, road impacts, and evacuation corridors.
-* **OGC KML 2.2 XML:** Fully styled Keyhole Markup Language with embedded hydraulic telemetry, elevation tags, and departure margins.
+* **OGC KML 2.2 XML:** Styled Keyhole Markup Language with embedded hydraulic telemetry, elevation tags, and departure margins.
 * **API Endpoints:**
   * `GET /api/v1/scenarios/{id}/export?layer=inundation&format=geojson|kml`
   * `GET /api/v1/scenarios/{id}/export?layer=roads&format=geojson|kml`
@@ -259,8 +261,9 @@ JalRakshak verifies the physical integrity of every ingested hydraulic dataset v
 2. **Elevation Data:** Copernicus GLO-30 is a 30m Digital Surface Model (DSM) that includes canopy and structural heights.
 3. **Vertical Datum:** Geoid-to-ellipsoid vertical datum offset is uncalibrated between GLO-30 (EGM96) and local riverbed gauge levels.
 4. **Traffic Dynamics:** Static vehicle speed ($50\,\text{km/h}$) is assumed. Multi-agent congestion, road blockages, and vehicle breakdowns are unmodelled.
-5. **Multi-Model Solvers:** Delft3D FM and DualSPHysics SPH are structured as adapter interfaces; where proprietary binaries are not installed, the system outputs structured adapter errors.
-6. **Damage Assessment:** Damage curves represent empirical depth-damage functions (DDF); localized financial loss values require cadastral survey calibration.
+5. **Multi-Model Solvers:** Delft3D FM and DualSPHysics SPH are structured as adapter interfaces; external solver execution is not included in the current demonstration environment.
+6. **Damage Assessment:** Exposure assessment framework identifies exposed infrastructure; damage estimation requires calibrated cadastral survey inputs.
+7. **Near-Real-Time Operation:** GEE/Sentinel-1 observation is currently a research-stage workflow. Live automated acquisition and end-to-end near-real-time processing remain configuration dependent.
 
 ---
 
@@ -271,12 +274,12 @@ JalRakshak verifies the physical integrity of every ingested hydraulic dataset v
 | **Dam Break / Water Release Modeling** | `IMPLEMENTED` | Native HEC-RAS 2D unsteady flow HDF5 ingestion across 3 breach plans ($28.5\text{k}, 65\text{k}, 115\text{k m}^3/\text{s}$). |
 | **Downstream Inundation Estimation** | `IMPLEMENTED` | Spatiotemporal flood depths, velocities, and arrival timestamps across 740+ mesh cells. |
 | **Hydrologic Data & DEM Ingestion** | `IMPLEMENTED` | Ingestion of Copernicus GLO-30 DEM and inflow hydrographs. |
-| **Satellite Imagery & GEE** | `RESEARCH` | Sentinel-1 SAR multi-temporal change detection pipeline and GEE spatial discrepancy comparator. |
+| **Satellite Imagery & GEE** | `RESEARCH / PARTIAL` | Multi-temporal Sentinel-1 SAR change detection pipeline and GEE spatial discrepancy comparator. Live automated pipeline is configuration dependent. |
 | **Scenario Generation & Comparison** | `IMPLEMENTED` | Central, Minimum, and Maximum breach plan comparison with cross-scenario delta analytics. |
 | **Dashboard & 3D Visualization** | `IMPLEMENTED` | React + Vite + TypeScript + ArcGIS Maps SDK 3D SceneView with interactive timeline. |
-| **Standard GIS Outputs (SHP/KML/GeoJSON)** | `IMPLEMENTED` | Production RFC 7946 GeoJSON and OGC KML 2.2 export endpoints. |
-| **SPH / Delft3D Solvers** | `INTERFACE` | Unified `HydraulicModelAdapter` interface specification; commercial engines require local license/binaries. |
-| **Near-Real-Time Flood Analysis** | `PARTIAL` | Rapid EWE calculation on pre-computed scenarios; live automated solver meshing requires cluster compute. |
+| **Standard GIS Outputs (KML/GeoJSON)** | `IMPLEMENTED` | OGC KML 2.2 and RFC 7946 GeoJSON export endpoints. |
+| **SPH / Delft3D Solvers** | `INTERFACE` | Unified `HydraulicModelAdapter` interface specification; external solver execution is not included in current demo environment. |
+| **Near-Real-Time Flood Analysis** | `PARTIAL / RESEARCH` | Rapid EWE calculation on pre-computed scenarios; live automated solver meshing and GEE ingestion remain configuration dependent. |
 | **Indian River / Dam Demonstration** | `IMPLEMENTED` | Demonstrated on Tehri Dam (Bhagirathi River, Uttarakhand). |
 
 ---
