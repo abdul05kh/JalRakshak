@@ -45,7 +45,7 @@ export const App: React.FC = () => {
     return "OPERATIONAL_MAP";
   });
 
-  // Post-Submission Notice Modal State: Always visible on initial load / refresh
+  // Post-Submission Notice Modal State: Always displays as a pop-up at the beginning
   const [showPostSubmissionModal, setShowPostSubmissionModal] = useState<boolean>(true);
 
   // Scenarios & Dam Metadata
