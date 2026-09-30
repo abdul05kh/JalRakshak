@@ -45,18 +45,8 @@ export const App: React.FC = () => {
     return "OPERATIONAL_MAP";
   });
 
-  // Post-Submission Notice Modal State: Always show on initial load
+  // Post-Submission Notice Modal State: Always visible on initial load / refresh
   const [showPostSubmissionModal, setShowPostSubmissionModal] = useState<boolean>(true);
-
-  // Clear any legacy persistent storage flags to guarantee popup visibility
-  useEffect(() => {
-    try {
-      localStorage.removeItem("jalrakshak_post_submission_update_v2");
-      sessionStorage.removeItem("jalrakshak_post_submission_dismissed");
-    } catch {
-      // Ignore storage errors
-    }
-  }, []);
 
   // Scenarios & Dam Metadata
   const [scenarios, setScenarios] = useState<ScenarioSummary[]>([]);
