@@ -1,0 +1,105 @@
+{
+  "scenario_id": "SCENARIO_MINIMUM",
+  "timesteps": [
+    {
+      "timestep_min": 0,
+      "label": "T+00:00",
+      "elapsed_seconds": 0,
+      "description": "HEC-RAS STATE T+00:00: Flood wave propagating along Bhagirathi canyon.",
+      "wavefront_progress_fraction": 0.0,
+      "affected_roads": [],
+      "inundated_edge_count": 0,
+      "is_arrival_point_for_r02": false
+    },
+    {
+      "timestep_min": 15,
+      "label": "T+15:00",
+      "elapsed_seconds": 900,
+      "description": "HEC-RAS STATE T+15:00: Flood wave propagating along Bhagirathi canyon.",
+      "wavefront_progress_fraction": 0.125,
+      "affected_roads": [],
+      "inundated_edge_count": 0,
+      "is_arrival_point_for_r02": false
+    },
+    {
+      "timestep_min": 30,
+      "label": "T+30:00",
+      "elapsed_seconds": 1800,
+      "description": "HEC-RAS STATE T+30:00: Flood wave propagating along Bhagirathi canyon.",
+      "wavefront_progress_fraction": 0.25,
+      "affected_roads": [],
+      "inundated_edge_count": 0,
+      "is_arrival_point_for_r02": false
+    },
+    {
+      "timestep_min": 45,
+      "label": "T+45:00",
+      "elapsed_seconds": 2700,
+      "description": "HEC-RAS STATE T+45:00: Flood wave propagating along Bhagirathi canyon.",
+      "wavefront_progress_fraction": 0.375,
+      "affected_roads": [],
+      "inundated_edge_count": 0,
+      "is_arrival_point_for_r02": false
+    },
+    {
+      "timestep_min": 60,
+      "label": "T+60:00",
+      "elapsed_seconds": 3600,
+      "description": "HEC-RAS STATE T+60:00: Flood wave propagating along Bhagirathi canyon.",
+      "wavefront_progress_fraction": 0.5,
+      "affected_roads": [
+        "R02"
+      ],
+      "inundated_edge_count": 1,
+      "is_arrival_point_for_r02": true
+    },
+    {
+      "timestep_min": 75,
+      "label": "T+75:00",
+      "elapsed_seconds": 4500,
+      "description": "HEC-RAS STATE T+75:00: Flood wave propagating along Bhagirathi canyon.",
+      "wavefront_progress_fraction": 0.625,
+      "affected_roads": [
+        "R02"
+      ],
+      "inundated_edge_count": 1,
+      "is_arrival_point_for_r02": false
+    },
+    {
+      "timestep_min": 90,
+      "label": "T+90:00",
+      "elapsed_seconds": 5400,
+      "description": "HEC-RAS STATE T+90:00: Flood wave propagating along Bhagirathi canyon.",
+      "wavefront_progress_fraction": 0.75,
+      "affected_roads": [
+        "R02"
+      ],
+      "inundated_edge_count": 1,
+      "is_arrival_point_for_r02": false
+    },
+    {
+      "timestep_min": 105,
+      "label": "T+105:00",
+      "elapsed_seconds": 6300,
+      "description": "HEC-RAS STATE T+105:00: Flood wave propagating along Bhagirathi canyon.",
+      "wavefront_progress_fraction": 0.875,
+      "affected_roads": [
+        "R02"
+      ],
+      "inundated_edge_count": 1,
+      "is_arrival_point_for_r02": false
+    },
+    {
+      "timestep_min": 120,
+      "label": "T+120:00",
+      "elapsed_seconds": 7200,
+      "description": "HEC-RAS STATE T+120:00: Flood wave propagating along Bhagirathi canyon.",
+      "wavefront_progress_fraction": 1.0,
+      "affected_roads": [
+        "R02"
+      ],
+      "inundated_edge_count": 1,
+      "is_arrival_point_for_r02": false
+    }
+  ]
+}

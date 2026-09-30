@@ -27,21 +27,39 @@ const API_BASE = rawApiBase
 
 
 export async function fetchScenarios(): Promise<ScenarioSummary[]> {
-  const res = await fetch(`${API_BASE}/scenarios`);
-  if (!res.ok) throw new Error("Failed to fetch scenarios");
-  return res.json();
+  try {
+    const res = await fetch(`${API_BASE}/scenarios`);
+    if (res.ok) return await res.json();
+  } catch (e) {
+    console.warn("[API] Live backend /scenarios unavailable, using pre-baked authoritative dataset:", e);
+  }
+  const fallback = await fetch("/data/scenarios.json");
+  if (!fallback.ok) throw new Error("Failed to fetch scenarios from API or fallback");
+  return fallback.json();
 }
 
 export async function fetchDam(damId: string = "dam-tehri-001"): Promise<Dam> {
-  const res = await fetch(`${API_BASE}/dams/${damId}`);
-  if (!res.ok) throw new Error("Failed to fetch dam details");
-  return res.json();
+  try {
+    const res = await fetch(`${API_BASE}/dams/${damId}`);
+    if (res.ok) return await res.json();
+  } catch (e) {
+    console.warn("[API] Live backend /dams unavailable, using pre-baked authoritative dataset:", e);
+  }
+  const fallback = await fetch("/data/dam.json");
+  if (!fallback.ok) throw new Error("Failed to fetch dam details from API or fallback");
+  return fallback.json();
 }
 
 export async function fetchScenarioLayers(scenarioId: string): Promise<any> {
-  const res = await fetch(`${API_BASE}/scenarios/${scenarioId}/layers`);
-  if (!res.ok) throw new Error("Failed to fetch scenario layers");
-  return res.json();
+  try {
+    const res = await fetch(`${API_BASE}/scenarios/${scenarioId}/layers`);
+    if (res.ok) return await res.json();
+  } catch (e) {
+    console.warn(`[API] Live backend /scenarios/${scenarioId}/layers unavailable, using pre-baked authoritative dataset:`, e);
+  }
+  const fallback = await fetch(`/data/layers_${scenarioId}.json`);
+  if (!fallback.ok) throw new Error(`Failed to fetch scenario layers for ${scenarioId}`);
+  return fallback.json();
 }
 
 export async function queryPoint(scenarioId: string, lat: number, lon: number): Promise<PointQueryResponse> {
@@ -95,9 +113,15 @@ export async function fetchProvenanceData(scenarioId: string): Promise<any> {
 }
 
 export async function fetchTimelineData(scenarioId: string): Promise<any> {
-  const res = await fetch(`${API_BASE}/scenarios/${scenarioId}/timeline`);
-  if (!res.ok) throw new Error("Failed to fetch timeline data");
-  return res.json();
+  try {
+    const res = await fetch(`${API_BASE}/scenarios/${scenarioId}/timeline`);
+    if (res.ok) return await res.json();
+  } catch (e) {
+    console.warn(`[API] Live backend /scenarios/${scenarioId}/timeline unavailable, using pre-baked authoritative dataset:`, e);
+  }
+  const fallback = await fetch(`/data/timeline_${scenarioId}.json`);
+  if (!fallback.ok) throw new Error(`Failed to fetch timeline data for ${scenarioId}`);
+  return fallback.json();
 }
 
 export async function fetchExplainersData(scenarioId: string): Promise<any> {
