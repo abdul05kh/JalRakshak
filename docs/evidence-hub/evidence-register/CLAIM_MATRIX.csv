@@ -1,0 +1,7 @@
+Claim ID,Claim,Evidence,Status,Safe wording,Forbidden wording,Gap/next action
+CLM-001,Native HEC-RAS 2D result ingestion,Native HDF5 + adapter tests,GREEN,Native HEC-RAS 2D result ingestion is demonstrated.,Fully validated hydraulic model,Attach exact artifact/hash for each showcased case.
+CLM-002,Evacuation deadline,EWE + property tests,GREEN,"Deadline is deterministically calculated from arrival, travel time and buffer.",Guaranteed safe evacuation,Keep backend authoritative.
+CLM-003,GEE observation comparison,Sentinel-1 workflow,YELLOW,Research-oriented observational discrepancy comparison.,Satellite validates Tehri,Use event-matched acquisitions when available.
+CLM-004,SPH/Delft3D,Interfaces,YELLOW,External solver interface boundary exists.,Fully implemented,Only claim execution with real solver artifacts.
+CLM-005,Tehri physical validation,No field benchmark,RED,Physical validation is not established.,Calibrated/validated Tehri model,Acquire defensible benchmark data.
+CLM-006,Operational travel time,Static 50 km/h assumption,ORANGE,Configured travel-time assumption.,Live traffic-aware prediction,Add validated dynamic model/data if needed.
