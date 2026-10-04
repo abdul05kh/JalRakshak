@@ -19,8 +19,7 @@ export type ViewType =
   | "FEASIBILITY"
   | "SCIENCE_VALIDATION" 
   | "PROVENANCE"
-  | "ARCGIS_TERRAIN_TEST"
-  | "POST_SUBMISSION_UPDATE";
+  | "ARCGIS_TERRAIN_TEST";
 
 interface HeaderProps {
   scenarios: ScenarioSummary[];
@@ -32,7 +31,6 @@ interface HeaderProps {
   activeTimestepMin?: number;
   activeView: ViewType;
   onNavigateToView: (view: ViewType) => void;
-  onOpenPostSubmissionModal?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -44,8 +42,7 @@ export const Header: React.FC<HeaderProps> = ({
   onSelectRouteId,
   activeTimestepMin = 60,
   activeView,
-  onNavigateToView,
-  onOpenPostSubmissionModal
+  onNavigateToView
 }) => {
 
   const operationalNav: { id: ViewType; label: string; icon: React.ReactNode }[] = [
@@ -258,39 +255,6 @@ export const Header: React.FC<HeaderProps> = ({
             );
           })}
         </div>
-
-        <span style={{ height: "16px", width: "1px", backgroundColor: "var(--jr-border, #D8D1C5)", margin: "0 1px" }} />
-
-        {/* Persistent Post-Submission Update Trigger */}
-        <button
-          onClick={() => {
-            if (onOpenPostSubmissionModal) {
-              onOpenPostSubmissionModal();
-            } else {
-              onNavigateToView("POST_SUBMISSION_UPDATE");
-            }
-          }}
-          title="Important Post-Submission Technical Update & Disclosure"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "4px",
-            padding: "4px 8px",
-            borderRadius: "5px",
-            border: "1px solid var(--jr-warning, #A97835)",
-            backgroundColor: "var(--status-lowmargin-bg, #FCF4E7)",
-            color: "var(--status-lowmargin-text, #825820)",
-            fontSize: "10px",
-            fontWeight: 800,
-            cursor: "pointer",
-            boxShadow: "0 1px 4px rgba(169, 120, 53, 0.15)",
-            whiteSpace: "nowrap",
-            flexShrink: 0
-          }}
-        >
-          <span style={{ display: "inline-block", width: "5px", height: "5px", borderRadius: "50%", backgroundColor: "var(--jr-warning, #A97835)" }} />
-          <span>UPDATE NOTICE</span>
-        </button>
       </nav>
     </header>
   );

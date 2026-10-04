@@ -9,8 +9,6 @@ import { FeasibilityView } from "./views/FeasibilityView";
 import { ScienceValidationView } from "./views/ScienceValidationView";
 import { ProvenanceView } from "./views/ProvenanceView";
 import { ArcGISTerrainTestView } from "./views/ArcGISTerrainTestView";
-import { PostSubmissionUpdateView } from "./views/PostSubmissionUpdateView";
-import { PostSubmissionNoticeModal } from "./components/PostSubmissionNoticeModal";
 import { StateDebugPanel } from "./components/StateDebugPanel";
 
 import type {
@@ -38,15 +36,9 @@ export const App: React.FC = () => {
       if (window.location.pathname === "/arcgis-terrain-test") {
         return "ARCGIS_TERRAIN_TEST";
       }
-      if (window.location.pathname === "/post-submission-update") {
-        return "POST_SUBMISSION_UPDATE";
-      }
     }
     return "OPERATIONAL_MAP";
   });
-
-  // Post-Submission Notice Modal State: Always displays as a pop-up at the beginning
-  const [showPostSubmissionModal, setShowPostSubmissionModal] = useState<boolean>(true);
 
   // Scenarios & Dam Metadata
   const [scenarios, setScenarios] = useState<ScenarioSummary[]>([]);
@@ -195,7 +187,6 @@ export const App: React.FC = () => {
         activeTimestepMin={activeTimestepMin}
         activeView={activeView}
         onNavigateToView={(view) => setActiveView(view)}
-        onOpenPostSubmissionModal={() => setShowPostSubmissionModal(true)}
       />
 
       {/* Main View Area */}
@@ -294,23 +285,7 @@ export const App: React.FC = () => {
             onNavigateToView={(view) => setActiveView(view as ViewType)}
           />
         )}
-
-        {activeView === "POST_SUBMISSION_UPDATE" && (
-          <PostSubmissionUpdateView
-            onBackToMap={() => setActiveView("OPERATIONAL_MAP")}
-          />
-        )}
       </main>
-
-      {/* Full-Screen Post-Submission Technical Notice Modal */}
-      <PostSubmissionNoticeModal
-        isOpen={showPostSubmissionModal}
-        onClose={() => setShowPostSubmissionModal(false)}
-        onReadFullUpdate={() => {
-          setShowPostSubmissionModal(false);
-          setActiveView("POST_SUBMISSION_UPDATE");
-        }}
-      />
 
       {/* Developer State Debug Panel (Gated behind dev flag / Ctrl+Shift+D) */}
       {(typeof window !== "undefined" && (window as any).__JALRAKSHAK_ENABLE_DEV_PANEL__) && (
