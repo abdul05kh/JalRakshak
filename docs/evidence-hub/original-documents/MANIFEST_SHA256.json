@@ -1,0 +1,92 @@
+[
+  {
+    "file": "00_README_START_HERE.docx",
+    "bytes": 38980,
+    "sha256": "9be87c3a153cef027163906022f2c3b5a35eee021a5d22bed2f45f5fa1e951db"
+  },
+  {
+    "file": "01_EVIDENCE_CLASSIFICATION_AND_CLAIM_RULES.docx",
+    "bytes": 37891,
+    "sha256": "d254d1c520cb3763cc27eda763b87564fcccdfe253e236744c54594d6928fbbb"
+  },
+  {
+    "file": "02_SOURCE_REGISTER_AND_CLAIM_MATRIX.xlsx",
+    "bytes": 8517,
+    "sha256": "1cb8827635d84fd44b1e5ae8645848ea57253de984b414bcabe5ee5b257b3364"
+  },
+  {
+    "file": "03_TEHRI_SOURCE_AND_PARAMETER_CARD.docx",
+    "bytes": 37967,
+    "sha256": "d9b6dfca5a216bc077b18c63aab59529f4334789501f62fb4ed6014d2868fc61"
+  },
+  {
+    "file": "04_TERRAIN_DATA_AND_3D_CONTEXT_REPORT.docx",
+    "bytes": 37548,
+    "sha256": "4ebb162fafe2e694a4f6164ac669789bdcf83b4191841a7169ba7f4813645991"
+  },
+  {
+    "file": "05_HECRAS_EXECUTION_AND_ARTIFACT_PROVENANCE.docx",
+    "bytes": 37702,
+    "sha256": "84aa524549500dcf53f4fa4bbf447616740d2b1fcaa2fd36ea008c927bca0940"
+  },
+  {
+    "file": "06_SCENARIO_CARDS_AND_COMPARISON_REPORT.docx",
+    "bytes": 37568,
+    "sha256": "78d955429d2557e9f3b0b7088f4da10784c448702f009c59bbe79ca56a0a70f9"
+  },
+  {
+    "file": "07_ROAD_HYDRAULIC_COUPLING_REPORT.docx",
+    "bytes": 37765,
+    "sha256": "8f3ae0e3169d4cd4cee6fac5c29a5daa31ba682ddae7f6c465eb7a71e0b939d6"
+  },
+  {
+    "file": "08_EWE_SPECIFICATION_AND_VALIDATION.docx",
+    "bytes": 37702,
+    "sha256": "cc27c29d64b95fea824a8c2f5309e15636e754bdb18299bf09890b5201fc57e4"
+  },
+  {
+    "file": "09_GEE_SENTINEL1_DATA_CARD_AND_RESEARCH_REPORT.docx",
+    "bytes": 37745,
+    "sha256": "b2bbeb0152f859be641940e10b6eac98e2cc3b5f6574f9c37deaa820e55bc463"
+  },
+  {
+    "file": "10_EXPOSURE_LOSS_DAMAGE_FRAMEWORK.docx",
+    "bytes": 37287,
+    "sha256": "ad43fa3f39539f5867c5830399bf0e81fd1d8344e427ba5faf246b89659413f5"
+  },
+  {
+    "file": "11_VALIDATION_LADDER_AND_HUMAN_PILOT_REPORT.docx",
+    "bytes": 37925,
+    "sha256": "88551e56399390847ac93f5edb761bf0cbd48168256741fd78995ac0a46ad188"
+  },
+  {
+    "file": "12_REPRODUCIBILITY_AND_PROVENANCE_REPORT.docx",
+    "bytes": 37346,
+    "sha256": "e29bca9c38cebb1e62e04f388cf75a316971d70d50dda3b2b7d6841cf7b64b0d"
+  },
+  {
+    "file": "13_LIMITATIONS_SCOPE_AND_RED_TEAM_REPORT.docx",
+    "bytes": 38035,
+    "sha256": "ce86c2bfd232d39761a5a53230d4a098d6528ff3933b4c3f0c5ee525e7795df8"
+  },
+  {
+    "file": "14_RESOURCE_INDEX_AND_REFERENCE_MAP.docx",
+    "bytes": 37937,
+    "sha256": "0fb3335911ef82dd06d7455ea8d6a38b31a9a1969d84ee87963a09a6a7327965"
+  },
+  {
+    "file": "15_CLAIM_TO_EVIDENCE_AND_LANGUAGE_AUDIT.docx",
+    "bytes": 38056,
+    "sha256": "1bb715102620d28ef1985ecf4afe3da126c4ab9811cd3463b4ad546f61dde1a5"
+  },
+  {
+    "file": "MASTER_JALRAKSHAK_EVIDENCE_HUB_MANUAL.docx",
+    "bytes": 38816,
+    "sha256": "33587f0790d855b86328ac9f9128604062e20ee6da0355eace428ac33c758df4"
+  },
+  {
+    "file": "UPLOAD_CHECKLIST.txt",
+    "bytes": 1221,
+    "sha256": "dcf17d22c692c7168f9da7c410877fe96044c5ecaecf1cf1d758b14e52595c2f"
+  }
+]
